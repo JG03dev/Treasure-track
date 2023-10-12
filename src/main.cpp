@@ -22,9 +22,9 @@ GLfloat deltaTime = 0.0f;
 GLfloat lastTime = 0.0f;
 
 // Vertex Shader
-static const char* vShader = "../Shaders/shader.vert";
-//fragment shader
-static const char* fShader = "../Shaders/shader.frag";
+static const char* vShader = "../../../Shaders/shader.vert";
+// Fragment shader
+static const char* fShader = "../../../Shaders/shader.frag";
 
 void CreateObjects()
 {
@@ -61,7 +61,7 @@ void CreateShader()
     shaderList.push_back(*shader1);
 }
 
-int main()
+int main(int argc, char* argv[])
 {
     Window mainWindow = Window(800, 600);
     mainWindow.Initialise();
