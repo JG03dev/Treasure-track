@@ -13,7 +13,7 @@ Aquest projecte es una demo molt senzilla d'ús de glew i glfw, també inclou ll
 
 Amb git (o amb github desktop) cloneu aquest repositori
 ```sh
-git clone https://github.com/JG03dev/VGI-ABP.git
+git clone --recurse-submodules https://github.com/JG03dev/VGI-ABP.git
 ```
 
 Nota: Es possible que us hagueu de logejar a git amb el vostre compte de github si voleu fer commits, ja que el repositori es privat.
