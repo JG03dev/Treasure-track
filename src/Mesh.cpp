@@ -11,19 +11,19 @@ Mesh::Mesh() {
     indexCount = 0;
 }
 
-// This funcion does nothing its just to test out Assimp imports
-//void Mesh::loadModel(std::string path)
-//{
-//    Assimp::Importer import;
-//    const aiScene * scene = import.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
-//
-//    if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
-//    {
-//        std::cout << "ERROR::ASSIMP::" << import.GetErrorString() << std::endl;
-//        return;
-//    }
-//    //directory = path.substr(0, path.find_last_of('/'));
-//}
+//This funcion does nothing its just to test out Assimp imports
+void Mesh::loadModel(std::string path)
+{
+    Assimp::Importer import;
+    const aiScene * scene = import.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
+
+    if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
+    {
+        std::cout << "ERROR::ASSIMP::" << import.GetErrorString() << std::endl;
+        return;
+    }
+    //directory = path.substr(0, path.find_last_of('/'));
+}
 
 void Mesh::CreateMesh(GLfloat *vertices, unsigned int *indices, unsigned int numOfVertices, unsigned int numOfIndices){
     indexCount = numOfIndices;
@@ -80,6 +80,7 @@ void Mesh::ClearMesh(){
     }
 
     indexCount = 0;
+    importer.FreeScene();
 }
 
 

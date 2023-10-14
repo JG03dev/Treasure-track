@@ -7,6 +7,10 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include <assimp/Importer.hpp>
+#include <AL/al.h>
+#include <AL/alc.h>
+
 #include "Mesh.h"
 #include "Shader.h"
 #include "Window.h"
@@ -61,6 +65,41 @@ void CreateShader()
     shaderList.push_back(*shader1);
 }
 
+/*
+* This should return the Imported, the Device and the context from 
+* the libraries, but for now is to test that it compiles and links 
+* them correctly.
+*/
+
+int initialize_libraries()
+{
+    // Initialize Assimp
+    Assimp::Importer importer;
+
+    // Initialize OpenAL
+    ALCdevice* device = alcOpenDevice(NULL);
+    if (!device) {
+        std::cerr << "Failed to initialize OpenAL device" << std::endl;
+        return -1;
+    }
+
+    ALCcontext* context = alcCreateContext(device, NULL);
+    if (!context) {
+        std::cerr << "Failed to initialize OpenAL context" << std::endl;
+        return -1;
+    }
+
+    alcMakeContextCurrent(context);
+
+    // Since this is just for testing we destroy everything after initialization
+
+    importer.FreeScene();
+    alcMakeContextCurrent(NULL);
+    alcDestroyContext(context);
+    alcCloseDevice(device);
+    return 0;
+}
+
 int main(int argc, char* argv[])
 {
     Window mainWindow = Window(800, 600);
@@ -70,6 +109,10 @@ int main(int argc, char* argv[])
     CreateShader();
 
     camera = Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f, 5.0f, 1.0f);
+
+    // Test other libraries
+    if (initialize_libraries() < 0)
+        return -1;
 
     GLuint uniformProjection = 0, uniformModel = 0, uniformView = 0;
 
