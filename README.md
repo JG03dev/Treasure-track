@@ -1,58 +1,59 @@
-# glfw_template
+# VGI-ABP Project
 
-Simple template to get started with OpenGL using [GLFW](https://www.glfw.org/docs/latest/quick_guide.html) and [GLEW](https://github.com/nigels-com/glew).
+Aquest projecte es una demo molt senzilla d'ús de glew i glfw, també inclou llibreries que utilitzarem en el projecte com assimp o openal-soft
 
-This template uses [cmkr](https://github.com/build-cpp/cmkr) together with [vcpkg](https://github.com/microsoft/vcpkg) for frictionless cross platform dependency management with CMake.
+# Instalació
+ ## Prerequisits
+ - Visual studio 2022, comproveu que teniu compatibilitat amb CMake. (e.j. podeu crear projectes de CMake)
+ - Alternativament podeu utilitzar CLion pero la instalacó pot variar.
+ - Es recomana visual studio com a editor auxiliar i per resoldre merge conflicts.
+ - Finalment es recomana que tingueu git o github desktop ja que utilitzarem git com a VCS pel projecte.
 
-## Building (IDE)
+## Instalació
 
-Clone this repository and open it in your favorite IDE with CMake support ([Visual Studio](https://visualstudio.microsoft.com/), [CLion](https://www.jetbrains.com/clion/), [Qt Creator](https://www.qt.io/product/development-tools)). Everything should work out of the box.
-
-## Building (command line)
-
+Amb git (o amb github desktop) cloneu aquest repositori
 ```sh
-cmake -B build
-cmake --build build
+git clone https://github.com/JG03dev/VGI-ABP.git
 ```
 
-**Note:** On Ubuntu you need to run `sudo apt-get install libgl-dev libxinerama-dev libxcursor-dev xorg-dev libglu1-mesa-dev` to use this template.
+Nota: Es possible que us hagueu de logejar a git amb el vostre compte de github si voleu fer commits, ja que el repositori es privat.
 
-## cmake.toml
+Obriu el repositori amb Visual Studio i executeu el fitxer CMakeLists.txt per a comprovar que teniu les llibreries.
 
-Under the hood cmkr generates the `CMakeLists.txt` required to build this project from the `cmake.toml` file:
+![Comproveu que en l'execució teniu ficat el CMakeLists.txt](Assets/ReadMe/RunCMake.png)
 
-```toml
-[cmake]
-version = "3.15"
-cmkr-include = "cmake/cmkr.cmake"
+I no us surt cap error ja heu acabat 👍✅
 
-[project]
-name = "glfw_template"
-include-after = [
-    "cmake/generate_shaders.cmake"
-]
+Si us surten errors i la compilació de CMake no ha pogut acabar de manera exitosa amb la instalació de llibreries.
 
-# See https://vcpkg.io/en/packages.html for available packages
-# Chose a version from https://github.com/microsoft/vcpkg/releases
-[vcpkg]
-version = "2021.05.12"
-packages = ["glfw3", "glew"]
+## Instalació de llibreries
 
-# vcpkg will download the packages, but you still need to find them to use them
-[find-package]
-glfw3 = {}
-GLEW = {}
+En aquest projecte, de moment, utilitza les següents llibreries:
 
-[target.example]
-type = "executable"
-sources = [
-    "src/example.cpp",
-    "shaders/FragmentShader.glsl",
-    "shaders/VertexShader.glsl",
-]
-link-libraries = ["glfw", "GLEW::GLEW"]
-compile-features = ["cxx_std_11"]
-cmake-after = """
-generate_shaders(${CMKR_TARGET})
-"""
+- GLEW: Llibreria gràfica de OpenGL que utilitzarem per tots les gràfics.
+- GLM: Llibreria matemàtica de OpenGL que ens automatitzarà moltes operacións pels gràfics.
+- GLFW: Llibreria per gestionar el input/output del programa, aixo inclou la finestra del programa.
+- Assimp: Llibreria d'importació de models.
+- OpenAL-soft: Llibreria de audio 3D.
+
+Per instal·lar les llibreries utilitzarem [vcpkg](https://github.com/microsoft/vcpkg) que esta inclos en aquest projecte com a sub-module de git
+
+Per començar obriu una terminal en la carpeta del projecte i executeu el següent per fer l'instalació de vcpkg
+
+```powershell
+.\vcpkg\bootstrap-vcpkg.bat
 ```
+
+A continuació instaleu les llibreries utilitzant la següent comanda
+
+```powershell
+.\vcpkg\vcpkg install glew glm glfw3 assimp openal-soft
+```
+
+Finalment per integrar vcpkg amb les llibreries instalades a visual studio executeu
+
+```powershell
+.\vcpkg\vcpkg integrate install
+```
+
+

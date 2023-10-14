@@ -2,9 +2,10 @@ cmake_minimum_required(VERSION 3.26)
 project(VGI-ABP)
 
 set(CMAKE_CXX_STANDARD 14)
-
-# Add the path to the vcpkg toolchain file
-set(CMAKE_TOOLCHAIN_FILE "${CMAKE_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake")
+IF (WIN32)
+    # Add the path to the vcpkg toolchain file
+    set(CMAKE_TOOLCHAIN_FILE "${CMAKE_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake")
+ENDIF()
 
 find_package(GLEW REQUIRED)
 find_package(glm CONFIG REQUIRED)
