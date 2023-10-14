@@ -7,11 +7,10 @@ IF (WIN32)
     set(CMAKE_TOOLCHAIN_FILE "${CMAKE_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake")
 ENDIF()
 
-find_package(GLEW REQUIRED)
+find_package(OpenGL REQUIRED)
 find_package(glm CONFIG REQUIRED)
 find_package(OpenAL CONFIG REQUIRED)
 find_package(assimp REQUIRED)
-find_package(Bullet CONFIG REQUIRED)
 find_package(glfw3 REQUIRED)
 
 add_executable(VGI-ABP src/main.cpp
@@ -27,5 +26,5 @@ add_executable(VGI-ABP src/main.cpp
 # target_link_libraries(VGI-ABP PRIVATE glfw "${ASSIMP_INCLUDE_DIRS}/assimp" "${BULLET_LIBRARIES}" GLEW::glew OpenAL::OpenAL)
 target_link_libraries(VGI-ABP PRIVATE ${ASSIMP_LIBRARIES})
 target_link_libraries(VGI-ABP PRIVATE OpenAL::OpenAL)
-target_link_libraries(VGI-ABP PRIVATE GLEW::GLEW)
+target_link_libraries(VGI-ABP PRIVATE OpenGL::GL GLEW)
 target_link_libraries(VGI-ABP PRIVATE glfw)
