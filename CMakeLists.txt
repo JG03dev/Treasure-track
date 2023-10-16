@@ -14,6 +14,7 @@ find_package(OpenAL CONFIG REQUIRED)
 find_package(Bullet CONFIG REQUIRED)
 find_package(assimp REQUIRED)
 find_package(glfw3 REQUIRED)
+find_package(soil2 CONFIG REQUIRED)
 
 add_executable(VGI-ABP src/main.cpp
         src/Mesh.h
@@ -23,7 +24,15 @@ add_executable(VGI-ABP src/main.cpp
         src/Window.cpp
         src/Window.h
         src/Camera.cpp
-        src/Camera.h)
+        src/Camera.h
+        src/constants.h
+        src/glut_geometry.h
+        src/glut_geometry.cpp
+        src/objLoader.h
+        src/objLoader.cpp
+        src/stdafx.h
+        src/material.h
+        src/material.cpp)
 
 # target_link_libraries(VGI-ABP PRIVATE glfw "${ASSIMP_INCLUDE_DIRS}/assimp" "${BULLET_LIBRARIES}" GLEW::glew OpenAL::OpenAL)
 target_link_libraries(VGI-ABP PRIVATE ${ASSIMP_LIBRARIES})
@@ -32,3 +41,4 @@ target_link_libraries(VGI-ABP PRIVATE OpenGL::GL)
 target_link_libraries(VGI-ABP PRIVATE GLEW::GLEW)
 target_link_libraries(VGI-ABP PRIVATE glfw)
 target_link_libraries(VGI-ABP PRIVATE "${BULLET_LIBRARIES}")
+target_link_libraries(VGI-ABP PRIVATE soil2)
