@@ -17,6 +17,23 @@ Camera::Camera(glm::vec3 startPosition, glm::vec3 startUp, GLfloat startYaw, GLf
     update();
 }
 
+// void Camera::PhysicsInit() {
+//     collisionShape = new btBoxShape(btVector3(btScalar(1.f), btScalar(1.f), btScalar(1.f)));
+// 
+//     btTransform transform;
+//     transform.setIdentity();
+//     transform.setOrigin(btVector3(btScalar(position[0]), btScalar(position[1]), btScalar(position[2])));
+// 
+//     btScalar mass(1.f);
+// 
+//     btVector3 localInertia(0, 0, 0);
+// 
+//     motionState = new btDefaultMotionState(transform);
+//     collisionShape->calculateLocalInertia(mass, localInertia);
+//     btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, motionState, collisionShape, localInertia);
+//     rb = new btRigidBody(rbInfo);
+// }
+
 void Camera::keyControl(bool *keys, GLfloat deltaTime)
 {
     GLfloat velocity = movementSpeed * deltaTime;
