@@ -16,6 +16,8 @@
 #include "Window.h"
 #include "Camera.h"
 
+#include "objLoader.h"
+
 const float toRadians = 3.14159265f / 180.0f;
 
 std::vector<Mesh*> meshList;
@@ -102,6 +104,10 @@ int initialize_libraries()
 
 int main(int argc, char* argv[])
 {
+
+    COBJModel* obj = new COBJModel;
+    obj->LoadModel("../../../Assets/Skull/12140_Skull_v3_L2.obj");
+
     Window mainWindow = Window(800, 600);
     mainWindow.Initialise();
 
@@ -154,6 +160,9 @@ int main(int argc, char* argv[])
         model = glm::translate(model, glm::vec3(0.0f, 1.0f, -2.5f));
         model = glm::scale(model, glm::vec3(0.4f, 0.4f, 1.0f));
         glUniformMatrix4fv((int) uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+
+        //TODO: import shaders
+        //obj.draw_TriVAO_OBJ();	// Dibuixar VAO a pantalla
 
         meshList[1]->RenderMesh();
 

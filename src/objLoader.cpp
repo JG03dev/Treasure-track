@@ -1023,11 +1023,11 @@ void _stdcall COBJModel::loadToVAOList(const Face* pFaces,
 // ----------------------- VAO
 	nv = vertices.size();	// Tamany del vector vertices en elements.
 
-	if (nv != 0) 
-	{	// Creació del darrer VAO i un VBO i càrrega de la geometria. Guardar identificador VAO identificador VBO a struct CVAO.
-		objVAO = load_TRIANGLES_VAO(vertices, normals, colors, textures);
-		Set_VAOList_OBJ(index_VAO, objVAO);
-	}
+	//if (nv != 0) 
+	//{	// Creació del darrer VAO i un VBO i càrrega de la geometria. Guardar identificador VAO identificador VBO a struct CVAO.
+	//	objVAO = load_TRIANGLES_VAO(vertices, normals, colors, textures);
+	//	Set_VAOList_OBJ(index_VAO, objVAO);
+	//}
 
 // Numero de Materials del fitxer OBJ
 	numMaterials = index_VAO + 1;
