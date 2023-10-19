@@ -25,14 +25,18 @@ add_executable(VGI-ABP src/main.cpp
         src/Window.h
         src/Camera.cpp
         src/Camera.h
-        src/constants.h
-        src/glut_geometry.h
-        src/glut_geometry.cpp
-        src/objLoader.h
-        src/objLoader.cpp
-        src/stdafx.h
-        src/material.h
-        src/material.cpp)
+        src/Entorn/objLoader.cpp
+        src/Entorn/objLoader.h
+        src/Entorn/escena.cpp
+        src/Entorn/escena.h
+        src/Entorn/constants.h
+        src/Entorn/glut_geometry.cpp
+        src/Entorn/glut_geometry.h
+        src/Entorn/material.cpp
+        src/Entorn/material.h
+        src/Entorn/stdafx.h
+        src/Entorn/visualitzacio.h
+        src/Entorn/visualitzacio.cpp)
 
 # target_link_libraries(VGI-ABP PRIVATE glfw "${ASSIMP_INCLUDE_DIRS}/assimp" "${BULLET_LIBRARIES}" GLEW::glew OpenAL::OpenAL)
 target_link_libraries(VGI-ABP PRIVATE ${ASSIMP_LIBRARIES})

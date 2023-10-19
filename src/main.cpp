@@ -16,7 +16,7 @@
 #include "Window.h"
 #include "Camera.h"
 
-#include "objLoader.h"
+#include "Entorn/objLoader.h"
 
 const float toRadians = 3.14159265f / 180.0f;
 
