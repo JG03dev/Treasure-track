@@ -10,7 +10,7 @@
 
 #include <GLFW/glfw3.h>
 
-#include "btBulletDynamicsCommon.h"
+#include "PlayerVehicle.h"
 
 class Camera
 {
@@ -18,18 +18,18 @@ public:
     Camera() {} // Maybe I'll put some default values
     Camera(glm::vec3 startPosition, glm::vec3 startUp, GLfloat startYaw, GLfloat startPitch, GLfloat startMovementSpeed, GLfloat startTurnSpeed);
 
-    // void PhysicsInit();
-    // 
-    // btCollisionShape* GetCollisionShape() { return collisionShape; }
-    // btRigidBody* GetRb() { return rb; }
     void setPosition(glm::vec3 pos) { position = pos; }
-    void keyControl(bool* keys, GLfloat deltaTime);
+    //void keyControl(bool* keys, GLfloat deltaTime);
     void mouseControl(GLfloat xChange, GLfloat yChange);
 
     glm::vec3 getFront() { return front; }
     glm::vec3 getRight() { return right; }
 
     glm::mat4 calculateViewMatrix();
+
+    void followPlayer();
+
+
 
     ~Camera() {}
 
@@ -46,10 +46,7 @@ private:
     GLfloat movementSpeed;
     GLfloat turnSpeed;
 
-    // btRigidBody* rb;
-    // 
-    // btCollisionShape* collisionShape;
-    // btDefaultMotionState* motionState;
+    PlayerVehicle* player;
 
     void update();
 };
