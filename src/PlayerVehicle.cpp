@@ -43,14 +43,14 @@ bool PlayerVehicle::keyboardCallback(bool* keys, GLfloat deltaTime, int state) {
 	if (state == GLFW_PRESS) {
 		if (keys[GLFW_KEY_W])
 		{
-			this->vehicle->applyEngineForce(this->vehicleParams.m_fEngineForce, 2); 
-			this->vehicle->applyEngineForce(this->vehicleParams.m_fEngineForce, 3); 
+			this->vehicle->applyEngineForce(this->vehicleParams.m_fEngineForce * deltaTime, 2); 
+			this->vehicle->applyEngineForce(this->vehicleParams.m_fEngineForce * deltaTime, 3);
 			handled = true;
 		}
 		if (keys[GLFW_KEY_S])
 		{
-			this->vehicle->applyEngineForce(this->vehicleParams.m_bEngineForce, 0); 
-			this->vehicle->applyEngineForce(this->vehicleParams.m_bEngineForce, 1); 
+			this->vehicle->applyEngineForce(this->vehicleParams.m_bEngineForce * deltaTime, 0);
+			this->vehicle->applyEngineForce(this->vehicleParams.m_bEngineForce * deltaTime, 1);
 			handled = true;
 		}
 		if (keys[GLFW_KEY_A])
@@ -68,8 +68,8 @@ bool PlayerVehicle::keyboardCallback(bool* keys, GLfloat deltaTime, int state) {
 		}
 		// Handbrake
 		if (keys[GLFW_KEY_LEFT_CONTROL]) {
-			this->vehicle->setBrake(500, 2);
-			this->vehicle->setBrake(500, 3);
+			this->vehicle->setBrake(500 * deltaTime, 2);
+			this->vehicle->setBrake(500 * deltaTime, 3);
 			handled = true;
 		}
 	}

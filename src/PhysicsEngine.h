@@ -31,6 +31,8 @@ public:
 
 	btRigidBody* groundRB;
 
+	PlayerVehicle* player;
+
 private:
 
 	// Private Methods
@@ -50,8 +52,6 @@ private:
 	btAlignedObjectArray<btCollisionShape*> collisionShapes;
 
 	btVector3 gravity;
-
-	PlayerVehicle* player;
 
 	Renderer* renderer;
 };

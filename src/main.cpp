@@ -127,54 +127,6 @@ int initialize_libraries()
     return 0;
 }
 
-void  initialize_physics() {
-    int i;
-    ///-----initialization_start-----
-
-    ///collision configuration contains default setup for memory, collision setup. Advanced users can create their own configuration.
-    btDefaultCollisionConfiguration* collisionConfiguration = new btDefaultCollisionConfiguration();
-
-    ///use the default collision dispatcher. For parallel processing you can use a diffent dispatcher (see Extras/BulletMultiThreaded)
-    btCollisionDispatcher* dispatcher = new btCollisionDispatcher(collisionConfiguration);
-
-    ///btDbvtBroadphase is a good general purpose broadphase. You can also try out btAxis3Sweep.
-    btBroadphaseInterface* overlappingPairCache = new btDbvtBroadphase();
-
-    ///the default constraint solver. For parallel processing you can use a different solver (see Extras/BulletMultiThreaded)
-    btSequentialImpulseConstraintSolver* solver = new btSequentialImpulseConstraintSolver;
-
-    btDiscreteDynamicsWorld* dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguration);
-    
-    dynamicsWorld->setGravity(btVector3(0.f, -9.8f, 0.f));
-
-    ///-----initialization_end-----
-}
-
-btVector3 keyControl(bool* keys, GLfloat deltaTime, glm::vec3 front, glm::vec3 right)
-{
-    btVector3 force(0.f, 0.f, 0.f);
-    GLfloat velocity = 5.f * deltaTime;
-
-    if (keys[GLFW_KEY_W])
-    {
-        return btVector3(front.x, front.y, front.z * velocity);
-    }
-    if (keys[GLFW_KEY_S])
-    {
-        return btVector3(front.x, front.y, -front.z * velocity);
-    }
-    if (keys[GLFW_KEY_A])
-    {
-        return btVector3(right.x, right.y, -right.z * velocity);
-    }
-    if (keys[GLFW_KEY_D])
-    {
-        return btVector3(right.x, right.y, -right.z * velocity);
-    }
-
-    return force;
-}
-
 int main(int argc, char* argv[])
 {
     Renderer* renderer = Renderer::getInstance();
@@ -187,6 +139,7 @@ int main(int argc, char* argv[])
     renderer->addShader(CreateShader());
 
     camera = Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f, 5.0f, 1.0f);
+    camera.setTarget(pE.player);
 
     renderer->addCamera(&camera);
 
@@ -208,6 +161,8 @@ int main(int argc, char* argv[])
 		// Get + Handle user input events
 		glfwPollEvents();
 
+        pE.player->keyboardCallback(renderer->getKeys(), deltaTime, 1);
+
         //camera.keyControl(mainWindow.getKeys(), deltaTime);
         renderer->updateCameraPos();
         renderer->updateCameraRotation();
@@ -215,7 +170,7 @@ int main(int argc, char* argv[])
 		// Clear window
         renderer->clearWindow();
 
-        renderer->render(pE.groundRB);
+        renderer->render(pE.groundRB, pE.player->vehicle->getChassisWorldTransform());
 	}
 
 	return 0;

@@ -29,7 +29,7 @@ public:
 
     void followPlayer();
 
-
+    void setTarget(PlayerVehicle* p) { player = p; }
 
     ~Camera() {}
 

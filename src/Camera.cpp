@@ -79,10 +79,10 @@ void Camera::update()
 void Camera::followPlayer() {
     btTransform t;
 
-    t = player->vehicle->getChassisWorldTransform();
+    t = this->player->vehicle->getChassisWorldTransform();
 
     btVector3 pos = t.getOrigin();
 
-    position = glm::vec3(pos.getX(), pos.getY(), pos.getZ());
+    position = glm::vec3(float(pos.getX()), float(pos.getY()) + 2, float(pos.getZ()));
 }
 

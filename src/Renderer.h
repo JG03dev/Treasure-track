@@ -49,7 +49,9 @@ public:
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 
-	void render(btRigidBody* groundRB);
+	void render(btRigidBody* groundRB, btTransform chassisT);
+
+	bool* getKeys() { return mainWindow->getKeys(); }
 
 	// Destructors
 

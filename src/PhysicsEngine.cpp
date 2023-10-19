@@ -8,9 +8,13 @@ PhysicsEngine::PhysicsEngine() : gravity(0, -9.8, 0), simulationSubSteps(2) {
 	initPhysics();
 
 	player = new PlayerVehicle(dynamicsWorld);
+
+	
 }
 
 PhysicsEngine::PhysicsEngine(float* g, int simulationSubSteps) : gravity(btScalar(g[0]), btScalar(g[1]), btScalar(g[2])), simulationSubSteps(simulationSubSteps) {
+	renderer = Renderer::getInstance();
+
 	initPhysics();
 
 	player = new PlayerVehicle(dynamicsWorld);
@@ -116,7 +120,7 @@ btRigidBody* PhysicsEngine::createGroundRigidBodyFromShape(btCollisionShape* gro
 {
 	btTransform groundTransform;
 	groundTransform.setIdentity();
-	groundTransform.setOrigin(btVector3(0, -1, 0));
+	groundTransform.setOrigin(btVector3(0, -100, 0));
 
 	{
 		//The ground is not dynamic, we set its mass to 0
