@@ -136,7 +136,7 @@ int PlayerVehicle::initVehicle(btDiscreteDynamicsWorld* dynamicsWorld) {
 
 		btTransform localTransform;
 		localTransform.setIdentity();
-		localTransform.setOrigin(btVector3(0, 1, 0));
+		localTransform.setOrigin(btVector3(0, 1, 0)); // This moves the center of mass, not the vehicle position, do not set too far away from the origin
 
 		//The center of gravity of the compound shape is the origin. When we add a rigidbody to the compound shape
 		//it's center of gravity does not change. This way we can add the chassis rigidbody one unit above our center of gravity
@@ -185,7 +185,7 @@ void PlayerVehicle::exitVehicle() {
 btRigidBody* PlayerVehicle::createChassisRigidBodyFromShape(btCollisionShape* chassisShape) {
 	btTransform chassisTransform;
 	chassisTransform.setIdentity();
-	chassisTransform.setOrigin(btVector3(0, 1, 0));
+	chassisTransform.setOrigin(btVector3(10, 1, 10)); // This changes the car starting position
 
 	{
 		//chassis mass 
