@@ -24,7 +24,7 @@ public:
 
 	PlayerVehicle(btDiscreteDynamicsWorld* dynamicsWorld);
 
-	PlayerVehicle(btDiscreteDynamicsWorld* dynamicsWorld, int mass, int suspensionRestLength, int wheelWidth, int wheelRadius, int connectionHeight);
+	PlayerVehicle(btDiscreteDynamicsWorld* dynamicsWorld, int mass, int suspensionRestLength, int wheelWidth, int wheelRadius, int connectionHeight, int fEngineForce, int bEngineForce, int steeringValue);
 
 	// Destructors
 	~PlayerVehicle();
@@ -44,9 +44,9 @@ public:
 
 	// Public Methods
 
-	void renderScene();
+	void renderScene(); // Borrar
 
-	void physicsDebugDraw(int debugFlags);
+	void physicsDebugDraw(int debugFlags); // Borrar
 
 	void resetCamera()
 	{
@@ -76,13 +76,15 @@ public:
 
 		VehicleParams() : m_mass(1200), m_suspensionRestLength(0.7), m_wheelWidth(0.4),	m_wheelRadius(0.5),	m_connectionHeight(1.2) {}
 
-		VehicleParams(float mass, float suspensionRestLengt, float wheelWidth, float wheelRadius, float connectionHeight) :
+		VehicleParams(float mass, float suspensionRestLengt, float wheelWidth, float wheelRadius, float connectionHeight, float fEngineForce, float bEngineForce, float steeringValue) :
 			m_mass(mass), 
 			m_suspensionRestLength(suspensionRestLengt), 
 			m_wheelWidth(wheelWidth),
 			m_wheelRadius(wheelRadius),
-			m_connectionHeight(connectionHeight) {}
-
+			m_connectionHeight(connectionHeight),
+			m_fEngineForce(fEngineForce),
+			m_bEngineForce(bEngineForce),
+			m_steeringValue(steeringValue) {}
 	} vehicleParams;
 
 	struct WheelParams {

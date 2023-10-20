@@ -36,55 +36,6 @@ static const char* vShader = "../../../Shaders/shader.vert";
 // Fragment shader
 static const char* fShader = "../../../Shaders/shader.frag";
 
-void CreateObjects()
-{
-    unsigned int indices[] = {
-        1, 2, 6, 6, 5, 1, // up
-        0, 3, 7, 7, 4, 0, // down
-        0, 1, 2, 2, 3, 0, // back
-        4, 5, 6, 6, 7, 4, // front
-        2, 3, 7, 7, 6, 2, // left
-        1, 5, 4, 4, 0, 1, // right
-    };
-
-    GLfloat vertices[] = {
-    //  X, Y, Z
-        1.f, 0.f, 0.f,
-        1.f, 1.f, 0.f,
-        0.f, 1.f, 0.f,
-        0.f, 0.f, 0.f,
-        1.f, 0.f, 1.f,
-        1.f, 1.f, 1.f,
-        0.f, 1.f, 1.f,
-        0.f, 0.f, 1.f,
-    };
-
-    //unsigned int indices[] = {
-    //  0, 3, 1,
-    //  1, 3, 2,
-    //  2, 3, 0,
-    //  0, 1, 2
-    //};
-
-	//GLfloat vertices[] = {
-	//	-1.0f, -1.0f, 0.0f,
-    //    0.0f, -1.0f, 1.0f,
-	//	1.0f, -1.0f, 0.0f,
-	//	0.0f, 1.0f, 0.0f
-	//};
-
-    Mesh *obj1 = new Mesh();
-    // TODO: clear magic numbers
-    obj1->CreateMesh(vertices, indices, 24, 36);
-    meshList.push_back(obj1);
-
-    //Mesh *obj2 = new Mesh();
-    //obj2->CreateMesh(vertices, indices, 12, 12);
-    //meshList.push_back(obj2);
-
-
-}
-
 Shader* CreateShader()
 {
     auto* shader1 = new Shader();

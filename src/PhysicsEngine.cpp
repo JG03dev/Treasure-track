@@ -56,7 +56,7 @@ void PhysicsEngine::initPhysics() {
 	//make sure to re-use collision shapes among rigid bodies whenever possible!
 	{
 		//Creates the ground shape
-		btCollisionShape* groundShape = new btBoxShape(btVector3(100, 1, 100));
+		btCollisionShape* groundShape = new btBoxShape(btVector3(10, 1, 10));
 
 		Mesh* groundM = new Mesh();
 		groundM->CreateMesh(gVerticesGround, gIndicesBunny, GROUND_NUM_VERTICES, GROUND_NUM_INDICES);
@@ -120,7 +120,7 @@ btRigidBody* PhysicsEngine::createGroundRigidBodyFromShape(btCollisionShape* gro
 {
 	btTransform groundTransform;
 	groundTransform.setIdentity();
-	groundTransform.setOrigin(btVector3(0, -100, 0));
+	groundTransform.setOrigin(btVector3(0, -10, 0));
 
 	{
 		//The ground is not dynamic, we set its mass to 0

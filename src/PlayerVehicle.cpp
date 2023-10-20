@@ -6,20 +6,9 @@ PlayerVehicle::PlayerVehicle(btDiscreteDynamicsWorld* dynamicsWorld) {
 	initVehicle(dynamicsWorld);
 }
 
-PlayerVehicle::PlayerVehicle(btDiscreteDynamicsWorld* dynamicsWorld, int mass, int suspensionRestLength, int wheelWidth, int wheelRadius, int connectionHeight) :
-	vehicleParams(mass, suspensionRestLength, wheelWidth, wheelRadius, connectionHeight)
+PlayerVehicle::PlayerVehicle(btDiscreteDynamicsWorld* dynamicsWorld, int mass, int suspensionRestLength, int wheelWidth, int wheelRadius, int connectionHeight, int fEngineForce, int bEngineForce, int steeringValue) :
+	vehicleParams(mass, suspensionRestLength, wheelWidth, wheelRadius, connectionHeight, fEngineForce, bEngineForce, steeringValue)
 {
-	btScalar m_mass = mass;
-	btScalar m_suspensionRestLength = suspensionRestLength;
-	btScalar m_wheelWidth = wheelWidth;
-	btScalar m_wheelRadius = wheelRadius;
-	btScalar m_connectionHeight = connectionHeight;	//The height where the wheels are connected to the chassis
-
-	// On The Road params
-	btScalar m_fEngineForce = 5000;
-	btScalar m_bEngineForce = 3000;
-	btScalar m_steeringValue = 0.3;
-
 	initVehicle(dynamicsWorld);
 }
 
@@ -43,8 +32,8 @@ bool PlayerVehicle::keyboardCallback(bool* keys, GLfloat deltaTime, int state) {
 	if (state == GLFW_PRESS) {
 		if (keys[GLFW_KEY_W])
 		{
-			this->vehicle->applyEngineForce(this->vehicleParams.m_fEngineForce * deltaTime, 2); 
-			this->vehicle->applyEngineForce(this->vehicleParams.m_fEngineForce * deltaTime, 3);
+			this->vehicle->applyEngineForce(this->vehicleParams.m_fEngineForce, 2); 
+			this->vehicle->applyEngineForce(this->vehicleParams.m_fEngineForce, 3);
 			handled = true;
 		}
 		if (keys[GLFW_KEY_S])
