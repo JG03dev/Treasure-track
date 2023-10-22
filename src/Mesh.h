@@ -8,10 +8,6 @@
 #include <string>
 #include <iostream>
 
-#include <assimp/Importer.hpp>      // C++ importer interface
-#include <assimp/scene.h>       // Output data structure
-#include <assimp/postprocess.h> // Post processing flags
-
 
 class Mesh {
 public:
@@ -27,5 +23,4 @@ public:
 private:
     GLuint VAO, VBO, IBO;
     GLsizei indexCount;
-    Assimp::Importer importer;
 };

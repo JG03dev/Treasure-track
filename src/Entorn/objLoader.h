@@ -16,11 +16,6 @@
 #include <stdlib.h>
 #include <math.h>
 #include "stdafx.h"
-// VGI: Llibreries OpenGL
-//#include <gl\gl.h>										// Header File For The OpenGL32 Library
-//#include <gl\glu.h>										// Header File For The GLu32 Library
-//#include <gl\glaux.h>
-//#include <gl/glut.h>
 
 // Màxima mida vector VAOList
 #define MAX_SIZE_VAOLIST 125
@@ -106,14 +101,7 @@ class OBJLOADER_CLASS_DECL COBJModel
 		  const Vector3D *pNormals, const Vector2D *pTexCoords, const unsigned int iMaterialIndex);
 	  void _stdcall GetFileInfo(FILE *hStream, OBJFileInfo *Stat, const char szConstBasePath[]);
  	  void _stdcall GenTexCoords();
-	  //unsigned int m_iDisplayList;
 
-/*
-// Allocate space for optional model data only if present.
-	  Vector3D* pNormals = 0;
-	  Vector2D* pTexCoords = 0;
-	  Material* pMaterials = 0;
-*/
 
 // CVAO
 	  GLint numMaterials = 0;

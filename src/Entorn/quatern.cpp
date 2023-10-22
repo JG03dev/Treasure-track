@@ -11,6 +11,8 @@
 #include "stdafx.h"
 #include "quatern.h"
 
+#define pi = 3.14159265358979323846264338327950288
+
 //#include "main.h"										// This includes our header file
 
 #define DELTA 1e-6     // error tolerance
@@ -38,16 +40,10 @@ struct GL_Quat {
 //						y = Y * sin( theta / 2 )
 //						z = Z * sin( theta / 2 )
 void EixAngleToQuat(double X, double Y, double Z, double degree, GL_Quat &q) 
-//GL_Quat EixAngle2Quat(double X, double Y, double Z, double degree) 
 { 
 
 	GL_Quat auxq;
-//	GL_Quat qPi;
 
-//	qPi.w=1.0;	qPi.x=0.0;	qPi.y=0.0;	qPi.z=0.0;				// Quaternió Identitat
-//	if ((Y==0) && (Z==0)) {qPi.w=0.0;	qPi.x=1.0;}				// Quaternió Rotació pi graus (1,0,0)
-//		else if ((X==0) && (Z==0)) {qPi.w=0.0;	qPi.y=1.0;}		// Quaternió Rotació pi graus (0,1,0)
-//				if ((X==0) && (Z==0)) {qPi.w=0.0;	qPi.z=1.0;}	// Quaternió Rotació pi graus (0,0,1)
 				
 // First we want to convert the degrees to radians 
 //		since the angle is assumed to be in radians
@@ -65,13 +61,6 @@ void EixAngleToQuat(double X, double Y, double Z, double degree, GL_Quat &q)
 	auxq.z = GLdouble(Z * result);
 
 	q=auxq;
-//	if (angle>pi) 	QuatMul(auxq,qPi,q);
-
-//	EixAngle2Quat.w =q.w;
-//	EixAngle2Quat.x =q.x;	
-//	EixAngle2Quat.y =q.y;	
-//	EixAngle2Quat.z =q.z;
-
 }
 
 /*SDOC***********************************************************************

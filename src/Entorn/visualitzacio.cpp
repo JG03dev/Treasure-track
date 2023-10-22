@@ -34,8 +34,6 @@ void Iluminacio(GLint sh_programID, char ilumin, bool ifix, bool ilu2sides, bool
 	GLfloat ambientg[] = { .5,.5,.5,1.0 };
 
 // Definició de llum ambient segons booleana ll_amb
-//	if (ll_amb) glLightModelfv(GL_LIGHT_MODEL_AMBIENT,ambientg);
-//		else glLightModelfv(GL_LIGHT_MODEL_AMBIENT,especular);
 	if (ll_amb) glUniform4f(glGetUniformLocation(sh_programID, "LightModelAmbient"), ambientg[0], ambientg[1], ambientg[2], ambientg[3]);
 	else glUniform4f(glGetUniformLocation(sh_programID, "LightModelAmbient"), especular[0], especular[1], especular[2], especular[3]);
 

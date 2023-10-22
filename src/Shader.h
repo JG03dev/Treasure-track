@@ -15,14 +15,15 @@ class Shader {
 public:
     Shader();
 
-    void CreateFromString(const char* vertexCode, const char* fragmentCode);
-    void CreateFromFiles(const char* vertexLocation, const char* fragmentLocation);
+    void CreateFromString(const char* vertexCode, const char* fragmentCode, const char* geometricCode="");
+    void CreateFromFiles(std::string vertexLocation, std::string fragmentLocation, std::string geometricLocation="");
 
     std::string ReadFile(const char* fileLocation);
 
-    GLuint GetProjectionLocation();
-    GLuint GetModelLocation();
-    GLuint GetViewLocation();
+    GLuint GetProjectionLocation(){ return uniformProjection; }
+    GLuint GetModelLocation(){ return uniformModel; }
+    GLuint GetViewLocation(){ return uniformView; }
+    GLuint GetShaderID() { return shaderID; }
 
     void UseShader();
     void ClearShader();
@@ -32,7 +33,7 @@ public:
 private:
     GLuint shaderID, uniformProjection, uniformModel, uniformView;
 
-    void CompileShader(const char* vertexCode, const char* fragmentCode);
+    void CompileShader(const char* vertexCode, const char* fragmentCode, const char* geometricCode = "");
     void AddShader(GLuint theProgram, const char* shaderCode, GLenum shaderType);
 };
 

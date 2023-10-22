@@ -11,30 +11,15 @@ Shader::Shader()
     uniformProjection = 0;
 }
 
-void Shader::CreateFromString(const char *vertexCode, const char *fragmentCode)
+void Shader::CreateFromString(const char *vertexCode, const char *fragmentCode, const char *geometricCode="")
 {
-    this->CompileShader(vertexCode, fragmentCode);
+    this->CompileShader(vertexCode, fragmentCode, geometricCode);
 }
 
 
 Shader::~Shader()
 {
-
-}
-
-GLuint Shader::GetProjectionLocation()
-{
-    return uniformProjection;
-}
-
-GLuint Shader::GetModelLocation()
-{
-    return uniformModel;
-}
-
-GLuint Shader::GetViewLocation()
-{
-    return uniformView;
+    ClearShader();
 }
 
 void Shader::UseShader()
@@ -54,7 +39,7 @@ void Shader::ClearShader()
     uniformProjection = 0;
 }
 
-void Shader::CompileShader(const char *vertexCode, const char *fragmentCode)
+void Shader::CompileShader(const char *vertexCode, const char *fragmentCode, const char *geometricCode="")
 {
     shaderID = glCreateProgram();
 
@@ -66,6 +51,8 @@ void Shader::CompileShader(const char *vertexCode, const char *fragmentCode)
 
     AddShader(shaderID, vertexCode, GL_VERTEX_SHADER);
     AddShader(shaderID, fragmentCode, GL_FRAGMENT_SHADER);
+    if (geometricCode != "")
+        AddShader(shaderID, geometricCode, GL_GEOMETRY_SHADER);
 
     // Linking shaders
     GLint result = 0;
@@ -90,6 +77,7 @@ void Shader::CompileShader(const char *vertexCode, const char *fragmentCode)
         return;
     }
 
+    //TODO: make sure ALL shaders have this or change Class structure
     uniformModel = glGetUniformLocation(shaderID, "model");
     uniformProjection = glGetUniformLocation(shaderID, "projection");
     uniformView = glGetUniformLocation(shaderID, "view");
@@ -123,13 +111,18 @@ void Shader::AddShader(GLuint theProgram, const char *shaderCode, GLenum shaderT
     glAttachShader(theProgram, theShader);
 }
 
-void Shader::CreateFromFiles(const char *vertexLocation, const char *fragmentLocation)
+//TODO: Change Locations to std::strings and add an optional geometry shader
+void Shader::CreateFromFiles(std::string vertexLocation, std::string fragmentLocation, std::string geometricLocation="")
 {
-    std::string vertexString = ReadFile(vertexLocation);
-    std::string fragmentString = ReadFile(fragmentLocation);
+    std::string vertexString = ReadFile(vertexLocation.c_str());
+    std::string fragmentString = ReadFile(fragmentLocation.c_str());
+    std::string geometricString = "";
+    if (geometricLocation != "")
+        geometricString = ReadFile(geometricLocation.c_str());
 
     const char* vertexCode = vertexString.c_str();
     const char* fragmentCode =  fragmentString.c_str();
+    const char* geometricCode = geometricString.c_str();
 
     CompileShader(vertexCode, fragmentCode);
 }

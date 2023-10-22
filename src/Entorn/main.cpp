@@ -444,12 +444,6 @@ void OnPaint(GLFWwindow* window)
 			FonsB();
 		else
 			FonsN();
-
-// Entorn VGI: TO DO -> Aquí farem les quatre crides a ProjeccioOrto i Ortografica per obtenir 
-//						les quatre vistes ortogràfiques. De moment n'activem només una de prova
-//						IMPORTANT: DESCOMENTAR LA RESTA QUAN FUNCIONI LA PRIMERA
-// PLANTA (Inferior Esquerra)
-		// Definició de Viewport, Projecció i Càmara
 		ProjectionMatrix = Projeccio_Orto();
 		ViewMatrix = Vista_Ortografica(shader_programID, 0, OPV.R, c_fons, col_obj, objecte, mida, pas, front_faces, oculta,
 			test_vis, back_line, ilumina, llum_ambient, llumGL, ifixe, ilum2sides,
@@ -457,40 +451,6 @@ void OnPaint(GLFWwindow* window)
 		// Dibuix de l'Objecte o l'Escena
 		configura_Escena();     // Aplicar Transformacions Geometriques segons persiana Transformacio i configurar objectes
 		dibuixa_Escena();		// Dibuix geometria de l'escena amb comandes GL.
-/*
-// ISOMÈTRICA (Inferior Dreta)
-		// Definició de Viewport, Projecció i Càmara
-		ProjectionMatrix = Projeccio_Orto();
-		ViewMatrix = Vista_Ortografica(shader_programID, 3, OPV.R, c_fons, col_obj, objecte, mida, pas, front_faces, oculta,
-			test_vis, back_line, ilumina, llum_ambient, llumGL, ifixe, ilum2sides,
-			eixos, grid, hgrid);
-		// Dibuix de l'Objecte o l'Escena
-		configura_Escena();     // Aplicar Transformacions Geometriques segons persiana Transformacio i configurar objectes
-		dibuixa_Escena();		// Dibuix geometria de l'escena amb comandes GL.
-
-// ALÇAT (Superior Esquerra)
-		// Definició de Viewport, Projecció i Càmara
-		ProjectionMatrix = Projeccio_Orto();
-		ViewMatrix = Vista_Ortografica(shader_programID, 1, OPV.R, c_fons, col_obj, objecte, mida, pas, front_faces, oculta,
-			test_vis, back_line, ilumina, llum_ambient, llumGL, ifixe, ilum2sides,
-			eixos, grid, hgrid);
-		// Dibuix de l'Objecte o l'Escena
-		  configura_Escena();     // Aplicar Transformacions Geom?triques segons persiana Transformacio i configurar objectes
-	 	  dibuixa_Escena();		// Dibuix geometria de l'escena amb comandes GL.
-
-// PERFIL (Superior Dreta)
-		// Definició de Viewport, Projecció i Càmara
-		ProjectionMatrix = Projeccio_Orto();
-		ViewMatrix = Vista_Ortografica(shader_programID, 2, OPV.R, c_fons, col_obj, objecte, mida, pas, front_faces, oculta,
-			test_vis, back_line, ilumina, llum_ambient, llumGL, ifixe, ilum2sides,
-			eixos, grid, hgrid);
-		// Dibuix de l'Objecte o l'Escena
-		configura_Escena();     // Aplicar Transformacions Geom?triques segons persiana Transformacio i configurar objectes
-		  // glScalef();			// Escalat d'objectes, per adequar-los a les vistes ortogràfiques (Pràctica 2)
-		dibuixa_Escena();		// Dibuix geometria de l'escena amb comandes GL.
-*/
-// Entorn VGI: Transferència del buffer OpenGL a buffer de pantalla
-		//glfwSwapBuffers(window);
 
 		break;
 

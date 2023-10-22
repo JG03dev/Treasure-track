@@ -16,8 +16,7 @@
 #define GLEW_NO_GLU	// Sense usar llibreria GLU
 #include <gl/glew.h>
 #include <gl/wglew.h>
-//#pragma comment(lib, "../lib/glew32.lib")	// Link against GLEW library 
-//#pragma comment(lib, "../lib/glew32s.lib")// Link against GLEW library 
+
 
 // VGI: Include llibreria GLFW
 #include <GLFW/glfw3.h>
@@ -26,30 +25,18 @@
 #include <glm/glm.hpp>		// perspective, translate, rotate
 // Include all GLM extensions
 #include <glm/ext.hpp>
-//#include <glm/gtc/matrix_transform.hpp>
-//#include <glm/gtc/quaternion.hpp>
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtx/euler_angles.hpp>
-//#include <glm/gtx/norm.hpp>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 using namespace glm;
 
 // VGI: Llibreries OpenGL
-//#include <gl/gl.h>
-//#pragma comment(lib, "../lib/opengl32.lib")	// Link against GL library  
-//#include <gl/glaux.h>
-//#include <gl/glu.h>
-//#pragma comment(lib, "../lib/glu32.lib")	// Link against GLU library 
-//#include <gl/glut.h>
 #include "glut_geometry.h"			// Fonts dels Objectes de la llibreria freeglut
-
-/*
-// Include AntTweakBar
-#include <AntTweakBar.h>
-*/
 
 // VGI: Llibreria SOIL2 (actualització de SOIL) per llegir imatges de diferents formats 
 //     (BMP,JPG,TIF,GIF,etc.) en la funció loadIMA (visualitzacio.cpp)
-//#include <gl/SOIL.h>
 #include <SOIL2/SOIL2.h>
 
 // VGI: Includes per lectura fitxers, funcions trigonomètriques i nombres aleatoris.
@@ -62,6 +49,16 @@ using namespace glm;
 
 // VGI: Constants de l'aplicació EntornVGI
 #include "constants.h"
+
+// Includes extra del nou entorn
+#include "../Mesh.h"
+//#include "../Shader.h"
+#include "../Window.h"
+#include "../Camera.h"
+
+// LLibreria de Open AL per a sounds 3D
+#include <AL/al.h>
+#include <AL/alc.h>
 
 // Desactivar en llistat compilació warning C4244: 'argumento': conversión de 'double' a 'GLfloat'; posible pérdida de datos
 #  pragma warning (disable:4244)  // Disable bogus VC++ 4.2 conversion warnings.

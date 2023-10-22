@@ -12,7 +12,7 @@
 //
 
 #include "stdafx.h"
-#include "Shader.h"	
+#include "shader.h"	
 
 #include <string>
 
@@ -25,7 +25,7 @@
 //Shader::Shader(std::string file_Vert, std::string file_Frag)
 Shader::Shader()
 {
-// Inicialitzar programID
+	// Inicialitzar programID
 	this->programID = -1;
 
 }
@@ -50,8 +50,8 @@ GLuint Shader::loadFileShaders(std::string file_Vert, std::string file_Frag)
 	int info_log_length = 0, compile_result = 0, link_result = 0;
 	FILE* fd;
 
-// Inicialitzar programID
-	if (this->programID !=-1) glDeleteProgram(this->programID);		// Don't leak the program.
+	// Inicialitzar programID
+	if (this->programID != -1) glDeleteProgram(this->programID);		// Don't leak the program.
 	this->programID = -1;
 
 	v = glCreateShader(GL_VERTEX_SHADER);
@@ -77,7 +77,7 @@ GLuint Shader::loadFileShaders(std::string file_Vert, std::string file_Frag)
 	free(vs);
 	free(fs);
 
-// COMPILACIÓ VERTEX SHADER (VS)
+	// COMPILACIÓ VERTEX SHADER (VS)
 	glCompileShader(v);
 	glGetShaderiv(v, GL_COMPILE_STATUS, &compile_result);
 	// Llista error de compilació
@@ -114,7 +114,7 @@ GLuint Shader::loadFileShaders(std::string file_Vert, std::string file_Frag)
 	}
 	else fprintf(stderr, "%s \n", "Compilacio Vertex Shader OK"); //DisplayMessageBox("Compilacio Vertex Shader OK", file_Vert); //AfxMessageBox(_T("Compilacio Vertex Shader OK"));
 
-// COMPILACIÓ FRAGMENT SHADER (FS)
+	// COMPILACIÓ FRAGMENT SHADER (FS)
 	glCompileShader(f);
 	glGetShaderiv(f, GL_COMPILE_STATUS, &compile_result);
 	// Llista error de compilació
@@ -137,7 +137,8 @@ GLuint Shader::loadFileShaders(std::string file_Vert, std::string file_Frag)
 			return GL_FALSE;
 		}
 		for (int i = 0; i <= maxLength; i = i++)
-		{	fprintf(fd, "%c", errorLog[i]);
+		{
+			fprintf(fd, "%c", errorLog[i]);
 			fprintf(stderr, "%c", errorLog[i]);
 		}
 		fclose(fd);
@@ -147,18 +148,13 @@ GLuint Shader::loadFileShaders(std::string file_Vert, std::string file_Frag)
 	}
 	else fprintf(stderr, "%s \n", "Compilacio Fragment Shader OK"); //DisplayMessageBox("Compilacio Fragment Shader OK", file_Frag); // AfxMessageBox(_T("Compilacio Fragment Shader OK"));
 
-// Creació del Program que inclou Vertex i Fragment Shader
+	// Creació del Program que inclou Vertex i Fragment Shader
 	programID = glCreateProgram();
 	glAttachShader(programID, v);
 	glAttachShader(programID, f);
 
-// Attribute Locations must be setup before calling glLinkProgram()
-//	glBindAttribLocation(programID, 0, "in_Vertex"); // Vèrtexs
-//	glBindAttribLocation(programID, 1, "in_Normal"); // Normals
-//	glBindAttribLocation(programID, 2, "in_TexCoord"); // Textura
-//	glBindAttribLocation(programID, 3, "in_Color"); // Color
 
-// LINKEDICIÓ SHADER PROGRAM (programID)
+	// LINKEDICIÓ SHADER PROGRAM (programID)
 	glLinkProgram(programID);
 	glGetProgramiv(programID, GL_LINK_STATUS, &link_result);
 
@@ -193,10 +189,10 @@ GLuint Shader::loadFileShaders(std::string file_Vert, std::string file_Frag)
 	glDeleteShader(v);		// Don't leak the shader.
 	glDeleteShader(f);		// Don't leak the shader.
 
-// Activació del Programa
+	// Activació del Programa
 	glUseProgram(programID);
 
-// Retorna referència al Program creat
+	// Retorna referència al Program creat
 	return programID;
 }
 
@@ -205,7 +201,6 @@ GLuint Shader::loadFileShaders(std::string file_Vert, std::string file_Frag)
 * loadFileShadersG()
 *      Loads custom shader by specifying filename (expects geom/frag/vert trio)
 *****************************************************************************/
-//GLuint Shader::loadFileShaders(const char*  file_Vert, const char*  file_Frag, const char*  file_Geom = nullptr)
 GLuint Shader::loadFileShadersG(std::string file_Vert, std::string file_Frag, std::string file_Geom)
 {
 	GLuint v, f, g;
@@ -407,7 +402,7 @@ GLuint Shader::loadFileShadersG(std::string file_Vert, std::string file_Frag, st
 	glDeleteShader(f);		// Don't leak the shader.
 	glDeleteShader(g);		// Don't leak the shader.
 
-// Activació del Programa
+	// Activació del Programa
 	glUseProgram(programID);
 
 	// Retorna referència al Program creat
@@ -493,7 +488,7 @@ GLuint Shader::loadFileShadersTest(std::string file_Vert, std::string file_Frag)
 	}
 	else fprintf(stderr, "%s \n", "Compilacio Vertex Shader OK"); //DisplayMessageBox("Compilacio Vertex Shader OK", file_Vert); //AfxMessageBox(_T("Compilacio Vertex Shader OK"));
 
-// COMPILACIÓ FRAGMENT SHADER (FS)
+	// COMPILACIÓ FRAGMENT SHADER (FS)
 	glCompileShader(f);
 	glGetShaderiv(f, GL_COMPILE_STATUS, &compile_result);
 	// Llista error de compilació
@@ -528,7 +523,7 @@ GLuint Shader::loadFileShadersTest(std::string file_Vert, std::string file_Frag)
 	}
 	else fprintf(stderr, "%s \n", "Compilacio Fragment Shader OK"); //DisplayMessageBox("Compilacio Fragment Shader OK", file_Frag); // AfxMessageBox(_T("Compilacio Fragment Shader OK"));  //fprintf(stderr, "%s \n", "Compilacio Fragment Shader OK");
 
-// Creació del Program que inclou Vertex i Fragment Shader
+	// Creació del Program que inclou Vertex i Fragment Shader
 	programID = glCreateProgram();
 	glAttachShader(programID, v);
 	glAttachShader(programID, f);
@@ -575,7 +570,7 @@ GLuint Shader::loadFileShadersTest(std::string file_Vert, std::string file_Frag)
 	glDeleteShader(v);		// Don't leak the shader.
 	glDeleteShader(f);		// Don't leak the shader.
 
-// Activació del Programa
+	// Activació del Programa
 	glUseProgram(programID);
 
 	// Retorna referència al Program creat
@@ -792,7 +787,7 @@ GLuint Shader::loadFileShadersGTest(std::string file_Vert, std::string file_Frag
 	glDeleteShader(f);		// Don't leak the shader.
 	glDeleteShader(g);		// Don't leak the shader.
 
-// Activació del Programa
+	// Activació del Programa
 	glUseProgram(programID);
 
 	// Retorna referència al Program creat
@@ -845,7 +840,7 @@ char* Shader::textFileRead(const char* fn) {
 			rewind(fp);
 			if (count > 0) {
 				content = (char*)malloc(sizeof(char) * (count + 1));
-				count = (int) fread(content, sizeof(char), count, fp);
+				count = (int)fread(content, sizeof(char), count, fp);
 				content[count] = '\0';
 			}
 			fclose(fp);
@@ -894,54 +889,54 @@ void Shader::use()
 *      Set Uniform Shader Variables
 *****************************************************************************/
 // Pas de valors simples (bool, int, float o double)
-void Shader::setBool(const std::string &name, bool value)
+void Shader::setBool(const std::string& name, bool value)
 {
 	glUniform1i(glGetUniformLocation(this->programID, name.c_str()), (int)value);
 }
 
-void Shader::setInt(const std::string &name, int value)
+void Shader::setInt(const std::string& name, int value)
 {
 	glUniform1i(glGetUniformLocation(this->programID, name.c_str()), value);
 }
 
-void Shader::setFloat(const std::string &name, float value)
+void Shader::setFloat(const std::string& name, float value)
 {
 	glUniform1f(glGetUniformLocation(this->programID, name.c_str()), value);
 }
 
-void Shader::setDouble(const std::string &name, double value)
+void Shader::setDouble(const std::string& name, double value)
 {
 	glUniform1f(glGetUniformLocation(this->programID, name.c_str()), value);
 }
 
 // Pas de vectors de 3 posicions (bool, int, float o double)
-void Shader::setBool3(const std::string &name, bool value1, bool value2, bool value3)
+void Shader::setBool3(const std::string& name, bool value1, bool value2, bool value3)
 {
 	glUniform3i(glGetUniformLocation(this->programID, name.c_str()), (int)value1, (int)value2, (int)value3);
 }
 
-void Shader::setInt3(const std::string &name, int value1, int value2, int value3)
+void Shader::setInt3(const std::string& name, int value1, int value2, int value3)
 {
 	glUniform3i(glGetUniformLocation(this->programID, name.c_str()), value1, value2, value3);
 }
 
-void Shader::setFloat3(const std::string &name, float value1, float value2, float value3)
+void Shader::setFloat3(const std::string& name, float value1, float value2, float value3)
 {
 	glUniform3f(glGetUniformLocation(this->programID, name.c_str()), value1, value2, value3);
 }
 
-void Shader::setDouble3(const std::string &name, double value1, double value2, double value3)
+void Shader::setDouble3(const std::string& name, double value1, double value2, double value3)
 {
 	glUniform3d(glGetUniformLocation(this->programID, name.c_str()), value1, value2, value3);
 }
 
 // Pas de vectors de 4 posicions (float o double)
-void Shader::setFloat4(const std::string &name, float value1, float value2, float value3, float value4)
+void Shader::setFloat4(const std::string& name, float value1, float value2, float value3, float value4)
 {
 	glUniform4f(glGetUniformLocation(this->programID, name.c_str()), value1, value2, value3, value4);
 }
 
-void Shader::setDouble4(const std::string &name, double value1, double value2, double value3, double value4)
+void Shader::setDouble4(const std::string& name, double value1, double value2, double value3, double value4)
 {
 	glUniform4d(glGetUniformLocation(this->programID, name.c_str()), value1, value2, value3, value4);
 }
@@ -952,7 +947,7 @@ void Shader::setMatrix3fv(const std::string& name, glm::mat3 trans)
 	glUniformMatrix3fv(glGetUniformLocation(this->programID, name.c_str()), 1, GL_FALSE, glm::value_ptr(trans));
 }
 
-void Shader::setMatrix4fv(const std::string &name, glm::mat4 trans)
+void Shader::setMatrix4fv(const std::string& name, glm::mat4 trans)
 {
 	glUniformMatrix4fv(glGetUniformLocation(this->programID, name.c_str()), 1, GL_FALSE, glm::value_ptr(trans));
 }

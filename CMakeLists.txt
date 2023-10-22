@@ -36,7 +36,9 @@ add_executable(VGI-ABP src/main.cpp
         src/Entorn/material.h
         src/Entorn/stdafx.h
         src/Entorn/visualitzacio.h
-        src/Entorn/visualitzacio.cpp)
+        src/Entorn/visualitzacio.cpp
+        src/Entorn/quatern.cpp
+        src/Entorn/quatern.h "src/Entorn/shader.cpp" "src/Entorn/shader.h" "src/skybox.cpp" "src/skybox.h") 
 
 # target_link_libraries(VGI-ABP PRIVATE glfw "${ASSIMP_INCLUDE_DIRS}/assimp" "${BULLET_LIBRARIES}" GLEW::glew OpenAL::OpenAL)
 target_link_libraries(VGI-ABP PRIVATE ${ASSIMP_LIBRARIES})
