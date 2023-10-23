@@ -11,7 +11,7 @@ Mesh::Mesh() {
     indexCount = 0;
 }
 
-//This funcion does nothing its just to test out Assimp imports
+//TODO: Integrate this with Obj_loader
 void Mesh::loadModel(std::string path)
 {
     Assimp::Importer import;

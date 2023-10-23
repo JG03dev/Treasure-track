@@ -424,7 +424,7 @@ int main(int argc, char* argv[])
         glUniformMatrix4fv((int) uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 
         //TODO: import shaders
-        //obj.draw_TriVAO_OBJ();	// Dibuixar VAO a pantalla
+        obj->draw_TriVAO_OBJ();	// Dibuixar VAO a pantalla
 
         meshList[1]->RenderMesh();
 
