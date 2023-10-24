@@ -60,8 +60,6 @@ _stdcall COBJModel::~COBJModel()
 	netejaVAOList_OBJ();
 }
 
-//bool _stdcall COBJModel::LoadModel(const char szFileName[],unsigned int iDisplayList)
-//GLuint _stdcall COBJModel::LoadModel(char *szFileName, int prim_Id)
 int _stdcall COBJModel::LoadModel(char* szFileName)
 {
 ////////////////////////////////////////////////////////////////////////
@@ -77,7 +75,6 @@ int _stdcall COBJModel::LoadModel(char* szFileName)
 	unsigned int iCurMaterial = 0;// Current material
 
 	FILE *hFile=NULL;
-//	int errno;
 
 // VAO
 // Inicialitzar la llista de VAO's.
@@ -91,12 +88,10 @@ int _stdcall COBJModel::LoadModel(char* szFileName)
 // Open the OBJ file
 ////////////////////////////////////////////////////////////////////////
 	errno = 0;
-//	FILE *hFile = fopen(szFileName, "r");
 	errno = fopen_s(&hFile, szFileName, "r"); // Funció Visual 2005 i 2010
 	
 // Success ?
 	if (errno != 0)
-		//if (!hFile)
 		return errno; //FALSE;
 
 ////////////////////////////////////////////////////////////////////////
@@ -513,7 +508,6 @@ CVAO _stdcall COBJModel::RenderToVAOList(const Face* pFaces,
 	double color[4] = { 1.0F, 0.0f, 0.0f, 1.0f };
 
 // VAO
-	//GLuint vaoId = 0;		GLuint vboId = 0;
 	CVAO objVAO = {0,0,0,0,0};
 
 	objVAO.vaoId = 0;	objVAO.vboId = 0;	objVAO.eboId = 0; objVAO.nVertexs = 0; objVAO.nIndices = 0;
@@ -528,7 +522,6 @@ CVAO _stdcall COBJModel::RenderToVAOList(const Face* pFaces,
 // Generate & save display list index
 	
 // Render model into the display list
-	//glNewList(m_iDisplayList, GL_COMPILE);
 
 		// Save texture bit to recover from the various texture state changes
 		glPushAttrib(GL_TEXTURE_BIT);
@@ -550,7 +543,7 @@ CVAO _stdcall COBJModel::RenderToVAOList(const Face* pFaces,
 					// -----------VERTEX 0
 					// Set vertex normal (if vertex normals are specified)
 					if (pFaces[i].pNormals)
-						{	//glNormal3f(pFaces[i].pNormals[j].fX, pFaces[i].pNormals[j].fY, pFaces[i].pNormals[j].fZ);
+						{	
 							normals.push_back(pFaces[i].pNormals[0].fX);
 							normals.push_back(pFaces[i].pNormals[0].fY);
 							normals.push_back(pFaces[i].pNormals[0].fZ);
@@ -568,12 +561,12 @@ CVAO _stdcall COBJModel::RenderToVAOList(const Face* pFaces,
 					if (pMaterials)
 					{	if (pMaterials[pFaces[i].iMaterialIndex].iTextureID != 0)
 							{	if (pFaces[i].pTexCoords)
-									{	// glTexCoord2f(pFaces[i].pTexCoords[j].fX, pFaces[i].pTexCoords[j].fY);
+									{	
 										textures.push_back(pFaces[i].pTexCoords[0].fX);	
 										textures.push_back(pFaces[i].pTexCoords[0].fY);
 									}
-									else {	textures.push_back(0.0); // textures.push_back(-0.1*pFaces[i].pVertices[j].fX);
-											textures.push_back(0.0); // textures.push_back(-0.1 * pFaces[i].pVertices[j].fZ);
+									else {	textures.push_back(0.0); 
+											textures.push_back(0.0); 
 										}
 							}
 							else {	textures.push_back(0.0);
@@ -606,7 +599,6 @@ CVAO _stdcall COBJModel::RenderToVAOList(const Face* pFaces,
 					}
 
 					// Set VERTEX
-					//glVertex3f(pFaces[i].pVertices[j].fX, pFaces[i].pVertices[j].fY, pFaces[i].pVertices[j].fZ);
 					vertices.push_back(pFaces[i].pVertices[0].fX);
 					vertices.push_back(pFaces[i].pVertices[0].fY);
 					vertices.push_back(pFaces[i].pVertices[0].fZ);
@@ -614,7 +606,7 @@ CVAO _stdcall COBJModel::RenderToVAOList(const Face* pFaces,
 					// -----------VERTEX j
 // Set vertex normal (if vertex normals are specified)
 					if (pFaces[i].pNormals)
-					{	//glNormal3f(pFaces[i].pNormals[j].fX, pFaces[i].pNormals[j].fY, pFaces[i].pNormals[j].fZ);
+					{	
 						normals.push_back(pFaces[i].pNormals[j].fX);
 						normals.push_back(pFaces[i].pNormals[j].fY);
 						normals.push_back(pFaces[i].pNormals[j].fZ);
@@ -622,7 +614,6 @@ CVAO _stdcall COBJModel::RenderToVAOList(const Face* pFaces,
 
 					else {	// Calculate and set face normal if no vertex normals are specified
 						GetFaceNormal(fNormal, &pFaces[i]);
-						//glNormal3fv(fNormal);
 						normals.push_back(fNormal[0]);
 						normals.push_back(fNormal[1]);
 						normals.push_back(fNormal[2]);
@@ -634,13 +625,13 @@ CVAO _stdcall COBJModel::RenderToVAOList(const Face* pFaces,
 						if (pMaterials[pFaces[i].iMaterialIndex].iTextureID != 0)
 						{
 							if (pFaces[i].pTexCoords)
-							{	// glTexCoord2f(pFaces[i].pTexCoords[j].fX, pFaces[i].pTexCoords[j].fY);
+							{	
 								textures.push_back(pFaces[i].pTexCoords[j].fX);
 								textures.push_back(pFaces[i].pTexCoords[j].fY);
 							}
 							else {
-								textures.push_back(0.0); // textures.push_back(-0.1*pFaces[i].pVertices[j].fX);
-								textures.push_back(0.0); // textures.push_back(-0.1 * pFaces[i].pVertices[j].fZ);
+								textures.push_back(0.0); 
+								textures.push_back(0.0); 
 							}
 						}
 						else {
@@ -675,7 +666,6 @@ CVAO _stdcall COBJModel::RenderToVAOList(const Face* pFaces,
 					}
 
 					// Set VERTEX
-					//glVertex3f(pFaces[i].pVertices[j].fX, pFaces[i].pVertices[j].fY, pFaces[i].pVertices[j].fZ);
 					vertices.push_back(pFaces[i].pVertices[j].fX);
 					vertices.push_back(pFaces[i].pVertices[j].fY);
 					vertices.push_back(pFaces[i].pVertices[j].fZ);
@@ -684,7 +674,7 @@ CVAO _stdcall COBJModel::RenderToVAOList(const Face* pFaces,
 					// -----------VERTEX j+1
 // Set vertex normal (if vertex normals are specified)
 					if (pFaces[i].pNormals)
-					{	//glNormal3f(pFaces[i].pNormals[j].fX, pFaces[i].pNormals[j].fY, pFaces[i].pNormals[j].fZ);
+					{	
 						normals.push_back(pFaces[i].pNormals[j+1].fX);
 						normals.push_back(pFaces[i].pNormals[j+1].fY);
 						normals.push_back(pFaces[i].pNormals[j+1].fZ);
@@ -692,7 +682,6 @@ CVAO _stdcall COBJModel::RenderToVAOList(const Face* pFaces,
 
 					else {	// Calculate and set face normal if no vertex normals are specified
 						GetFaceNormal(fNormal, &pFaces[i]);
-						//glNormal3fv(fNormal);
 						normals.push_back(fNormal[0]);
 						normals.push_back(fNormal[1]);
 						normals.push_back(fNormal[2]);
@@ -704,13 +693,13 @@ CVAO _stdcall COBJModel::RenderToVAOList(const Face* pFaces,
 						if (pMaterials[pFaces[i].iMaterialIndex].iTextureID != 0)
 						{
 							if (pFaces[i].pTexCoords)
-							{	// glTexCoord2f(pFaces[i].pTexCoords[j].fX, pFaces[i].pTexCoords[j].fY);
+							{	
 								textures.push_back(pFaces[i].pTexCoords[j+1].fX);
 								textures.push_back(pFaces[i].pTexCoords[j+1].fY);
 							}
 							else {
-								textures.push_back(0.0); // textures.push_back(-0.1*pFaces[i].pVertices[j].fX);
-								textures.push_back(0.0); // textures.push_back(-0.1 * pFaces[i].pVertices[j].fZ);
+								textures.push_back(0.0); 
+								textures.push_back(0.0); 
 							}
 						}
 						else {
@@ -745,14 +734,12 @@ CVAO _stdcall COBJModel::RenderToVAOList(const Face* pFaces,
 					}
 
 					// Set VERTEX
-					//glVertex3f(pFaces[i].pVertices[j].fX, pFaces[i].pVertices[j].fY, pFaces[i].pVertices[j].fZ);
 					vertices.push_back(pFaces[i].pVertices[j+1].fX);
 					vertices.push_back(pFaces[i].pVertices[j+1].fY);
 					vertices.push_back(pFaces[i].pVertices[j+1].fZ);
 				}
 			}
 		glPopAttrib();
-	//glEndList();
 
 // ----------------------- VAO
 // Creació d'un VAO i un VBO i càrrega de la geometria. Guardar identificador VAO identificador VBO a struct CVAO.
@@ -790,14 +777,6 @@ void _stdcall COBJModel::loadToVAOList(const Face* pFaces,
 	GLfloat cColor[4];
 	glGetFloatv(GL_CURRENT_COLOR, cColor);
 
-// Generate & save display list index
-
-// Render model into the display list
-	//glNewList(m_iDisplayList, GL_COMPILE);
-
-// Save texture bit to recover from the various texture state changes
-	//glPushAttrib(GL_TEXTURE_BIT);
-
 // Activate automatic texture coord generation if no coords loaded
 	if (!pFaces[0].pTexCoords) GenTexCoords();
 
@@ -820,8 +799,6 @@ void _stdcall COBJModel::loadToVAOList(const Face* pFaces,
 						Set_VAOList_OBJ(index_VAO, objVAO);
 						index_VAO = index_VAO + 1;
 						vertices.resize(0);		colors.resize(0);	normals.resize(0);		textures.resize(0);// Reinicialitzar vectors
-						//iPreviousMaterial = pFaces[i].iMaterialIndex;
-						//UseMaterial(&pMaterials[pFaces[i].iMaterialIndex]);
 					}
 					vector_Materials[index_VAO] = pFaces[i].iMaterialIndex;
 					iPreviousMaterial = pFaces[i].iMaterialIndex;
@@ -831,7 +808,7 @@ void _stdcall COBJModel::loadToVAOList(const Face* pFaces,
 			// -----------VERTEX 0
 			// Set vertex normal (if vertex normals are specified)
 			if (pFaces[i].pNormals)
-			{	//glNormal3f(pFaces[i].pNormals[j].fX, pFaces[i].pNormals[j].fY, pFaces[i].pNormals[j].fZ);
+			{	
 				normals.push_back(pFaces[i].pNormals[0].fX);
 				normals.push_back(pFaces[i].pNormals[0].fY);
 				normals.push_back(pFaces[i].pNormals[0].fZ);
@@ -839,7 +816,6 @@ void _stdcall COBJModel::loadToVAOList(const Face* pFaces,
 
 			else {	// Calculate and set face normal if no vertex normals are specified
 				GetFaceNormal(fNormal, &pFaces[i]);
-				//glNormal3fv(fNormal);
 				normals.push_back(fNormal[0]);
 				normals.push_back(fNormal[1]);
 				normals.push_back(fNormal[2]);
@@ -851,13 +827,13 @@ void _stdcall COBJModel::loadToVAOList(const Face* pFaces,
 				if (pMaterials[pFaces[i].iMaterialIndex].iTextureID != 0)
 				{
 					if (pFaces[i].pTexCoords)
-					{	// glTexCoord2f(pFaces[i].pTexCoords[j].fX, pFaces[i].pTexCoords[j].fY);
+					{	
 						textures.push_back(pFaces[i].pTexCoords[0].fX);
 						textures.push_back(pFaces[i].pTexCoords[0].fY);
 					}
 					else {
-						textures.push_back(0.0); // textures.push_back(-0.1*pFaces[i].pVertices[j].fX);
-						textures.push_back(0.0); // textures.push_back(-0.1 * pFaces[i].pVertices[j].fZ);
+						textures.push_back(0.0); 
+						textures.push_back(0.0); 
 					}
 				}
 				else {
@@ -886,7 +862,6 @@ void _stdcall COBJModel::loadToVAOList(const Face* pFaces,
 			}
 
 			// Set VERTEX
-			//glVertex3f(pFaces[i].pVertices[j].fX, pFaces[i].pVertices[j].fY, pFaces[i].pVertices[j].fZ);
 			vertices.push_back(pFaces[i].pVertices[0].fX);
 			vertices.push_back(pFaces[i].pVertices[0].fY);
 			vertices.push_back(pFaces[i].pVertices[0].fZ);
@@ -894,7 +869,7 @@ void _stdcall COBJModel::loadToVAOList(const Face* pFaces,
 			// -----------VERTEX j
 // Set vertex normal (if vertex normals are specified)
 			if (pFaces[i].pNormals)
-			{	//glNormal3f(pFaces[i].pNormals[j].fX, pFaces[i].pNormals[j].fY, pFaces[i].pNormals[j].fZ);
+			{	
 				normals.push_back(pFaces[i].pNormals[j].fX);
 				normals.push_back(pFaces[i].pNormals[j].fY);
 				normals.push_back(pFaces[i].pNormals[j].fZ);
@@ -902,7 +877,6 @@ void _stdcall COBJModel::loadToVAOList(const Face* pFaces,
 
 			else {	// Calculate and set face normal if no vertex normals are specified
 				GetFaceNormal(fNormal, &pFaces[i]);
-				//glNormal3fv(fNormal);
 				normals.push_back(fNormal[0]);
 				normals.push_back(fNormal[1]);
 				normals.push_back(fNormal[2]);
@@ -914,13 +888,13 @@ void _stdcall COBJModel::loadToVAOList(const Face* pFaces,
 				if (pMaterials[pFaces[i].iMaterialIndex].iTextureID != 0)
 				{
 					if (pFaces[i].pTexCoords)
-					{	// glTexCoord2f(pFaces[i].pTexCoords[j].fX, pFaces[i].pTexCoords[j].fY);
+					{	
 						textures.push_back(pFaces[i].pTexCoords[j].fX);
 						textures.push_back(pFaces[i].pTexCoords[j].fY);
 					}
 					else {
-						textures.push_back(0.0); // textures.push_back(-0.1*pFaces[i].pVertices[j].fX);
-						textures.push_back(0.0); // textures.push_back(-0.1 * pFaces[i].pVertices[j].fZ);
+						textures.push_back(0.0);
+						textures.push_back(0.0);
 					}
 				}
 				else {
@@ -949,7 +923,6 @@ void _stdcall COBJModel::loadToVAOList(const Face* pFaces,
 			}
 
 			// Set VERTEX
-			//glVertex3f(pFaces[i].pVertices[j].fX, pFaces[i].pVertices[j].fY, pFaces[i].pVertices[j].fZ);
 			vertices.push_back(pFaces[i].pVertices[j].fX);
 			vertices.push_back(pFaces[i].pVertices[j].fY);
 			vertices.push_back(pFaces[i].pVertices[j].fZ);
@@ -957,14 +930,13 @@ void _stdcall COBJModel::loadToVAOList(const Face* pFaces,
 			// -----------VERTEX j+1
 // Set vertex normal (if vertex normals are specified)
 			if (pFaces[i].pNormals)
-			{	//glNormal3f(pFaces[i].pNormals[j].fX, pFaces[i].pNormals[j].fY, pFaces[i].pNormals[j].fZ);
+			{	
 				normals.push_back(pFaces[i].pNormals[j + 1].fX);
 				normals.push_back(pFaces[i].pNormals[j + 1].fY);
 				normals.push_back(pFaces[i].pNormals[j + 1].fZ);
 			}
 			else {	// Calculate and set face normal if no vertex normals are specified
 				GetFaceNormal(fNormal, &pFaces[i]);
-				//glNormal3fv(fNormal);
 				normals.push_back(fNormal[0]);
 				normals.push_back(fNormal[1]);
 				normals.push_back(fNormal[2]);
@@ -976,13 +948,13 @@ void _stdcall COBJModel::loadToVAOList(const Face* pFaces,
 				if (pMaterials[pFaces[i].iMaterialIndex].iTextureID != 0)
 				{
 					if (pFaces[i].pTexCoords)
-					{	// glTexCoord2f(pFaces[i].pTexCoords[j].fX, pFaces[i].pTexCoords[j].fY);
+					{	
 						textures.push_back(pFaces[i].pTexCoords[j + 1].fX);
 						textures.push_back(pFaces[i].pTexCoords[j + 1].fY);
 					}
 					else {
-						textures.push_back(0.0); // textures.push_back(-0.1*pFaces[i].pVertices[j].fX);
-						textures.push_back(0.0); // textures.push_back(-0.1 * pFaces[i].pVertices[j].fZ);
+						textures.push_back(0.0); 
+						textures.push_back(0.0); 
 					}
 				}
 				else {
@@ -1011,23 +983,14 @@ void _stdcall COBJModel::loadToVAOList(const Face* pFaces,
 			}
 
 			// Set VERTEX
-			//glVertex3f(pFaces[i].pVertices[j].fX, pFaces[i].pVertices[j].fY, pFaces[i].pVertices[j].fZ);
 			vertices.push_back(pFaces[i].pVertices[j + 1].fX);
 			vertices.push_back(pFaces[i].pVertices[j + 1].fY);
 			vertices.push_back(pFaces[i].pVertices[j + 1].fZ);
 		}
 	}
-	//glPopAttrib();
-	//glEndList();
 
 // ----------------------- VAO
 	nv = vertices.size();	// Tamany del vector vertices en elements.
-
-	//if (nv != 0) 
-	//{	// Creació del darrer VAO i un VBO i càrrega de la geometria. Guardar identificador VAO identificador VBO a struct CVAO.
-	//	objVAO = load_TRIANGLES_VAO(vertices, normals, colors, textures);
-	//	Set_VAOList_OBJ(index_VAO, objVAO);
-	//}
 
 // Numero de Materials del fitxer OBJ
 	numMaterials = index_VAO + 1;
@@ -1041,7 +1004,6 @@ void _stdcall COBJModel::UseMaterial(const Material *pMaterial)
 ////////////////////////////////////////////////////////////////////////
 	float color[4] = { 1.0F, 0.0f, 0.0f, 1.0f};
 
-	//glColor3f(1.0,1.0,1.0);
 // Look for the presence of a texture and activate texturing if succeed
 	if (pMaterial!=NULL)
 	{ if (pMaterial->iTextureID)
@@ -1049,23 +1011,19 @@ void _stdcall COBJModel::UseMaterial(const Material *pMaterial)
 			glBindTexture(GL_TEXTURE_2D, pMaterial->iTextureID);
 		}
 	else {	glDisable(GL_TEXTURE_2D);
-			//glMaterialfv(GL_FRONT, GL_EMISSION, pMaterial->fEmmissive);
 			
 			glColorMaterial(GL_FRONT, GL_AMBIENT);
 			color[0] = pMaterial->fAmbient[0];	color[1] = pMaterial->fAmbient[1];	color[2] = pMaterial->fAmbient[2];
-			//glMaterialfv(GL_FRONT, GL_AMBIENT, pMaterial->fAmbient);
 			glMaterialfv(GL_FRONT, GL_AMBIENT, color);
 			glColor4fv(color);
 
 			glColorMaterial(GL_FRONT, GL_DIFFUSE);
 			color[0] = pMaterial->fDiffuse[0];	color[1] = pMaterial->fDiffuse[1];	color[2] = pMaterial->fDiffuse[2];
-			//glMaterialfv(GL_FRONT, GL_DIFFUSE, pMaterial->fDiffuse);
 			glMaterialfv(GL_FRONT, GL_DIFFUSE, color);
 			glColor4fv(color);
 			
 			glColorMaterial(GL_FRONT, GL_SPECULAR);
 			color[0] = pMaterial->fSpecular[0];	color[1] = pMaterial->fSpecular[1];	color[2] = pMaterial->fSpecular[2];
-			//glMaterialfv(GL_FRONT, GL_SPECULAR, pMaterial->fSpecular);
 			glMaterialfv(GL_FRONT, GL_SPECULAR, color);
 			glColor4fv(color);
 
@@ -1074,14 +1032,7 @@ void _stdcall COBJModel::UseMaterial(const Material *pMaterial)
 			glEnable(GL_COLOR_MATERIAL);
 		}
 	}
-	else {	glDisable(GL_TEXTURE_2D);
-			/* Color blanc
-			glMaterialfv(GL_FRONT, GL_AMBIENT, color);
-			glMaterialfv(GL_FRONT, GL_DIFFUSE, color);
-			glMaterialfv(GL_FRONT, GL_SPECULAR, color);
-			glMaterialf(GL_FRONT, GL_SHININESS, 0);
-			*/
-		}
+	else {	glDisable(GL_TEXTURE_2D); }
 }
 
 
@@ -1092,19 +1043,15 @@ void _stdcall COBJModel::UseMaterial_ShaderID(GLuint sh_programID, Material pMat
 ////////////////////////////////////////////////////////////////////////
 	float color[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
 
-	//glColor3f(1.0,1.0,1.0);
 // Look for the presence of a texture and activate texturing if succeed
 	if (pMaterial.szName != "")
 	{
-		//glUniform4i(glGetUniformLocation(sh_programID, "sw_intensity"), false, true, true, true);
-		//glUniform1i(glGetUniformLocation(sh_programID, "sw_material"), true);
 
 		if (pMaterial.iTextureID)
 		{
 			glEnable(GL_TEXTURE_2D);
 			glBindTexture(GL_TEXTURE_2D, pMaterial.iTextureID);
 			glUniform1i(glGetUniformLocation(sh_programID, "texture0"), GLint(0));
-			//glUniform1i(glGetUniformLocation(sh_programID, "texture0"), pMaterial.iTextureID);
 
 			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -1115,50 +1062,24 @@ void _stdcall COBJModel::UseMaterial_ShaderID(GLuint sh_programID, Material pMat
 		}
 		else {
 			glDisable(GL_TEXTURE_2D);
-			//glMaterialfv(GL_FRONT, GL_EMISSION, pMaterial->fEmmissive);
 
-			//glColorMaterial(GL_FRONT, GL_AMBIENT);
 			color[0] = pMaterial.fAmbient[0];	color[1] = pMaterial.fAmbient[1];	color[2] = pMaterial.fAmbient[2];
-			//glMaterialfv(GL_FRONT, GL_AMBIENT, pMaterial->fAmbient);
-			//glMaterialfv(GL_FRONT, GL_AMBIENT, color);
-			//glColor4fv(color);
+
 			glUniform4f(glGetUniformLocation(sh_programID, "material.ambient"), color[0], color[1], color[2], color[3]);
 
-			//glColorMaterial(GL_FRONT, GL_DIFFUSE);
 			color[0] = pMaterial.fDiffuse[0];	color[1] = pMaterial.fDiffuse[1];	color[2] = pMaterial.fDiffuse[2];
-			//glMaterialfv(GL_FRONT, GL_DIFFUSE, pMaterial->fDiffuse);
-			//glMaterialfv(GL_FRONT, GL_DIFFUSE, color);
-			//glColor4fv(color);
+
 			glUniform4f(glGetUniformLocation(sh_programID, "material.diffuse"), color[0], color[1], color[2], color[3]);
 
-			//glColorMaterial(GL_FRONT, GL_SPECULAR);
 			color[0] = pMaterial.fSpecular[0];	color[1] = pMaterial.fSpecular[1];	color[2] = pMaterial.fSpecular[2];
-			//glMaterialfv(GL_FRONT, GL_SPECULAR, pMaterial->fSpecular);
-			//glMaterialfv(GL_FRONT, GL_SPECULAR, color);
-			//glColor4fv(color);
+
 			glUniform4f(glGetUniformLocation(sh_programID, "material.specular"), color[0], color[1], color[2], color[3]);
 
-			//glMaterialf(GL_FRONT, GL_SHININESS, pMaterial->fShininess);
 			glUniform1f(glGetUniformLocation(sh_programID, "material.shininess"), pMaterial.fShininess);
 
 			glEnable(GL_COLOR_MATERIAL);
 			}
 	}
-/*
-	else {
-		glDisable(GL_TEXTURE_2D);
-		glUniform4f(glGetUniformLocation(sh_programID, "material.ambient"), color[0], color[1], color[2], color[3]);
-		glUniform4f(glGetUniformLocation(sh_programID, "material.diffuse"), color[0], color[1], color[2], color[3]);
-		glUniform4f(glGetUniformLocation(sh_programID, "material.specular"), color[0], color[1], color[2], color[3]);
-		glUniform1f(glGetUniformLocation(sh_programID, "material.shininess"), 0.0);
-		// Color blanc
-		//glMaterialfv(GL_FRONT, GL_AMBIENT, color);
-		//glMaterialfv(GL_FRONT, GL_DIFFUSE, color);
-		//glMaterialfv(GL_FRONT, GL_SPECULAR, color);
-		//glMaterialf(GL_FRONT, GL_SHININESS, 0);
-		//
-	}
-*/
 }
 
 
@@ -1280,7 +1201,6 @@ void _stdcall COBJModel::GetFileInfo(FILE *hStream, OBJFileInfo *Info,
 			strcat_s(szBasePath, szString);
 
 			// Open the library file
-//			FILE *hMaterialLib = fopen(szBasePath, "r");
 			errno = fopen_s(&hMaterialLib,szBasePath, "r");
 			// Success ?
 			if (!errno) //(hMaterialLib)
@@ -1396,85 +1316,6 @@ static int CompareFaceByMaterial(const void *Arg1, const void *Arg2)
 	return 0;
 }
 
-/*
-int COBJModel::LoadTexture(const char szFileName[_MAX_PATH])
-{
-////////////////////////////////////////////////////////////////////////
-// Load a texture and return its ID
-////////////////////////////////////////////////////////////////////////
-
-	FILE *hFile = NULL;
-	int errno;
-
-	unsigned int iTexture = 0;
-	AUX_RGBImageRec *AUXTextureImage[1];
-	memset(AUXTextureImage,0,sizeof(void *)*1);
-
-// Open the file
-	//FILE *hFile = fopen(szFileName,"r");
-	errno=fopen_s(&hFile,szFileName, "r");
-
-// Does file exist ?
-    if (!errno) //(hFile)
-    {
-		// Close the stream
-		fclose(hFile);
-
-		// Load bitmap
-		//AUXTextureImage[0] = auxDIBImageLoad(szFileName);
-		// Conversió variable const char --> LPCWSTR
-		LPCWSTR nomf = reinterpret_cast<LPCWSTR> (szFileName);
-
-		AUXTextureImage[0] = auxDIBImageLoad(nomf);
-
-		// Create one texture
-		glGenTextures(1, &iTexture);
-
-		// Make the texture the current one
-		glBindTexture(GL_TEXTURE_2D, iTexture);
-
-		// Texture parameters
-		//glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S, GL_REPEAT);
-		//glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T, GL_REPEAT);
-		//glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		//glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-
-		// Build mip-maps
-		glTexImage2D(GL_TEXTURE_2D, 0, 3, AUXTextureImage[0]->sizeX, AUXTextureImage[0]->sizeY, 0, GL_RGB, GL_UNSIGNED_BYTE, AUXTextureImage[0]->data);
-		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-
-		//gluBuild2DMipmaps(GL_TEXTURE_2D, 3, AUXTextureImage->sizeX, AUXTextureImage->sizeY,
-		//	GL_RGB, GL_UNSIGNED_BYTE, AUXTextureImage->data);
-	}
-	else
-		// Failed
-		return FALSE;
-
-	// Does texture exist ?
-	if (AUXTextureImage[0])
-	{
-		// If texture image exists
-		if (AUXTextureImage[0]->data)
-			// Free the texture image memory
-			free(AUXTextureImage[0]->data);
-		else
-			// Failed
-			return FALSE;
-		
-		// free the image structure
-		free(AUXTextureImage[0]);						
-	}
-	else
-		// Failed
-		return FALSE;
-
-	// Success (return the texture id)
-	
-	return iTexture;
-}
-*/
-
 int COBJModel::LoadTexture2(const char szFileName[_MAX_PATH])
 {
 ////////////////////////////////////////////////////////////////////////
@@ -1487,24 +1328,17 @@ int COBJModel::LoadTexture2(const char szFileName[_MAX_PATH])
 
 	
 // Open the image file for reading
-// file=fopen(filename,"r");					// Funció Visual Studio 6.0
-   errno=fopen_s(&file,szFileName,"r");			// Funció Visual 2005
+   errno=fopen_s(&file,szFileName,"r");
 
 // If the file is empty (or non existent) print an error and return false
-// if (file == NULL)
+
    if (errno!=0)
-	 {	//	printf("Could not open file '%s'.\n",filename) ;
+	 {	
 	    return false ;
 	}
 
 // Close the image file
  fclose(file);
-
-// ilutGLLoadImage: Funció que llegeix la imatge del fitxer filename
-//				si és compatible amb els formats DevIL/OpenIL (BMP,JPG,GIF,TIF,TGA,etc.)
-//				i defineix la imatge com a textura OpenGL retornant l'identificador 
-//				de textura OpenGL.
-//	iTexture = ilutGLLoadImage((wchar_t *) szFileName);
 
 // SOIL_load_OGL_texture: Funció que llegeix la imatge del fitxer filename
 //				si és compatible amb els formats SOIL (BMP,JPG,GIF,TIF,TGA,etc.)
@@ -1523,12 +1357,6 @@ int COBJModel::LoadTexture2(const char szFileName[_MAX_PATH])
 // Make the texture the current one
 	glBindTexture(GL_TEXTURE_2D, iTexture);
 
-// Texture parameters
-//	glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S, GL_REPEAT);
-//	glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T, GL_REPEAT);
-//	glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-//	glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-
 // Build mip-maps
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -1538,9 +1366,7 @@ int COBJModel::LoadTexture2(const char szFileName[_MAX_PATH])
 
 void _stdcall COBJModel::DrawModel(int prim_Id)
 {
-	//glCallList(m_iDisplayList);
 	deleteVAOList(prim_Id);
-	
 }
 
   
@@ -1556,10 +1382,9 @@ OBJLOADER_CLASS_DECL void _stdcall UnInitObject(COBJModel * obj)
   delete obj; //Release TMyObject instance
 }
 
-//void _stdcall COBJModel::EliminaLlista(unsigned int iDisplayList)
+// Delete Object Instance-Access Function
 void _stdcall COBJModel::EliminaLlista(int prim_Id)
 {
-	//glDeleteLists(iDisplayList, 1);
 	deleteVAOList(prim_Id);
 }
 
@@ -1617,10 +1442,8 @@ void _stdcall COBJModel::netejaTextures_OBJ()
 
 void _stdcall COBJModel::deleteVAOList_OBJ(GLint k)
 {
-	//GLboolean err;
-
 	if (VAOList_OBJ[k].vaoId != 0)
-	{	glBindVertexArray(VAOList_OBJ[k].vaoId); //glBindVertexArray(vaoId);
+	{	glBindVertexArray(VAOList_OBJ[k].vaoId);
 		glDisableVertexAttribArray(0);
 		glDisableVertexAttribArray(1);
 		glDisableVertexAttribArray(2);
@@ -1630,20 +1453,14 @@ void _stdcall COBJModel::deleteVAOList_OBJ(GLint k)
 		// Once bound with 0, all pointers in gl*Pointer() behave as real
 		// pointer, so, normal vertex array operations are re-activated
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		//err = glIsBuffer(VAOList_OBJ[k].vboId);
-		glDeleteBuffers(1, &VAOList_OBJ[k].vboId);// glDeleteBuffers(1, &vboId);
-		//err = glIsBuffer(VAOList_OBJ[k].vboId);
+		glDeleteBuffers(1, &VAOList_OBJ[k].vboId);
 
 		// Delete EBO
-		//err = glIsBuffer(VAOList_OBJ[k].eboId);
-		if (VAOList_OBJ[k].eboId != 0) glDeleteBuffers(1, &VAOList_OBJ[k].eboId);// glDeleteBuffers(1, &eboId);
-		//err = glIsBuffer(VAOList_OBJ[k].eboId);
+		if (VAOList_OBJ[k].eboId != 0) glDeleteBuffers(1, &VAOList_OBJ[k].eboId);
 
 		// Unbind and delete VAO
 		glBindVertexArray(0);
-		//err = glIsVertexArray(VAOList_OBJ[k].vaoId);
-		glDeleteVertexArrays(1, &VAOList_OBJ[k].vaoId);	// glDeleteVertexArrays(1, &vaoId);
-		//err = glIsVertexArray(VAOList_OBJ[k].vaoId);
+		glDeleteVertexArrays(1, &VAOList_OBJ[k].vaoId);
 
 		VAOList_OBJ[k].vaoId = 0;
 		VAOList_OBJ[k].vboId = 0;
@@ -1660,7 +1477,6 @@ void _stdcall COBJModel::draw_TriVAO_Object_OBJ(GLint k)
 	// Recuperar identificadors VAO i nvertexs dels vector VAOList pr a dibuixar VAO
 	if (VAOList_OBJ[k].vaoId != 0) {
 		glBindVertexArray(VAOList_OBJ[k].vaoId);
-		//glBindBuffer(GL_ARRAY_BUFFER, vboId);
 		glDrawArrays(GL_TRIANGLES, 0, VAOList_OBJ[k].nVertexs);
 		glBindVertexArray(0);
 	}

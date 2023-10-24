@@ -26,52 +26,10 @@
 #define MAT_LLUM_VERDA    9
 #define MAT_FITXER	     10
 
-/* MATERIALS -> A constants.h
-typedef struct
-{
-	float ambient[4];
-	float diffuse[4];
-	float specular[4];
-	float emission[4];
-	float shininess;
-} MATERIAL;
-
-
-struct MATERIAL
-{
-	float ambient[4];
-	float diffuse[4];
-	float specular[4];
-	float emission[4];
-	float shininess;
-};
-*/
-
-/*
-enum 
-{
-	MAT_CAP,
-	MAT_DEFAULT,
-	MAT_BASE, 
-	MAT_METALL_OBSCUR, 
-	MAT_VIDRE, 
-	MAT_GOMA_NEGRA, 
-	MAT_GESPA, 
-	MAT_METALL_GROC,
-	MAT_LLUM_VERMELLA,
-	MAT_LLUM_GROGA,
-	MAT_LLUM_VERDA
-} mat;
-*/
-
 
 /* ------------------------------------------------------------------------- */
 /*                            Funcions de material                           */
 /* ------------------------------------------------------------------------- */
-
-// Seleccionar Materials
-void SeleccionaMaterial(GLuint sh_programID, int quin, bool sw_mater[5]);
-void SeleccionaColorMaterial(GLuint sh_programID, CColor c_obj, bool sw_mater[5]);
 
 bool llegir_Material(GLuint sh_programID, char * filename,int index);
 #endif
