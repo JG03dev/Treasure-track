@@ -25,8 +25,8 @@ add_executable(VGI-ABP src/main.cpp
         src/Window.h
         src/Camera.cpp
         src/Camera.h
-        src/Texture.h
-        src/Texture.cpp
+        
+        
         src/Entorn/objLoader.cpp
         src/Entorn/objLoader.h
         src/Entorn/escena.cpp

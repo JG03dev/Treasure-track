@@ -496,7 +496,7 @@ bool _stdcall COBJModel::LoadMaterialLib(const char szFileName[],
 
 CVAO _stdcall COBJModel::RenderToVAOList(const Face* pFaces,
 									const unsigned int iFaceCount,
-									const Material *pMaterials)
+									Material *pMaterials)
 {
 ////////////////////////////////////////////////////////////////////////
 // Render a list of faces into a VAO
@@ -751,7 +751,7 @@ CVAO _stdcall COBJModel::RenderToVAOList(const Face* pFaces,
 
 void _stdcall COBJModel::loadToVAOList(const Face* pFaces,
 	const unsigned int iFaceCount,
-	const Material* pMaterials)
+	Material* pMaterials)
 {
 ////////////////////////////////////////////////////////////////////////
 // Load a list of faces into a VAO
@@ -997,17 +997,16 @@ void _stdcall COBJModel::loadToVAOList(const Face* pFaces,
 }
 
 
-void _stdcall COBJModel::UseMaterial(const Material *pMaterial)
+void _stdcall COBJModel::UseMaterial(Material *pMaterial)
 {
 ////////////////////////////////////////////////////////////////////////
 // Make a given material the current one
 ////////////////////////////////////////////////////////////////////////
-	float color[4] = { 1.0F, 0.0f, 0.0f, 1.0f};
 
 // Look for the presence of a texture and activate texturing if succeed
 	if (pMaterial!=NULL)
 	{ 
-		pMaterial->useMaterial();
+		pMaterial->UseMaterial();
 	}
 	else 
 	{	
@@ -1409,7 +1408,7 @@ void _stdcall COBJModel::netejaTextures_OBJ()
 
 	for (i = 0; i <= numMaterials; i++)
 	{
-		vMaterials.destroyTextures();
+		vMaterials->DestroyTextures();
 		if (vMaterials[i].iTextureID)
 		{	err = glIsTexture(vMaterials[i].iTextureID);
 			glDeleteTextures(1, &vMaterials[i].iTextureID);

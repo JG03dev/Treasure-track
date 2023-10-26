@@ -7,8 +7,7 @@
 #ifndef GLMATERIAL_H
 #define GLMATERIAL_H
 
-#include "stdafx.h"
-#include "Texture.h"
+#include "Entorn/stdafx.h"
 
 //-------------- GC2: M�xim nombre de Materials
 #define MAX_MATERIALS  11
@@ -29,20 +28,20 @@
 
 
 
-enum 
-{
-	MAT_CAP,
-	MAT_DEFAULT,
-	MAT_BASE, 
-	MAT_METALL_OBSCUR, 
-	MAT_VIDRE, 
-	MAT_GOMA_NEGRA, 
-	MAT_GESPA, 
-	MAT_METALL_GROC,
-	MAT_LLUM_VERMELLA,
-	MAT_LLUM_GROGA,
-	MAT_LLUM_VERDA
-} mat;
+//enum 
+//{
+//	MAT_CAP,
+//	MAT_DEFAULT,
+//	MAT_BASE, 
+//	MAT_METALL_OBSCUR, 
+//	MAT_VIDRE, 
+//	MAT_GOMA_NEGRA, 
+//	MAT_GESPA, 
+//	MAT_METALL_GROC,
+//	MAT_LLUM_VERMELLA,
+//	MAT_LLUM_GROGA,
+//	MAT_LLUM_VERDA
+//} mat;
 
 
 
@@ -61,9 +60,8 @@ public:
 
 	~Material();
 
-private:
 	char	szName[1024];		 // Name of the material
-	GLuint textureID;
+	GLuint iTextureID;
 	char	szTexture[_MAX_PATH];// Filename of the texture
 	float fDiffuse[3];		 // Diffuse component
 	float fAmbient[3];		 // Ambient component
@@ -72,8 +70,5 @@ private:
 	float fShininess;			 // Specular exponent
 };
 // Seleccionar Materials
-void SeleccionaMaterial(GLuint sh_programID, int quin, bool sw_mater[5]);
-void SeleccionaColorMaterial(GLuint sh_programID, CColor c_obj, bool sw_mater[5]);
-
 bool llegir_Material(GLuint sh_programID, char * filename,int index);
 #endif

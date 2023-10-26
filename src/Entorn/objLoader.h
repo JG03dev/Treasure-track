@@ -16,6 +16,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include "stdafx.h"
+#include "../Material.h"
 
 // Màxima mida vector VAOList
 #define MAX_SIZE_VAOLIST 125
@@ -52,18 +53,6 @@ struct Face
 	Vector2D		*pTexCoords;
 };
 
-struct Material
-{
-  char	szName[1024];		 // Name of the material
-  char	szTexture[_MAX_PATH];// Filename of the texture
-  uint	iTextureID;			 // OpenGL name of the texture
-  float fDiffuse[3];		 // Diffuse component
-  float fAmbient[3];		 // Ambient component
-  float fSpecular[3];		 // Specular component
-  float fEmmissive[3];		 // Emmissive component
-  float fShininess;			 // Specular exponent
-};
-
 class OBJLOADER_CLASS_DECL COBJModel  
 {
   public:
@@ -81,16 +70,16 @@ class OBJLOADER_CLASS_DECL COBJModel
   private:
 	  void _stdcall ReadNextString(char szString[], FILE *hStream);
 	  int _stdcall LoadTexture2(const char szFileName[_MAX_PATH]);
-	  void _stdcall UseMaterial(const Material *pMaterial);
+	  void _stdcall UseMaterial(Material *pMaterial);
 	  void _stdcall UseMaterial_ShaderID(GLuint sh_programID, Material pMaterial);
 	  void _stdcall GetTokenParameter(char szString[], const unsigned int iStrSize, FILE *hFile);
 	  void _stdcall MakePath(char szFileAndPath[]);
 	  bool _stdcall LoadMaterialLib(const char szFileName[], Material *pMaterials,
 		  unsigned int *iCurMaterialIndex, char szBasePath[]);
 	  CVAO _stdcall RenderToVAOList(const Face* pFaces, const unsigned int iFaceCount,
-		  const Material *pMaterials);
+		  Material *pMaterials);
 	  void _stdcall loadToVAOList(const Face* pFaces, const unsigned int iFaceCount,
-		  const Material* pMaterials);
+		  Material* pMaterials);
 	  void _stdcall GetFaceNormal(float fNormalOut[3], const Face *pFace);
 	  void _stdcall ParseFaceString(char szFaceString[], Face *FaceOut, const Vector3D *pVertices,
 		  const Vector3D *pNormals, const Vector2D *pTexCoords, const unsigned int iMaterialIndex);

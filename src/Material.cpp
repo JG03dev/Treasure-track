@@ -3,105 +3,6 @@
 #include "Entorn/stdafx.h"
 #include "Material.h"
 
-void Material::DestroyTextures()
-{
-	Textura.ClearTexture();
-}
-
-Material::~Material()
-{
-	DestroyTextures();
-}
-
-void Material::UseMaterial()
-{
-////////////////////////////////////////////////////////////////////////
-// Make a given material the current one
-////////////////////////////////////////////////////////////////////////
-float color[4] = { 1.0F, 0.0f, 0.0f, 1.0f };
-
-//glColor3f(1.0,1.0,1.0);
-// Look for the presence of a texture and activate texturing if succeed
-
-	if (textureID)
-	{
-		glEnable(GL_TEXTURE_2D);
-		glBindTexture(GL_TEXTURE_2D, textureID);
-	}
-	else {
-		glDisable(GL_TEXTURE_2D);
-		//glMaterialfv(GL_FRONT, GL_EMISSION, pMaterial->fEmmissive);
-
-		glColorMaterial(GL_FRONT, GL_AMBIENT);
-		color[0] = fAmbient[0];	color[1] = fAmbient[1];	color[2] = fAmbient[2];
-		//glMaterialfv(GL_FRONT, GL_AMBIENT, pMaterial->fAmbient);
-		glMaterialfv(GL_FRONT, GL_AMBIENT, color);
-		glColor4fv(color);
-
-		glColorMaterial(GL_FRONT, GL_DIFFUSE);
-		color[0] = fDiffuse[0];	color[1] = fDiffuse[1];	color[2] = fDiffuse[2];
-		//glMaterialfv(GL_FRONT, GL_DIFFUSE, pMaterial->fDiffuse);
-		glMaterialfv(GL_FRONT, GL_DIFFUSE, color);
-		glColor4fv(color);
-
-		glColorMaterial(GL_FRONT, GL_SPECULAR);
-		color[0] = fSpecular[0];	color[1] = fSpecular[1];	color[2] = fSpecular[2];
-		//glMaterialfv(GL_FRONT, GL_SPECULAR, pMaterial->fSpecular);
-		glMaterialfv(GL_FRONT, GL_SPECULAR, color);
-		glColor4fv(color);
-
-		glMaterialf(GL_FRONT, GL_SHININESS, fShininess);
-
-		glEnable(GL_COLOR_MATERIAL);
-	}
-}
-
-void Material::LoadTexture2(const char szFileName[_MAX_PATH])
-{
-	////////////////////////////////////////////////////////////////////////
-	// Load a texture and return its ID
-	////////////////////////////////////////////////////////////////////////
-
-	FILE* file = NULL;
-	int errno;
-	unsigned int iTexture = 0;
-
-
-	// Open the image file for reading
-	errno = fopen_s(&file, szFileName, "r");			// Funció Visual 2005
-
-	if (errno != 0)
-	{
-		return;
-	}
-
-	// Close the image file
-	fclose(file);
-
-	// SOIL_load_OGL_texture: Funció que llegeix la imatge del fitxer filename
-	//				si és compatible amb els formats SOIL (BMP,JPG,GIF,TIF,TGA,etc.)
-	//				i defineix la imatge com a textura OpenGL retornant l'identificador 
-	//				de textura OpenGL.
-	iTexture = SOIL_load_OGL_texture
-	(szFileName,
-		SOIL_LOAD_AUTO,
-		SOIL_CREATE_NEW_ID,
-		SOIL_FLAG_MIPMAPS | SOIL_FLAG_DDS_LOAD_DIRECT | SOIL_FLAG_INVERT_Y
-	);
-
-
-	// If execution arrives here it means that all went well. Return true
-
-	// Make the texture the current one
-	glBindTexture(GL_TEXTURE_2D, iTexture);
-
-	// Build mip-maps
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	textureID = iTexture;
-}
-
 // Tipus de materials que es seleccionen a la funció SeleccionaMaterial
 MATERIAL  materials[MAX_MATERIALS] =
 {
@@ -194,7 +95,104 @@ MATERIAL  materials[MAX_MATERIALS] =
 
 };
 
+void Material::DestroyTextures()
+{
+	
+}
 
+Material::~Material()
+{
+	DestroyTextures();
+}
+
+void Material::UseMaterial()
+{
+////////////////////////////////////////////////////////////////////////
+// Make a given material the current one
+////////////////////////////////////////////////////////////////////////
+float color[4] = { 1.0F, 0.0f, 0.0f, 1.0f };
+
+//glColor3f(1.0,1.0,1.0);
+// Look for the presence of a texture and activate texturing if succeed
+
+	if (iTextureID)
+	{
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, iTextureID);
+	}
+	else {
+		glDisable(GL_TEXTURE_2D);
+		//glMaterialfv(GL_FRONT, GL_EMISSION, pMaterial->fEmmissive);
+
+		glColorMaterial(GL_FRONT, GL_AMBIENT);
+		color[0] = fAmbient[0];	color[1] = fAmbient[1];	color[2] = fAmbient[2];
+		//glMaterialfv(GL_FRONT, GL_AMBIENT, pMaterial->fAmbient);
+		glMaterialfv(GL_FRONT, GL_AMBIENT, color);
+		glColor4fv(color);
+
+		glColorMaterial(GL_FRONT, GL_DIFFUSE);
+		color[0] = fDiffuse[0];	color[1] = fDiffuse[1];	color[2] = fDiffuse[2];
+		//glMaterialfv(GL_FRONT, GL_DIFFUSE, pMaterial->fDiffuse);
+		glMaterialfv(GL_FRONT, GL_DIFFUSE, color);
+		glColor4fv(color);
+
+		glColorMaterial(GL_FRONT, GL_SPECULAR);
+		color[0] = fSpecular[0];	color[1] = fSpecular[1];	color[2] = fSpecular[2];
+		//glMaterialfv(GL_FRONT, GL_SPECULAR, pMaterial->fSpecular);
+		glMaterialfv(GL_FRONT, GL_SPECULAR, color);
+		glColor4fv(color);
+
+		glMaterialf(GL_FRONT, GL_SHININESS, fShininess);
+
+		glEnable(GL_COLOR_MATERIAL);
+	}
+}
+
+void Material::LoadTexture2(const char szFileName[_MAX_PATH])
+{
+	////////////////////////////////////////////////////////////////////////
+	// Load a texture and return its ID
+	////////////////////////////////////////////////////////////////////////
+
+	FILE* file = NULL;
+	int errno;
+	unsigned int iTexture = 0;
+
+
+	// Open the image file for reading
+	errno = fopen_s(&file, szFileName, "r");			// Funció Visual 2005
+
+	if (errno != 0)
+	{
+		return;
+	}
+
+	// Close the image file
+	fclose(file);
+
+	// SOIL_load_OGL_texture: Funció que llegeix la imatge del fitxer filename
+	//				si és compatible amb els formats SOIL (BMP,JPG,GIF,TIF,TGA,etc.)
+	//				i defineix la imatge com a textura OpenGL retornant l'identificador 
+	//				de textura OpenGL.
+	iTexture = SOIL_load_OGL_texture
+	(szFileName,
+		SOIL_LOAD_AUTO,
+		SOIL_CREATE_NEW_ID,
+		SOIL_FLAG_MIPMAPS | SOIL_FLAG_DDS_LOAD_DIRECT | SOIL_FLAG_INVERT_Y
+	);
+
+
+	// If execution arrives here it means that all went well. Return true
+
+	// Make the texture the current one
+	glBindTexture(GL_TEXTURE_2D, iTexture);
+
+	// Build mip-maps
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	iTextureID = iTexture;
+}
 
 // llegir_Material: Llegir propietats de material de d'un fitxer segons l'estructura MATERIAL
 //			Retorna l'estructura MATERIAL llegida i un booleà si s'ha trobat el fitxer [TRUE] o no [FALSE].
