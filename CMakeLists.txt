@@ -25,6 +25,8 @@ add_executable(VGI-ABP src/main.cpp
         src/Window.h
         src/Camera.cpp
         src/Camera.h
+        src/Texture.h
+        src/Texture.cpp
         src/Entorn/objLoader.cpp
         src/Entorn/objLoader.h
         src/Entorn/escena.cpp
@@ -32,8 +34,8 @@ add_executable(VGI-ABP src/main.cpp
         src/Entorn/constants.h
         src/Entorn/glut_geometry.cpp
         src/Entorn/glut_geometry.h
-        src/Entorn/material.cpp
-        src/Entorn/material.h
+        "src/Material.cpp"
+        "src/Material.h"
         src/Entorn/stdafx.h
         src/Entorn/visualitzacio.h
         src/Entorn/visualitzacio.cpp
