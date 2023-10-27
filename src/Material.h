@@ -7,9 +7,9 @@
 #ifndef GLMATERIAL_H
 #define GLMATERIAL_H
 
-#include "Entorn/stdafx.h"
+#include "stdafx.h"
 
-//-------------- GC2: M�xim nombre de Materials
+// TODO: Mirar quins defines ens interessen (per tipus de materials etc.)
 #define MAX_MATERIALS  11
 
 //Tipus de materials
@@ -25,8 +25,6 @@
 #define MAT_LLUM_GROGA    8
 #define MAT_LLUM_VERDA    9
 #define MAT_FITXER	     10
-
-
 
 //enum 
 //{
@@ -53,11 +51,12 @@ class Material
 public:
 	Material();
 
-	void LoadTexture2(const char szFileName[_MAX_PATH]);
 	void UseMaterial();
-	void DestroyTextures();
+	void UseMaterial_ShaderID(GLuint sh_programID);
+	void LoadTexture2(const char szFileName[_MAX_PATH]);
+	void LoadMaterial(FILE* hFileT, char szBasePath[]);
 	
-
+	void DestroyTextures();
 	~Material();
 
 	char	szName[1024];		 // Name of the material
@@ -69,6 +68,4 @@ public:
 	float fEmmissive[3];		 // Emmissive component
 	float fShininess;			 // Specular exponent
 };
-// Seleccionar Materials
-bool llegir_Material(GLuint sh_programID, char * filename,int index);
 #endif

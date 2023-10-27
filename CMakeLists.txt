@@ -12,7 +12,6 @@ find_package(GLEW REQUIRED)
 find_package(glm CONFIG REQUIRED)
 find_package(OpenAL CONFIG REQUIRED)
 find_package(Bullet CONFIG REQUIRED)
-find_package(assimp REQUIRED)
 find_package(glfw3 REQUIRED)
 find_package(soil2 CONFIG REQUIRED)
 
@@ -24,9 +23,7 @@ add_executable(VGI-ABP src/main.cpp
         src/Window.cpp
         src/Window.h
         src/Camera.cpp
-        src/Camera.h
-        
-        
+        src/Camera.h        
         src/Entorn/objLoader.cpp
         src/Entorn/objLoader.h
         src/Entorn/escena.cpp
@@ -36,14 +33,14 @@ add_executable(VGI-ABP src/main.cpp
         src/Entorn/glut_geometry.h
         "src/Material.cpp"
         "src/Material.h"
-        src/Entorn/stdafx.h
+        src/StringHandler.cpp
+        "src/stdafx.h"
         src/Entorn/visualitzacio.h
         src/Entorn/visualitzacio.cpp
         src/Entorn/quatern.cpp
         src/Entorn/quatern.h "src/Entorn/shader.cpp" "src/Entorn/shader.h" "src/skybox.cpp" "src/skybox.h") 
 
 # target_link_libraries(VGI-ABP PRIVATE glfw "${ASSIMP_INCLUDE_DIRS}/assimp" "${BULLET_LIBRARIES}" GLEW::glew OpenAL::OpenAL)
-target_link_libraries(VGI-ABP PRIVATE ${ASSIMP_LIBRARIES})
 target_link_libraries(VGI-ABP PRIVATE OpenAL::OpenAL)
 target_link_libraries(VGI-ABP PRIVATE OpenGL::GL)
 target_link_libraries(VGI-ABP PRIVATE GLEW::GLEW)
