@@ -10,6 +10,15 @@
 #define MTL_LIB_ID		 "mtllib"
 #define USE_MTL_ID		 "usemtl"
 
+
+// MTL File string indentifiers
+#define NEW_MTL_ID		 "newmtl"
+#define MTL_TEXTURE_ID   "map_Kd"
+#define MTL_AMBIENT_ID	 "Ka"
+#define MTL_DIFFUSE_ID	 "Kd"
+#define MTL_SPECULAR_ID	 "Ks"
+#define MTL_SHININESS_ID "Ns"
+
 #define COMMENT_ID		 "#"
 
 struct OBJFileInfo
