@@ -1,5 +1,15 @@
 #include "stdafx.h"
 
+//TODO: Poner estos defines en la classe objeto
+// OBJ File string indentifiers
+#define VERTEX_ID		 "v"
+#define TEXCOORD_ID		 "vt"
+#define NORMAL_ID		 "vn"
+#define FACE_ID			 "f"
+#define COMMENT_ID		 "#"
+#define MTL_LIB_ID		 "mtllib"
+#define USE_MTL_ID		 "usemtl"
+
 #define COMMENT_ID		 "#"
 
 struct OBJFileInfo

@@ -52,7 +52,8 @@ using namespace glm;
 
 // Includes extra del nou entorn
 #include "Mesh.h"
-//#include "../Shader.h"
+#include "Material.h"
+#include "Shader.h"
 #include "Window.h"
 #include "Camera.h"
 

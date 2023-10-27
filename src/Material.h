@@ -26,6 +26,14 @@
 #define MAT_LLUM_VERDA    9
 #define MAT_FITXER	     10
 
+// MTL File string indentifiers
+#define NEW_MTL_ID		 "newmtl"
+#define MTL_TEXTURE_ID   "map_Kd"
+#define MTL_AMBIENT_ID	 "Ka"
+#define MTL_DIFFUSE_ID	 "Kd"
+#define MTL_SPECULAR_ID	 "Ks"
+#define MTL_SHININESS_ID "Ns"
+
 //enum 
 //{
 //	MAT_CAP,
