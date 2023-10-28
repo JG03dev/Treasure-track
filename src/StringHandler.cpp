@@ -32,7 +32,7 @@ struct OBJFileInfo
 
 #define MAX_STR_SIZE 1024
 
-void ReadNextString(char szString[], FILE* hStream)
+fpos_t ReadNextString(char szString[], FILE* hStream)
 {
 	////////////////////////////////////////////////////////////////////////
 	// Read the next string that isn't a comment
@@ -40,11 +40,12 @@ void ReadNextString(char szString[], FILE* hStream)
 
 	bool bSkipLine = FALSE;	// Skip the current line ?
 	int nScanReturn = 0;	// Return value of fscanf
-
+	fpos_t pos;
 	// Skip all strings that contain comments
 	do
 	{
 		// Read new string
+		fgetpos(hStream, &pos);
 		nScanReturn = fscanf(hStream, "%s", szString);
 		// Is rest of the line a comment ?
 		if (!strncmp(szString, COMMENT_ID, sizeof(COMMENT_ID)))
@@ -55,6 +56,7 @@ void ReadNextString(char szString[], FILE* hStream)
 		}
 		else bSkipLine = FALSE;
 	} while (bSkipLine == TRUE);
+	return pos;
 }
 
 void GetTokenParameter(char szString[], const unsigned int iStrSize, FILE *hFile)

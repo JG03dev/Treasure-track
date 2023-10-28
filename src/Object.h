@@ -1,18 +1,56 @@
 #pragma once
 
+#ifndef OBJECT_H
+
 #include "Mesh.h"
-#include <vector>
+#include "Material.h"
+#include "stdafx.h"
+
+struct Vector3D
+{
+	float fX;
+	float fY;
+	float fZ;
+};
+
+struct Vector2D
+{
+	float fX;
+	float fY;
+};
+
+struct OBJFileInfo
+{
+	unsigned int iVertexCount;
+	unsigned int iTexCoordCount;
+	unsigned int iNormalCount;
+	unsigned int iFaceCount;
+	unsigned int iMaterialCount;
+};
+
+
+struct Face
+{
+	unsigned int	iNumVertices;
+	unsigned int	iMaterialIndex;
+	glVertex3f* pVertices;
+	glNormal3f* pNormals;
+	glTexCoord2f* pTexCoords;
+};
 
 class Object {
 public:
-
 	// Constructors
 
-	_stdcall Object();
+	_stdcall Object() {}
 
-	// Netodos publicos
+	// Metodos Publicos de Inicializacion Grafica
 
 	int _stdcall LoadModel(char* szFileName);
+
+	// Metodos Publicos de Limpieza Grafica
+
+	void _stdcall ClearMeshList();
 
 	// Destructors
 
@@ -20,20 +58,27 @@ public:
 
 private:
 
-	// Metodos Privados
+	// Metodos Privados de Inicializacion
 
-	void _stdcall GetFileInfo(FILE* hStream, OBJFileInfo* Stat, const char szConstBasePath[]);
+	bool _stdcall LoadMaterialLib(const char szFileName[], unsigned int* iCurMaterialIndex, char szBasePath[]);
+	void _stdcall loadToVAOList(const Face* pFaces, const unsigned int iFaceCount);
+	void _stdcall GetFaceNormal(float fNormalOut[3], const Face* pFace);
+	void _stdcall ParseFaceString(char szFaceString[], Face* FaceOut, const Vector3D* pVertices, const Vector3D* pNormals, const Vector2D* pTexCoords, const unsigned int iMaterialIndex);
 
-	// Atributos Privados
+	// Atributos Privados Graficos
 
-	Mesh mesh;
-	std::vector<Material> vMaterials;
+	std::vector<int> materialIndexes;	// Indices para relacionar materiales con texturas
+	std::vector<Mesh> meshList;			// Meshes que componen el objeto
+	std::vector<Material> materialList;	// Materiales que componen el objeto
 
-#pragma region DELETE
-	void _stdcall ReadNextString(char szString[], FILE* hStream);
-	void _stdcall GetTokenParameter(char szString[], const unsigned int iStrSize, FILE* hFile);
-	void _stdcall MakePath(char szFileAndPath[]);
-	void _stdcall ParseFaceString(char szFaceString[], Face* FaceOut, const Vector3D* pVertices,
-		const Vector3D* pNormals, const Vector2D* pTexCoords, const unsigned int iMaterialIndex);
-#pragma endregion
+	// Atributos Privados Fisicas
+
+
 };
+
+// Metodos Adicionales Externos
+
+// Callback function for comparing two faces with qsort
+static int CompareFaceByMaterial(const void* Arg1, const void* Arg2);
+
+#endif // !OBJECT_H

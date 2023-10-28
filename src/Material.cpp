@@ -2,6 +2,8 @@
 
 #include "Material.h"
 
+// Constructors
+
 Material::Material()
 {
 	iTextureID = 0;
@@ -12,6 +14,133 @@ Material::Material()
 	fSpecular[0] = 0.0f;		fSpecular[1] = 0.0f;		fSpecular[2] = 0.0f;
 	fShininess = 0.0f;
 }
+
+// Metodes Publics de Inicialitzacio
+
+void Material::LoadTexture2(const char szFileName[_MAX_PATH])
+{
+	////////////////////////////////////////////////////////////////////////
+	// Load a texture and return its ID
+	////////////////////////////////////////////////////////////////////////
+
+	FILE* file = NULL;
+	int errno;
+	unsigned int iTexture = 0;
+
+
+	// Open the image file for reading
+	errno = fopen_s(&file, szFileName, "r");
+
+	if (errno != 0)
+	{
+		return;
+	}
+
+	// Close the image file
+	fclose(file);
+
+	// SOIL_load_OGL_texture: Funció que llegeix la imatge del fitxer filename
+	//				si és compatible amb els formats SOIL (BMP,JPG,GIF,TIF,TGA,etc.)
+	//				i defineix la imatge com a textura OpenGL retornant l'identificador 
+	//				de textura OpenGL.
+	iTexture = SOIL_load_OGL_texture
+	(szFileName,
+		SOIL_LOAD_AUTO,
+		SOIL_CREATE_NEW_ID,
+		SOIL_FLAG_MIPMAPS | SOIL_FLAG_DDS_LOAD_DIRECT | SOIL_FLAG_INVERT_Y
+	);
+
+
+	// If execution arrives here it means that all went well. Return true
+
+	// Make the texture the current one
+	glBindTexture(GL_TEXTURE_2D, iTexture);
+
+	// Build mip-maps
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	iTextureID = iTexture;
+}
+
+void Material::LoadMaterial(FILE* hFileT, char szBasePath[])
+{
+	////////////////////////////////////////////////////////////////////////
+	// Loads a material library file (.mtl)
+	////////////////////////////////////////////////////////////////////////
+
+	char szString[MAX_STR_SIZE];	// Buffer used while reading the file
+	// Quit reading when end of file has been reached
+	fpos_t pos;
+	fgetpos(hFileT, &pos);
+
+	while (!feof(hFileT))
+	{
+		// Get next string
+		pos = ReadNextString(szString, hFileT);
+
+		// Ambient material properties
+		if (!strncmp(szString, MTL_AMBIENT_ID, sizeof(MTL_AMBIENT_ID)))
+		{
+			// Read into current material
+			fscanf(hFileT, "%f %f %f",
+				&fAmbient[0],
+				&fAmbient[1],
+				&fAmbient[2]);
+		}
+		// Diffuse material properties
+		else if (!strncmp(szString, MTL_DIFFUSE_ID, sizeof(MTL_DIFFUSE_ID)))
+		{
+			// Read into current material
+			fscanf(hFileT, "%f %f %f",
+				&fDiffuse[0],
+				&fDiffuse[1],
+				&fDiffuse[2]);
+		}
+
+		// Specular material properties
+		else if (!strncmp(szString, MTL_SPECULAR_ID, sizeof(MTL_SPECULAR_ID)))
+		{
+			// Read into current material
+			fscanf(hFileT, "%f %f %f",
+				&fSpecular[0],
+				&fSpecular[1],
+				&fSpecular[2]);
+		}
+
+		// Texture map name
+		else if (!strncmp(szString, MTL_TEXTURE_ID, sizeof(MTL_TEXTURE_ID)))
+		{
+			// Read texture filename
+			GetTokenParameter(szString, sizeof(szString), hFileT);
+			// Append material library filename to the model's base path
+			char szTextureFile[_MAX_PATH];
+			strcpy_s(szTextureFile, szBasePath);
+			strcat_s(szTextureFile, szString);
+			// Store texture filename in the structure
+			strcpy_s(szTexture, szTextureFile);
+			// Load texture and store its ID in the structure
+			LoadTexture2(szTextureFile);
+		}
+
+		// Shininess
+		else if (!strncmp(szString, MTL_SHININESS_ID, sizeof(MTL_SHININESS_ID)))
+		{
+			// Read into current material
+			fscanf(hFileT, "%f",
+				&fShininess);
+			// OBJ files use a shininess from 0 to 1000; Scale for OpenGL
+			fShininess /= 1000.0f;
+			fShininess *= 128.0f;
+		}
+		else //TODO mirar si realment s'acaba un cop no es pot parsejar res mes
+			break;
+	}
+
+	if (!feof(hFileT)) fsetpos(hFileT, &pos);
+}
+
+// Metodes Publics Funcionals
 
 void Material::UseMaterial()
 {
@@ -96,128 +225,14 @@ void Material::UseMaterial_ShaderID(GLuint sh_programID)
 	}
 }
 
-void Material::LoadTexture2(const char szFileName[_MAX_PATH])
-{
-	////////////////////////////////////////////////////////////////////////
-	// Load a texture and return its ID
-	////////////////////////////////////////////////////////////////////////
-
-	FILE* file = NULL;
-	int errno;
-	unsigned int iTexture = 0;
-
-
-	// Open the image file for reading
-	errno = fopen_s(&file, szFileName, "r");			// Funció Visual 2005
-
-	if (errno != 0)
-	{
-		return;
-	}
-
-	// Close the image file
-	fclose(file);
-
-	// SOIL_load_OGL_texture: Funció que llegeix la imatge del fitxer filename
-	//				si és compatible amb els formats SOIL (BMP,JPG,GIF,TIF,TGA,etc.)
-	//				i defineix la imatge com a textura OpenGL retornant l'identificador 
-	//				de textura OpenGL.
-	iTexture = SOIL_load_OGL_texture
-	(szFileName,
-		SOIL_LOAD_AUTO,
-		SOIL_CREATE_NEW_ID,
-		SOIL_FLAG_MIPMAPS | SOIL_FLAG_DDS_LOAD_DIRECT | SOIL_FLAG_INVERT_Y
-	);
-
-
-	// If execution arrives here it means that all went well. Return true
-
-	// Make the texture the current one
-	glBindTexture(GL_TEXTURE_2D, iTexture);
-
-	// Build mip-maps
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	iTextureID = iTexture;
-}
-
-void Material::LoadMaterial(FILE* hFileT, char szBasePath[])
-{
-////////////////////////////////////////////////////////////////////////
-// Loads a material library file (.mtl)
-////////////////////////////////////////////////////////////////////////
-
-	char szString[MAX_STR_SIZE];	// Buffer used while reading the file
-// Quit reading when end of file has been reached
-	while (!feof(hFileT))
-	{
-		// Get next string
-		ReadNextString(szString, hFileT);
-
-		// Ambient material properties
-		if (!strncmp(szString, MTL_AMBIENT_ID, sizeof(MTL_AMBIENT_ID)))
-		{
-			// Read into current material
-			fscanf(hFileT, "%f %f %f",
-				&fAmbient[0],
-				&fAmbient[1],
-				&fAmbient[2]);
-		}
-// Diffuse material properties
-		else if (!strncmp(szString, MTL_DIFFUSE_ID, sizeof(MTL_DIFFUSE_ID)))
-		{
-			// Read into current material
-			fscanf(hFileT, "%f %f %f",
-				&fDiffuse[0],
-				&fDiffuse[1],
-				&fDiffuse[2]);
-		}
-
-// Specular material properties
-		else if (!strncmp(szString, MTL_SPECULAR_ID, sizeof(MTL_SPECULAR_ID)))
-		{
-			// Read into current material
-			fscanf(hFileT, "%f %f %f",
-				&fSpecular[0],
-				&fSpecular[1],
-				&fSpecular[2]);
-		}
-
-// Texture map name
-		else if (!strncmp(szString, MTL_TEXTURE_ID, sizeof(MTL_TEXTURE_ID)))
-		{
-			// Read texture filename
-			GetTokenParameter(szString, sizeof(szString), hFileT);
-			// Append material library filename to the model's base path
-			char szTextureFile[_MAX_PATH];
-			strcpy_s(szTextureFile, szBasePath);
-			strcat_s(szTextureFile, szString);
-			// Store texture filename in the structure
-			strcpy_s(szTexture, szTextureFile);
-			// Load texture and store its ID in the structure
-			LoadTexture2(szTextureFile);
-		}
-
-// Shininess
-		else if (!strncmp(szString, MTL_SHININESS_ID, sizeof(MTL_SHININESS_ID)))
-		{
-			// Read into current material
-			fscanf(hFileT, "%f",
-				&fShininess);
-			// OBJ files use a shininess from 0 to 1000; Scale for OpenGL
-			fShininess /= 1000.0f;
-			fShininess *= 128.0f;
-		}
-		else //TODO mirar si realment s'acaba un cop no es pot parsejar res mes
-			break;
-	}
-}
+// Metodes Publics de Neteja
 
 void Material::DestroyTextures()
 {
 	//TODO: Mirar que se tiene que destruir
 }
+
+// Destructors
 
 Material::~Material()
 {

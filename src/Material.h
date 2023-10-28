@@ -1,6 +1,6 @@
-//******** PRACTICA VISUALITZACI� GR�FICA INTERACTIVA (Escola Enginyeria - UAB)
-//******** Entorn b�sic VS2022 MONOFINESTRA amb OpenGL 4.3+, interf�cie GLFW, ImGui i llibreries GLM
-//******** Ferran Poveda, Marc Vivet, Carme Juli�, D�bora Gil, Enric Mart� (Setembre 2023)
+//******** PRACTICA VISUALITZACIO GRAFICA INTERACTIVA (Escola Enginyeria - UAB)
+//******** Entorn basic VS2022 MONOFINESTRA amb OpenGL 4.3+, interficie GLFW, ImGui i llibreries GLM
+//******** Ferran Poveda, Marc Vivet, Carme Julia, Debora Gil, Enric Marti (Setembre 2023)
 // material.h : interface de material.cpp
 //
 
@@ -57,23 +57,37 @@
 class Material
 {
 public:
+	// Contstructors
+
 	Material();
+
+	// Metodes Publics de Inicialitzacio
+	
+	void LoadTexture2(const char szFileName[_MAX_PATH]);
+	void LoadMaterial(FILE* hFileT, char szBasePath[]);
+
+	// Metodes Publics Funcionals
 
 	void UseMaterial();
 	void UseMaterial_ShaderID(GLuint sh_programID);
-	void LoadTexture2(const char szFileName[_MAX_PATH]);
-	void LoadMaterial(FILE* hFileT, char szBasePath[]);
-	
+
+	// Metodes Publics de Neteja
+
 	void DestroyTextures();
+
+	// Destructors
+
 	~Material();
 
-	char	szName[1024];		 // Name of the material
-	GLuint iTextureID;
-	char	szTexture[_MAX_PATH];// Filename of the texture
-	float fDiffuse[3];		 // Diffuse component
-	float fAmbient[3];		 // Ambient component
-	float fSpecular[3];		 // Specular component
-	float fEmmissive[3];		 // Emmissive component
-	float fShininess;			 // Specular exponent
+	// Atributs Publics
+
+	char	szName[1024];			// Name of the material
+	GLuint	iTextureID;
+	char	szTexture[_MAX_PATH]	;// Filename of the texture
+	float	fDiffuse[3];			// Diffuse component
+	float	fAmbient[3];			// Ambient component
+	float	fSpecular[3];			// Specular component
+	float	fEmmissive[3];			// Emmissive component
+	float	fShininess;				// Specular exponent
 };
 #endif

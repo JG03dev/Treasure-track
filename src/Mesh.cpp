@@ -4,6 +4,8 @@
 
 #include "Mesh.h"
 
+// Constructors
+
 Mesh::Mesh() {
     VAO = 0;
     VBO = 0;
@@ -11,6 +13,8 @@ Mesh::Mesh() {
     vertexCount = 0;
     indexCount = 0;
 }
+
+// Metodes Publics de Inicialitzacio
 
 void Mesh::CreateMesh(GLfloat *vertices, unsigned int *indices, unsigned int numOfVertices, unsigned int numOfIndices){
     indexCount = numOfIndices;
@@ -90,6 +94,8 @@ void Mesh::load_TRIANGLES_VAO(std::vector<double> vertices, std::vector<double> 
     indexCount = 0;
 }
 
+// Metodes Publics Funcionals
+
 void Mesh::RenderMesh(){
     glBindVertexArray(VAO);
     //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
@@ -97,6 +103,8 @@ void Mesh::RenderMesh(){
     //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 }
+
+// Metodes Publics de Neteja
 
 void Mesh::ClearMesh(){
     glBindVertexArray(VAO); //glBindVertexArray(vaoId);
@@ -127,6 +135,8 @@ void Mesh::ClearMesh(){
     indexCount = 0;
     vertexCount = 0;
 }
+
+// Destructors
 
 Mesh::~Mesh() {
     ClearMesh();
