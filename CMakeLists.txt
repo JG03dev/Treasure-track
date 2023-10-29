@@ -15,30 +15,31 @@ find_package(Bullet CONFIG REQUIRED)
 find_package(glfw3 REQUIRED)
 find_package(soil2 CONFIG REQUIRED)
 
-add_executable(VGI-ABP src/main.cpp
-        src/Mesh.h
-        src/Mesh.cpp
+add_executable(VGI-ABP 
+# Ficheros principales
+        src/main.cpp
+# Ficheros de funcionalidades extra
+        src/stdafx.h
+        src/constants.h
+# Fiechros de funcionalidades del juego
         src/Shader.cpp
         src/Shader.h
         src/Window.cpp
         src/Window.h
         src/Camera.cpp
-        src/Camera.h        
-        src/Entorn/objLoader.cpp
-        src/Entorn/objLoader.h
-        src/Entorn/escena.cpp
-        src/Entorn/escena.h
-        src/Entorn/constants.h
-        src/Entorn/glut_geometry.cpp
-        src/Entorn/glut_geometry.h
-        "src/Material.cpp"
-        "src/Material.h"
-        src/StringHandler.cpp
-        "src/stdafx.h"
-        src/Entorn/visualitzacio.h
-        src/Entorn/visualitzacio.cpp
-        src/Entorn/quatern.cpp
-        src/Entorn/quatern.h "src/Entorn/shader.cpp" "src/Entorn/shader.h" "src/skybox.cpp" "src/skybox.h" "src/Light.cpp" "src/Light.h") 
+        src/Camera.h
+        src/skybox.h 
+        src/skybox.cpp
+        src/Light.cpp 
+        src/Light.h
+# Ficheros de Objecto
+        src/Object.h
+        src/Object.cpp
+        src/Material.cpp
+        src/Material.h
+        src/Mesh.h
+        src/Mesh.cpp
+        src/StringHandler.cpp)
 
 # target_link_libraries(VGI-ABP PRIVATE glfw "${ASSIMP_INCLUDE_DIRS}/assimp" "${BULLET_LIBRARIES}" GLEW::glew OpenAL::OpenAL)
 target_link_libraries(VGI-ABP PRIVATE OpenAL::OpenAL)
