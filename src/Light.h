@@ -1,6 +1,7 @@
 #pragma once
 
 #include "stdafx.h"
+#include "constants.h"
 /*
 * Aquesta classe representa una instancia de Llum dins de l'escena
 * aquest configurara els parametres de la shader d'il·luminació per a que es pugui utilitzar al nostre favor.
@@ -12,7 +13,7 @@ public:
 	Light(bool encesa, float difusa[], float especular[], CEsfe3D posicio, CAtenua atenuacio, bool restringida, float spotdirection[], float spotcoscutoff, float spotexponent);
 
 	void Iluminacio(GLint sh_programID);
-	void setShaderLight(int shaderID);
+	void setShaderLight(int shaderID) {};
 
 	~Light();
 private:

@@ -19,8 +19,6 @@
 #define MTL_SPECULAR_ID	 "Ks"
 #define MTL_SHININESS_ID "Ns"
 
-#define COMMENT_ID		 "#"
-
 struct Vector3D
 {
 	float fX;
@@ -45,7 +43,7 @@ struct OBJFileInfo
 
 #define MAX_STR_SIZE 1024
 
-fpos_t ReadNextString(char szString[], FILE* hStream)
+fpos_t inline ReadNextString(char szString[], FILE* hStream)
 {
 	////////////////////////////////////////////////////////////////////////
 	// Read the next string that isn't a comment
@@ -72,7 +70,7 @@ fpos_t ReadNextString(char szString[], FILE* hStream)
 	return pos;
 }
 
-void GetTokenParameter(char szString[], const unsigned int iStrSize, FILE *hFile)
+void inline GetTokenParameter(char szString[], const unsigned int iStrSize, FILE *hFile)
 {
 ////////////////////////////////////////////////////////////////////////
 // Read the parameter of a token, remove space and newline character
@@ -88,7 +86,7 @@ void GetTokenParameter(char szString[], const unsigned int iStrSize, FILE *hFile
 	szString[strlen(szString) - 1] = char('\0');
 }
 
-void MakePath(char szFileAndPath[])
+void inline MakePath(char szFileAndPath[])
 {
 ////////////////////////////////////////////////////////////////////////
 // Rips the filenames out of a path and adds a slash (if needed)
@@ -114,7 +112,7 @@ void MakePath(char szFileAndPath[])
 	szFileAndPath[0] = char('\0');
 }
 
-void GetFileInfo(FILE *hStream, OBJFileInfo *Info, const char szConstBasePath[])
+void inline GetFileInfo(FILE *hStream, OBJFileInfo *Info, const char szConstBasePath[])
 {
 ////////////////////////////////////////////////////////////////////////
 // Read the count of all important identifiers out of the given stream
@@ -186,7 +184,7 @@ void GetFileInfo(FILE *hStream, OBJFileInfo *Info, const char szConstBasePath[])
 	}
 }
 
-void GenTexCoords()
+void inline GenTexCoords()
 {
 ////////////////////////////////////////////////////////////////////////
 // Set up the automatic texture coord generation

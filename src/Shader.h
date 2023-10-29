@@ -15,8 +15,8 @@ class Shader {
 public:
     Shader();
 
-    void CreateFromString(const char* vertexCode, const char* fragmentCode, const char* geometricCode="");
-    void CreateFromFiles(std::string vertexLocation, std::string fragmentLocation, std::string geometricLocation="");
+    void CreateFromString(const char* vertexCode, const char* fragmentCode);
+    void CreateFromFiles(std::string vertexLocation, std::string fragmentLocation);
 
     std::string ReadFile(const char* fileLocation);
 
@@ -33,7 +33,7 @@ public:
 private:
     GLuint shaderID, uniformProjection, uniformModel, uniformView;
 
-    void CompileShader(const char* vertexCode, const char* fragmentCode, const char* geometricCode = "");
+    void CompileShader(const char* vertexCode, const char* fragmentCode);
     void AddShader(GLuint theProgram, const char* shaderCode, GLenum shaderType);
 };
 

@@ -11,9 +11,9 @@ Shader::Shader()
     uniformProjection = 0;
 }
 
-void Shader::CreateFromString(const char *vertexCode, const char *fragmentCode, const char *geometricCode="")
+void Shader::CreateFromString(const char *vertexCode, const char *fragmentCode)
 {
-    this->CompileShader(vertexCode, fragmentCode, geometricCode);
+    this->CompileShader(vertexCode, fragmentCode);
 }
 
 
@@ -39,7 +39,7 @@ void Shader::ClearShader()
     uniformProjection = 0;
 }
 
-void Shader::CompileShader(const char *vertexCode, const char *fragmentCode, const char *geometricCode="")
+void Shader::CompileShader(const char *vertexCode, const char *fragmentCode)
 {
     shaderID = glCreateProgram();
 
@@ -51,8 +51,6 @@ void Shader::CompileShader(const char *vertexCode, const char *fragmentCode, con
 
     AddShader(shaderID, vertexCode, GL_VERTEX_SHADER);
     AddShader(shaderID, fragmentCode, GL_FRAGMENT_SHADER);
-    if (geometricCode != "")
-        AddShader(shaderID, geometricCode, GL_GEOMETRY_SHADER);
 
     // Linking shaders
     GLint result = 0;
@@ -112,13 +110,12 @@ void Shader::AddShader(GLuint theProgram, const char *shaderCode, GLenum shaderT
 }
 
 //TODO: Change Locations to std::strings and add an optional geometry shader
-void Shader::CreateFromFiles(std::string vertexLocation, std::string fragmentLocation, std::string geometricLocation="")
+void Shader::CreateFromFiles(std::string vertexLocation, std::string fragmentLocation)
 {
     std::string vertexString = ReadFile(vertexLocation.c_str());
     std::string fragmentString = ReadFile(fragmentLocation.c_str());
     std::string geometricString = "";
-    if (geometricLocation != "")
-        geometricString = ReadFile(geometricLocation.c_str());
+
 
     const char* vertexCode = vertexString.c_str();
     const char* fragmentCode =  fragmentString.c_str();

@@ -33,7 +33,7 @@
 using namespace glm;
 
 // VGI: Llibreries OpenGL
-#include "Entorn/glut_geometry.h"			// Fonts dels Objectes de la llibreria freeglut
+//#include "Entorn/glut_geometry.h"			// Fonts dels Objectes de la llibreria freeglut
 
 // VGI: Llibreria SOIL2 (actualització de SOIL) per llegir imatges de diferents formats 
 //     (BMP,JPG,TIF,GIF,etc.) en la funció loadIMA (visualitzacio.cpp)
@@ -46,18 +46,6 @@ using namespace glm;
 #include <time.h>
 #include <vector>
 #include <string>
-
-// VGI: Constants de l'aplicació EntornVGI
-#include "constants.h"
-
-// Includes extra del nou entorn
-#include "Mesh.h"
-#include "Material.h"
-#include "Shader.h"
-#include "Window.h"
-#include "Camera.h"
-
-#include "StringHandler.cpp"
 
 // LLibreria de Open AL per a sounds 3D
 #include <AL/al.h>

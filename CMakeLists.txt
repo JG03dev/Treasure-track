@@ -39,7 +39,8 @@ add_executable(VGI-ABP
         src/Material.h
         src/Mesh.h
         src/Mesh.cpp
-        src/StringHandler.cpp)
+        src/StringHandler.h)
+
 
 # target_link_libraries(VGI-ABP PRIVATE glfw "${ASSIMP_INCLUDE_DIRS}/assimp" "${BULLET_LIBRARIES}" GLEW::glew OpenAL::OpenAL)
 target_link_libraries(VGI-ABP PRIVATE OpenAL::OpenAL)

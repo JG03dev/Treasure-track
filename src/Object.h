@@ -2,15 +2,16 @@
 
 #ifndef OBJECT_H
 #include "stdafx.h"
-#include "StringHandler.cpp"
+#include "Material.h"
+#include "Mesh.h"
 
 struct Face
 {
 	unsigned int	iNumVertices;
 	unsigned int	iMaterialIndex;
-	glVertex3f* pVertices;
-	glNormal3f* pNormals;
-	glTexCoord2f* pTexCoords;
+	Vector3D* pVertices;
+	Vector3D* pNormals;
+	Vector2D* pTexCoords;
 };
 
 class Object {

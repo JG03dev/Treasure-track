@@ -1,7 +1,8 @@
 #pragma once
 
-#include "Entorn/stdafx.h"
+#include "stdafx.h"
 #include "Shader.h"
+#include "constants.h"
 
 class Skybox 
 {

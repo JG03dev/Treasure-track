@@ -1,13 +1,6 @@
 #include "stdafx.h"
 #include "skybox.h"
 
-void CubeSkybox(GLdouble dSize)
-{
-	Set_VAOList(CUBE_SKYBOX, loadCubeSkybox_VAO());
-	drawCubeSkybox();
-	deleteVAOList(CUBE_SKYBOX);
-}
-
 Skybox::Skybox()
 {
 	loadCubeSkyboxVAO();
@@ -70,7 +63,6 @@ void Skybox::loadCubeSkyboxVAO()
 	};
 
 	// skybox VAO
-	CVAO SkyVAO;
 	SkyVAO.vaoId = 0;	SkyVAO.vboId = 0;	SkyVAO.eboId = 0;	SkyVAO.nVertexs = 0; SkyVAO.nIndices = 0;
 
 	glGenVertexArrays(1, &SkyVAO.vaoId); //glGenVertexArrays(1, &skyboxVAO);
