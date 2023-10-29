@@ -21,6 +21,19 @@
 
 #define COMMENT_ID		 "#"
 
+struct Vector3D
+{
+	float fX;
+	float fY;
+	float fZ;
+};
+
+struct Vector2D
+{
+	float fX;
+	float fY;
+};
+
 struct OBJFileInfo
 {
 	unsigned int iVertexCount;

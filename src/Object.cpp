@@ -12,6 +12,11 @@
 // Maximum number of vertices a that a single face can have
 #define MAX_VERTICES 256
 
+// Axis constants
+const short unsigned int x = 0;
+const short unsigned int y = 1;
+const short unsigned int z = 2;
+
 // Metodos Publicos de Inicializacion Grafica
 
 int _stdcall Object::LoadModel(char* szFileName)
@@ -59,9 +64,11 @@ int _stdcall Object::LoadModel(char* szFileName)
 	Vector3D* pNormals = 0;
 	Vector2D* pTexCoords = 0;
 	if (OBJInfo.iNormalCount)
-		pNormals = new Vector3D[ObjInfo.iNormalCount];
+		pNormals = new Vector3D[OBJInfo.iNormalCount];
 	if (OBJInfo.iTexCoordCount)
 		pTexCoords = new Vector2D[OBJInfo.iTexCoordCount];
+	if (OBJInfo.iMaterialCount)
+		materialList = std::vector<Material>(OBJInfo.iMaterialCount);
 	
 	// Init structure that holds the current array index
 	memset(&CurrentIndex, 0, sizeof(OBJFileInfo));
@@ -84,7 +91,7 @@ int _stdcall Object::LoadModel(char* szFileName)
 		{
 			// Read three floats out of the file
 			nScanReturn = fscanf_s(hFile, "%f %f %f",
-				&pVertices[CurrentIndex.iVertexCount].x,
+				&pVertices[CurrentIndex.iVertexCount].fX,
 				&pVertices[CurrentIndex.iVertexCount].fY,
 				&pVertices[CurrentIndex.iVertexCount].fZ);
 			// Next vertex
@@ -127,7 +134,7 @@ int _stdcall Object::LoadModel(char* szFileName)
 		}
 
 		// Process material information only if needed
-		if (OBJInfo.iMaterialCount)
+		if (materialList.empty())
 		{
 			// Rest of the line contains the name of a material
 			if (!strncmp(szString, USE_MTL_ID, sizeof(USE_MTL_ID)))
@@ -135,10 +142,10 @@ int _stdcall Object::LoadModel(char* szFileName)
 				// Read the rest of the line (the complete material name)
 				GetTokenParameter(szString, sizeof(szString), hFile);
 				// Are any materials loaded ?
-				if (pMaterials)
+				if (materialList.empty())
 					// Find material array index for the material name
 					for (i = 0; i < (int)OBJInfo.iMaterialCount; i++)
-						if (!strncmp(pMaterials[i].szName, szString, sizeof(szString)))
+						if (!strncmp(materialList[i].szName, szString, sizeof(szString)))
 						{
 							iCurMaterial = i;
 							break;
@@ -156,8 +163,7 @@ int _stdcall Object::LoadModel(char* szFileName)
 				strcpy_s(szLibraryFile, szBasePath);
 				strcat_s(szLibraryFile, szString);
 				// Load the material library
-				LoadMaterialLib(szLibraryFile, pMaterials,
-					&CurrentIndex.iMaterialCount, szBasePath);
+				LoadMaterialLib(szLibraryFile,&CurrentIndex.iMaterialCount, szBasePath);
 			}
 		}
 	}
@@ -168,18 +174,10 @@ int _stdcall Object::LoadModel(char* szFileName)
 	////////////////////////////////////////////////////////////////////////
 	// Arrange and render the model data
 	////////////////////////////////////////////////////////////////////////
-
-	// Sort the faces by material to minimize state changes
 	if (!materialList.empty())
-	{
 		qsort(pFaces, OBJInfo.iFaceCount, sizeof(Face), CompareFaceByMaterial);
-
-		// Copiar el vector pMaterials a un vector fixe vMaterials.
-		for (int i = 0; i < numMaterials; i++) vMaterials[i] = pMaterials[i];
-	}
-
 	// Render all faces into a VAO
-	loadToVAOList(pFaces, OBJInfo.iFaceCount, pMaterials);
+	loadToVAOList(pFaces, OBJInfo.iFaceCount);
 
 	////////////////////////////////////////////////////////////////////////
 	// Free structures that hold the model data
@@ -189,7 +187,6 @@ int _stdcall Object::LoadModel(char* szFileName)
 	delete[] pVertices;	pVertices = 0;
 	delete[] pNormals;		pNormals = 0;
 	delete[] pTexCoords;	pTexCoords = 0;
-	delete[] pMaterials;	pMaterials = 0;
 
 	// Remove face array
 	for (i = 0; i < (int)OBJInfo.iFaceCount; i++)
@@ -212,8 +209,8 @@ int _stdcall Object::LoadModel(char* szFileName)
 
 void _stdcall Object::ClearMeshList()
 {
-	GLint i;
-	for (i = 0, size = meshList.size(); i < size; i++)
+	GLint i, size = meshList.size();
+	for (i = 0; i < size; i++)
 	{
 		meshList[i].ClearMesh();
 	}
@@ -271,9 +268,7 @@ bool _stdcall Object::LoadMaterialLib(const char szFileName[], unsigned int* iCu
 			// Read material name
 			GetTokenParameter(szString, sizeof(szString), hFileT);
 			// Store material name in the structure
-			strcpy_s(pMaterials[*iCurMaterialIndex].szName, szString);
-			// Inicialitzar valors registre materials
-			materialList.emplace_back();
+			strcpy_s(materialList[*iCurMaterialIndex].szName, szString);
 		}
 		else
 		{
@@ -287,8 +282,6 @@ bool _stdcall Object::LoadMaterialLib(const char szFileName[], unsigned int* iCu
 	// Increment index cause LoadMaterialLib() assumes that the passed
 	// index is always empty
 	(*iCurMaterialIndex)++;
-
-	numMaterials = *iCurMaterialIndex;
 	return TRUE;
 }
 
@@ -302,7 +295,7 @@ void _stdcall Object::loadToVAOList(const Face* pFaces, const unsigned int iFace
 	int iPreviousMaterial = -1;
 	double color[4] = { 1.0F, 0.0f, 0.0f, 1.0f };
 
-	// VAO
+	// Mesh
 	meshList.emplace_back();
 
 	std::vector <double> vertices, colors, normals, textures;		// Definicio vectors dinamics per a vertexs i colors 
@@ -310,7 +303,8 @@ void _stdcall Object::loadToVAOList(const Face* pFaces, const unsigned int iFace
 
 	std::vector <int>::size_type nv = vertices.size();	// Tamany del vector vertices en elements.
 
-	meshList.back().ClearMesh();
+	// Fiquem aquest mesh a zero
+	//meshList.back().ClearMesh();
 
 	// Obtenir color actual definit en OpenGL amb glColor();
 	GLfloat cColor[4];
@@ -320,7 +314,7 @@ void _stdcall Object::loadToVAOList(const Face* pFaces, const unsigned int iFace
 	if (!pFaces[0].pTexCoords) GenTexCoords();
 
 	// Use default material if no materials are loaded
-	if (materialList.empty()) UseMaterial(NULL);
+	if (materialList.empty()) glDisable(GL_TEXTURE_2D);
 
 	// Process all faces
 	for (i = 0; i < (int)iFaceCount; i++)
@@ -337,7 +331,6 @@ void _stdcall Object::loadToVAOList(const Face* pFaces, const unsigned int iFace
 						// Creacio d'un VAO i un VBO i carrega de la geometria. Guardar identificador VAO identificador VBO a struct CVAO.
 						meshList.back().load_TRIANGLES_VAO(vertices, normals, colors, textures);	
 						meshList.emplace_back();
-						index_VAO = index_VAO + 1;
 						vertices.resize(0);		colors.resize(0);	normals.resize(0);		textures.resize(0);// Reinicialitzar vectors
 					}
 					materialIndexes.emplace_back(pFaces[i].iMaterialIndex);
@@ -509,9 +502,9 @@ void _stdcall Object::loadToVAOList(const Face* pFaces, const unsigned int iFace
 			// Set COLOR: Any materials loaded ?
 			if (!materialList.empty())
 			{	// Set Color
-				colors.push_back(materialList[pFaces[i].iMaterialIndex].fDiffuse[0]]);
-				colors.push_back(materialList[pFaces[i].iMaterialIndex].fDiffuse[1]]);
-				colors.push_back(materialList[pFaces[i].iMaterialIndex].fDiffuse[2]]);
+				colors.push_back(materialList[pFaces[i].iMaterialIndex].fDiffuse[0]);
+				colors.push_back(materialList[pFaces[i].iMaterialIndex].fDiffuse[1]);
+				colors.push_back(materialList[pFaces[i].iMaterialIndex].fDiffuse[2]);
 				colors.push_back(1.0);
 			}
 			else {	// Set Color per defecte
@@ -527,12 +520,10 @@ void _stdcall Object::loadToVAOList(const Face* pFaces, const unsigned int iFace
 			vertices.push_back(pFaces[i].pVertices[j + 1].fZ);
 		}
 	}
-
+	
+	glPopAttrib();
 	// ----------------------- VAO
 	nv = vertices.size();	// Tamany del vector vertices en elements.
-
-	// Numero de Materials del fitxer OBJ
-	numMaterials = index_VAO + 1;
 }
 
 void _stdcall Object::GetFaceNormal(float fNormalOut[], const Face* pFace)

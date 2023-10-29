@@ -1,33 +1,8 @@
 #pragma once
 
 #ifndef OBJECT_H
-
-#include "Mesh.h"
-#include "Material.h"
 #include "stdafx.h"
-
-struct Vector3D
-{
-	float fX;
-	float fY;
-	float fZ;
-};
-
-struct Vector2D
-{
-	float fX;
-	float fY;
-};
-
-struct OBJFileInfo
-{
-	unsigned int iVertexCount;
-	unsigned int iTexCoordCount;
-	unsigned int iNormalCount;
-	unsigned int iFaceCount;
-	unsigned int iMaterialCount;
-};
-
+#include "StringHandler.cpp"
 
 struct Face
 {

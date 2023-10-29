@@ -1,4 +1,4 @@
-#include "Entorn/stdafx.h"
+#include "stdafx.h"
 #include "skybox.h"
 
 void CubeSkybox(GLdouble dSize)

@@ -48,7 +48,7 @@ using namespace glm;
 #include <string>
 
 // VGI: Constants de l'aplicació EntornVGI
-#include "Entorn/constants.h"
+#include "constants.h"
 
 // Includes extra del nou entorn
 #include "Mesh.h"

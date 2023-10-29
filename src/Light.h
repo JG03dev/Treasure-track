@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Entorn/stdafx.h"
+#include "stdafx.h"
 /*
 * Aquesta classe representa una instancia de Llum dins de l'escena
 * aquest configurara els parametres de la shader d'il·luminació per a que es pugui utilitzar al nostre favor.
