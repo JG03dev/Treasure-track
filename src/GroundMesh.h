@@ -12,14 +12,14 @@ const int GROUND_NUM_INDICES = GROUND_NUM_TRIANGLES * 3;
 
 static GLfloat gVerticesGround[GROUND_NUM_VERTICES * 3] = {
     //  X, Y, Z
-    1.f, 0.f, 0.f,
-    1.f, 1.f, 0.f,
-    0.f, 1.f, 0.f,
-    0.f, 0.f, 0.f,
-    1.f, 0.f, 1.f,
-    1.f, 1.f, 1.f,
-    0.f, 1.f, 1.f,
-    0.f, 0.f, 1.f,
+    0.5f, -0.5f, -0.5f,
+    0.5f, 0.5f, -0.5f,
+    -0.5f, 0.5f, -0.5f,
+    -0.5f, -0.5f, -0.5f,
+    0.5f, -0.5f, 0.5f,
+    0.5f, 0.5f, 0.5f,
+    -0.5f, 0.5f, 0.5f,
+    -0.5f, -0.5f, 0.5f,
 };
 
 static unsigned int gIndicesBunny[GROUND_NUM_INDICES] = {

@@ -83,6 +83,6 @@ void Camera::followPlayer() {
 
     btVector3 pos = t.getOrigin();
 
-    position = glm::vec3(float(pos.getX()), float(pos.getY()) + 2, float(pos.getZ()));
+    position = glm::vec3(float(pos.getX()), float(pos.getY()) + 4, float(pos.getZ()) - 2);
 }
 

@@ -11,7 +11,7 @@ void Renderer::render(btRigidBody* groundRB, btTransform chassisT) {
     btTransform t = btTransform();
     groundRB->getMotionState()->getWorldTransform(t);
     t.getOpenGLMatrix(glm::value_ptr(model));
-    model = glm::scale(model, glm::vec3(10, 1, 10));
+    model = glm::scale(model, glm::vec3(200, 2, 200));
     glUniformMatrix4fv((int)uniformModel, 1, GL_FALSE, glm::value_ptr(model));
     glUniformMatrix4fv((int)uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
     glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(camera->calculateViewMatrix()));
@@ -20,7 +20,7 @@ void Renderer::render(btRigidBody* groundRB, btTransform chassisT) {
 
     model = glm::mat4(1.0f);
     chassisT.getOpenGLMatrix(glm::value_ptr(model));
-    model = glm::scale(model, glm::vec3(1.f, 0.5f, 2.f));
+    model = glm::scale(model, glm::vec3(2.f, 1.f, 4.f));
     glUniformMatrix4fv((int)uniformModel, 1, GL_FALSE, glm::value_ptr(model));
     glUniformMatrix4fv((int)uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
     glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(camera->calculateViewMatrix()));
