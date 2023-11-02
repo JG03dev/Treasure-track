@@ -29,64 +29,58 @@ bool PlayerVehicle::keyboardCallback(bool* keys, GLfloat deltaTime, int state) {
 	// 3 => rueda trasera
 
 	// state indica si se ha pulsado o soltado
-	if (state == GLFW_PRESS) {
-		if (keys[GLFW_KEY_W])
-		{
-			this->vehicle->applyEngineForce(this->vehicleParams.m_fEngineForce, 2); 
-			this->vehicle->applyEngineForce(this->vehicleParams.m_fEngineForce, 3);
-			handled = true;
-		}
-		if (keys[GLFW_KEY_S])
-		{
-			this->vehicle->applyEngineForce(this->vehicleParams.m_bEngineForce * deltaTime, 0);
-			this->vehicle->applyEngineForce(this->vehicleParams.m_bEngineForce * deltaTime, 1);
-			handled = true;
-		}
-		if (keys[GLFW_KEY_A])
-		{
-			this->vehicle->setSteeringValue(this->vehicleParams.m_steeringValue, 0);
-			this->vehicle->setSteeringValue(this->vehicleParams.m_steeringValue, 1);
-			handled = true;
+	if (keys[GLFW_KEY_W]) {
+		this->vehicle->applyEngineForce(this->vehicleParams.m_fEngineForce, 2); 
+		this->vehicle->applyEngineForce(this->vehicleParams.m_fEngineForce, 3);
+		handled = true;
+	}
 
-		}
-		if (keys[GLFW_KEY_D])
-		{
-			this->vehicle->setSteeringValue(-this->vehicleParams.m_steeringValue, 0);
-			this->vehicle->setSteeringValue(-this->vehicleParams.m_steeringValue, 1);
-			handled = true;
-		}
-		// Handbrake
-		if (keys[GLFW_KEY_LEFT_CONTROL]) {
-			this->vehicle->setBrake(500 * deltaTime, 2);
-			this->vehicle->setBrake(500 * deltaTime, 3);
-			handled = true;
-		}
+	if (keys[GLFW_KEY_S]) {
+		this->vehicle->applyEngineForce(-this->vehicleParams.m_bEngineForce, 0);
+		this->vehicle->applyEngineForce(-this->vehicleParams.m_bEngineForce, 1);
+		handled = true;
+	}
+
+	if (!keys[GLFW_KEY_W] && !keys[GLFW_KEY_S]) {
+		this->vehicle->applyEngineForce(0, 2);
+		this->vehicle->applyEngineForce(0, 3);
+
+		//Default braking force, always added otherwise there is no friction on the wheels
+		this->vehicle->setBrake(10, 2);
+		this->vehicle->setBrake(10, 3);
+		handled = true;
+	}
+
+	if (keys[GLFW_KEY_A])
+	{
+		this->vehicle->setSteeringValue(this->vehicleParams.m_steeringValue, 0);
+		this->vehicle->setSteeringValue(this->vehicleParams.m_steeringValue, 1);
+		handled = true;
+
+	}
+	
+	if (keys[GLFW_KEY_D])
+	{
+		this->vehicle->setSteeringValue(-this->vehicleParams.m_steeringValue, 0);
+		this->vehicle->setSteeringValue(-this->vehicleParams.m_steeringValue, 1);
+		handled = true;
+	}
+
+	if (!keys[GLFW_KEY_A] && !keys[GLFW_KEY_D]) {
+		this->vehicle->setSteeringValue(0, 0);
+		this->vehicle->setSteeringValue(0, 1);
+		handled = true;
+	}
+	// Handbrake
+	if (keys[GLFW_KEY_LEFT_CONTROL]) {
+		this->vehicle->setBrake(500 * deltaTime, 2);
+		this->vehicle->setBrake(500 * deltaTime, 3);
+		handled = true;
 	}
 	else {
-		if (keys[GLFW_KEY_W] || keys[GLFW_KEY_S])
-		{
-			this->vehicle->applyEngineForce(0, 2);
-			this->vehicle->applyEngineForce(0, 3);
-
-			//Default braking force, always added otherwise there is no friction on the wheels
-			this->vehicle->setBrake(10, 2);
-			this->vehicle->setBrake(10, 3);
-			handled = true;
-		}
-
-		if (keys[GLFW_KEY_A] || keys[GLFW_KEY_D])
-		{
-			this->vehicle->setSteeringValue(0, 0);
-			this->vehicle->setSteeringValue(0, 1);
-			handled = true;
-		}
-
-		if (keys[GLFW_KEY_LEFT_CONTROL])
-		{
-			this->vehicle->setBrake(0, 2);
-			this->vehicle->setBrake(0, 3);
-			handled = true;
-		}
+		this->vehicle->setBrake(0, 2);
+		this->vehicle->setBrake(0, 3);
+		handled = true;
 	}
 
 	return handled;
