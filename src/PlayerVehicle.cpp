@@ -73,8 +73,8 @@ bool PlayerVehicle::keyboardCallback(bool* keys, GLfloat deltaTime, int state) {
 	}
 	// Handbrake
 	if (keys[GLFW_KEY_LEFT_CONTROL]) {
-		this->vehicle->setBrake(500 * deltaTime, 2);
-		this->vehicle->setBrake(500 * deltaTime, 3);
+		this->vehicle->setBrake(500, 2);
+		this->vehicle->setBrake(500, 3);
 		handled = true;
 	}
 	else {
@@ -107,6 +107,7 @@ int PlayerVehicle::initVehicle(btDiscreteDynamicsWorld* dynamicsWorld) {
 
 		//The btBoxShape is centered at the origin
 		btCollisionShape* chassisShape = new btBoxShape(halfExtends);
+		chassisShape->setMargin(0.5f);
 
 		//Stores on an array for reusing
 		this->collisionShapes.push_back(chassisShape);
@@ -147,6 +148,8 @@ int PlayerVehicle::initVehicle(btDiscreteDynamicsWorld* dynamicsWorld) {
 
 		//Adds the wheels to the vehicle
 		this->addWheels(&halfExtends, this->vehicle, tuning);
+
+		this->vehicle->setCoordinateSystem(0, 1, 2);
 	}
 
 	// guiHelper->autogenerateGraphicsObjects(this->dynamicsWorld);

@@ -6,7 +6,6 @@
 #include "Mesh.h"
 
 #include "GroundMesh.h"
-
 #include "Renderer.h"
 
 class PhysicsEngine {

@@ -30,7 +30,9 @@ add_executable(VGI-ABP src/main.cpp
         src/PlayerVehicle.cpp
         src/GroundMesh.h
         src/Renderer.h
-        src/Renderer.cpp)
+        src/Renderer.cpp
+        src/GLDebugDrawer.h
+        src/GLDebugDrawer.cpp)
 
 # target_link_libraries(VGI-ABP PRIVATE glfw "${ASSIMP_INCLUDE_DIRS}/assimp" "${BULLET_LIBRARIES}" GLEW::glew OpenAL::OpenAL)
 target_link_libraries(VGI-ABP PRIVATE ${ASSIMP_LIBRARIES})

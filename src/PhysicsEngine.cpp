@@ -1,4 +1,5 @@
 #include "PhysicsEngine.h"
+#include "Camera.h"
 
 // Constructors
 
@@ -8,8 +9,6 @@ PhysicsEngine::PhysicsEngine() : gravity(0, -9.8, 0), simulationSubSteps(2) {
 	initPhysics();
 
 	player = new PlayerVehicle(dynamicsWorld);
-
-	
 }
 
 PhysicsEngine::PhysicsEngine(float* g, int simulationSubSteps) : gravity(btScalar(g[0]), btScalar(g[1]), btScalar(g[2])), simulationSubSteps(simulationSubSteps) {
@@ -57,7 +56,7 @@ void PhysicsEngine::initPhysics() {
 	{
 		//Creates the ground shape
 		btCollisionShape* groundShape = new btBoxShape(btVector3(100, 1, 100));
-
+		groundShape->setMargin(4.f);
 		Mesh* groundM = new Mesh();
 		groundM->CreateMesh(gVerticesGround, gIndicesBunny, GROUND_NUM_VERTICES, GROUND_NUM_INDICES);
 		renderer->addMesh(groundM);
