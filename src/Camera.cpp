@@ -62,7 +62,7 @@ void Camera::mouseControl(GLfloat xChange, GLfloat yChange)
 glm::mat4 Camera::calculateViewMatrix()
 {
     btVector3 playerForward = this->player->vehicle->getForwardVector();
-    return glm::lookAt(position, position + glm::vec3(playerForward.getX(), playerForward.getY() - 0.5f, playerForward.getZ()), up);
+    return glm::lookAt(position, position + glm::vec3(playerForward.getX(), playerForward.getY(), playerForward.getZ()), up);
 }
 
 
@@ -82,8 +82,8 @@ void Camera::followPlayer() {
     t = this->player->vehicle->getChassisWorldTransform();
 
     btVector3 forward = this->player->vehicle->getForwardVector();
-    btVector3 pos = t.getOrigin() - forward;
+    btVector3 pos = t.getOrigin() - forward*8;
     
-    position = glm::vec3(float(pos.getX()), float(pos.getY()) + 3, float(pos.getZ()));
+    position = glm::vec3(float(pos.getX()), float(pos.getY()) + 2, float(pos.getZ()));
 }
 
