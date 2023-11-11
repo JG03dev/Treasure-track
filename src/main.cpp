@@ -20,6 +20,14 @@
 #include "Renderer.h"
 #include "PhysicsEngine.h"
 
+#include "SoundDevice.h"
+#include <iostream>
+#include "MusicBuffer.h"
+#include "MainLoop/MainLoop.h"  // for looping
+#include <Windows.h>  // for keyboard press
+
+
+
 const float toRadians = 3.14159265f / 180.0f;
 
 Renderer* Renderer::renderer = NULL;
@@ -82,7 +90,7 @@ int main(int argc, char* argv[])
 {
     Renderer* renderer = Renderer::getInstance();
 
-    renderer->startWindow();// Todo el código de graficos debe ir despues de esta inicializacion
+    renderer->startWindow();// Todo el cï¿½digo de graficos debe ir despues de esta inicializacion
 
     PhysicsEngine pE;
 
@@ -100,12 +108,31 @@ int main(int argc, char* argv[])
 
     GLuint uniformProjection = 0, uniformModel = 0, uniformView = 0;
 
+    SoundDevice::init();
+    static MusicBuffer myMusic("../../../music/coconut.wav");
 	// Loop until window closed
 	while (!renderer->mainWindow->getShouldClose())
 	{
+        myMusic.UpdateBufferStream();
         GLfloat now = (GLfloat) glfwGetTime();
         deltaTime = now - lastTime;
         lastTime = now;
+
+        static float musiccontrolcooldown = 1;
+        musiccontrolcooldown += deltaTime;
+        if (musiccontrolcooldown > 0 && GetKeyState('Q') & 0x8000)
+        {
+            if (myMusic.isPlaying()) // toggle play/pause
+            {
+                myMusic.Pause();
+            }
+            else
+            {
+                myMusic.Play();
+            }
+            _sleep(100);
+            musiccontrolcooldown = 0;
+        }        
 
         pE.stepSimulation(deltaTime);
 

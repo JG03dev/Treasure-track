@@ -14,6 +14,7 @@ find_package(OpenAL CONFIG REQUIRED)
 find_package(Bullet CONFIG REQUIRED)
 find_package(assimp REQUIRED)
 find_package(glfw3 REQUIRED)
+find_package(SndFile REQUIRED)
 
 add_executable(VGI-ABP src/main.cpp
         src/Mesh.h
@@ -30,7 +31,13 @@ add_executable(VGI-ABP src/main.cpp
         src/PlayerVehicle.cpp
         src/GroundMesh.h
         src/Renderer.h
-        src/Renderer.cpp)
+        src/Renderer.cpp
+        src/SoundDevice.h
+        src/SoundDevice.cpp 
+        src/SoundSource.cpp 
+        src/SoundSource.h
+        src/MusicBuffer.h 
+        src/MusicBuffer.cpp)
 
 # target_link_libraries(VGI-ABP PRIVATE glfw "${ASSIMP_INCLUDE_DIRS}/assimp" "${BULLET_LIBRARIES}" GLEW::glew OpenAL::OpenAL)
 target_link_libraries(VGI-ABP PRIVATE ${ASSIMP_LIBRARIES})
@@ -39,3 +46,4 @@ target_link_libraries(VGI-ABP PRIVATE OpenGL::GL)
 target_link_libraries(VGI-ABP PRIVATE GLEW::GLEW)
 target_link_libraries(VGI-ABP PRIVATE glfw)
 target_link_libraries(VGI-ABP PRIVATE "${BULLET_LIBRARIES}")
+target_link_libraries(VGI-ABP PRIVATE SndFile::sndfile)
