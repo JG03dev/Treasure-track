@@ -1,14 +1,12 @@
 //******** PRACTICA VISUALITZACIÓ GRÀFICA INTERACTIVA (Escola Enginyeria - UAB)
-//******** Entorn bàsic VS2022 MONOFINESTRA amb OpenGL 4.3+, interfície GLFW, ImGui i llibreries GLM
-//******** Ferran Poveda, Marc Vivet, Carme Julià, Débora Gil, Enric Martí (Setembre 2022)
+//******** Entorn bàsic VS2022 MULTIFINESTRA amb OpenGL 4.3+, interfície MFC i llibreries GLM
+//******** Ferran Poveda, Marc Vivet, Carme Julià, Débora Gil, Enric Martí Gòdia (Setembre 2023)
 // constants.h : Definició de constants compartides
 //				 CENtornVGIView.cpp, visualitzacio.cpp i escena.cpp
 
 
 #ifndef CONST_H
 #define CONST_H
-
-#include <GL/glew.h>
 
 //--------------- VGI: Tipus de Càmera
 #define CAP ' '
@@ -22,6 +20,7 @@
 #define PERSPECT 'P'
 #define IMA_PICK 3
 #define PASSEIG_V 4
+
 
 //--------------- VGI: Tipus de Polars (per la Visualització Interactiva)
 #define POLARZ 'Z'
@@ -57,17 +56,15 @@
 //-------------- VGI: Tipus d'Iluminacio
 #define PUNTS 'P'
 #define FILFERROS 'w'
-#define PLANA 'f'
+#define PLANA 'p'
 #define SUAU 's'
 
 //-------------- VGI: Objectes precompilats OpenGL amb glNewList
 #define EIXOS 1			// Eixos
 #define FRACTAL 2		// Fractal
-#define OBJECTE3DS 3	// Objecte 3DS sense textures
-#define OBJECTE3DST 4	// Objecte 3DS amb textures
-#define OBJECTEOBJ 5	// Objecte OBJ sense textures
-#define OBJECTEOBJT 6   // Objecte OBJ amb textures
-#define SEA 7			// Objecte SEA
+#define OBJECTEOBJ 3	// Objecte OBJ sense textures
+#define OBJECTEOBJT 4   // Objecte OBJ amb textures
+#define SEA 5			// Objecte SEA
 
 // -------------- VGI: Definició dels valors del pla near i far del Volum de Visualització en Perspectiva
 const double p_near=0.01;
@@ -108,7 +105,6 @@ const int NUM_MAX_LLUMS = 8;
 #define PHONG_SHADER 'P'
 #define FILE_SHADER 'F'
 #define PROG_BINARY_SHADER 'p'
-#define PROG_BINARY_SHADERW 'W'
 
 //--------------- VGI: Valor constant de pi
 const double PI=3.14159;
@@ -120,27 +116,15 @@ const double PID2 = PI / 2;
 #define GRID_SIZE 50	// Maximum size of the grid in OpenGL World Coordenates unities.
 #define PAS_GRID 1		// Step to shift the grid planes.
 
-// --------------- VGI. TRUCK: Resolució de les rodes (Nombre de divisions del cilindre i discos)
-#define RESOLUCIO_RODA 16
-
 // --------------- VGI. Maxim tamany del fractal
 //#define FMAX 512
 
-// --------------- VGI. MInterval temps Timer
-#define elapsedTime 0.004f
-
-// --------------- VGI: Estructura tamany 2D (Pre-definida en Visual Studio 2019)
-struct CSize
-{
-	GLint cx;
-	GLint cy;
-};
-
-// --------------- VGI: Estructura coordenada 2D (Ja definida en Visual Studio 2010)
+/* --------------- VGI: Estructura coordenada 2D (Ja definida en Visual Studio 2010)
 struct CPoint
 {   GLint x;
     GLint y;
 };
+*/
 
 // --------------- VGI: Estructura coordenada 3D
 struct CPunt3D
@@ -219,7 +203,5 @@ struct LLUM
 	GLfloat spotcoscutoff;		// Coseno de l'angle d'obertura de la font de llum restringida.
 	GLfloat spotexponent;		// Exponent que indica l'atenuació de la font del centre de l'eix a l'exterior, segons model de Warn.
 };
-
-typedef unsigned int	uint;
 
 #endif

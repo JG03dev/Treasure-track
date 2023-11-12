@@ -1,18 +1,18 @@
 #include "stdafx.h"
 #include "skybox.h"
 
-Skybox::Skybox()
+Skybox::Skybox() : SkyShader("", "")
 {
 	loadCubeSkyboxVAO();
 	SkyTexture = 0;
 }
 
-Skybox::Skybox(std::vector<std::string> faces, std::string vertexLocation, std::string fragmentLocation)
+Skybox::Skybox(std::vector<std::string> faces, std::string vertexLocation, std::string fragmentLocation) : SkyShader(vertexLocation.c_str(), fragmentLocation.c_str())
 {
 	loadCubeSkyboxVAO();
 	SkyTexture = 0;
 	loadCubemap(faces);
-	SkyShader.CreateFromFiles(vertexLocation, fragmentLocation);
+	
 }
 
 void Skybox::loadCubeSkyboxVAO()
@@ -109,7 +109,7 @@ void Skybox::loadCubemap(std::vector<std::string> faces)
 
 void Skybox::drawSkybox(char eix_Polar, glm::mat4 MatriuProjeccio, glm::mat4 MatriuVista)
 {
-	GLuint sk_programID = SkyShader.GetShaderID();
+	GLuint sk_programID = SkyShader.ID;
 	glm::mat4 ModelMatrix(1.0);
 
 	glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
@@ -122,8 +122,8 @@ void Skybox::drawSkybox(char eix_Polar, glm::mat4 MatriuProjeccio, glm::mat4 Mat
 	glUniformMatrix4fv(glGetUniformLocation(sk_programID, "viewMatrix"), 1, GL_FALSE, &MatriuVista[0][0]);
 
 	// Rotar skyBox per a orientar sobre eix superior Z o X en Vista Esfèrica (POLARX, POLARY, POLARZ)
-	if (eix_Polar == POLARZ) ModelMatrix = glm::rotate(ModelMatrix, radians(90.0f), vec3(1.0f, 0.0f, 0.0f));
-	else if (eix_Polar == POLARX) ModelMatrix = glm::rotate(ModelMatrix, radians(-90.0f), vec3(0.0f, 0.0f, 1.0f));
+	if (eix_Polar == 'Z') ModelMatrix = glm::rotate(ModelMatrix, radians(90.0f), vec3(1.0f, 0.0f, 0.0f));
+	else if (eix_Polar == 'X') ModelMatrix = glm::rotate(ModelMatrix, radians(-90.0f), vec3(0.0f, 0.0f, 1.0f));
 
 	// Escalar Cub Skybox a 5000 per encabir objectes escena a l'interior
 	ModelMatrix = glm::scale(ModelMatrix, vec3(5000.0f, 5000.0f, 5000.0f));		//glScaled(5000.0, 5000.0, 5000.0);
