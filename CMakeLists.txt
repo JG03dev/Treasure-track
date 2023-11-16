@@ -23,11 +23,10 @@ add_executable(VGI-ABP
 # Ficheros de funcionalidades extra
         src/stdafx.h
         src/constants.h
-# Fiechros de funcionalidades del juego
+# Ficheros de funcionalidades del juego
         src/Shader.h
         src/Window.cpp
         src/Window.h
-        src/Camera.cpp
         src/Camera.h
         src/PhysicsEngine.cpp
         src/PhysicsEngine.h
@@ -48,7 +47,7 @@ add_executable(VGI-ABP
         src/skybox.cpp
         src/Light.cpp 
         src/Light.h
-# Ficheros de Objecto
+# Ficheros de Objeto
         src/Model.h
         src/Mesh.h)
 

@@ -47,7 +47,7 @@ Per començar obriu una terminal en la carpeta del projecte i executeu el següe
 A continuació instaleu les llibreries utilitzant la següent comanda
 
 ```powershell
-.\vcpkg\vcpkg install glew glm glfw3 soil2 openal-soft bullet3
+.\vcpkg\vcpkg install glew glm glfw3 soil2 openal-soft libsndfile bullet3
 ```
 
 Finalment per integrar vcpkg amb les llibreries instalades a visual studio executeu

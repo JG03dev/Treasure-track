@@ -114,6 +114,18 @@ public:
             Zoom = 45.0f;
     }
 
+    void Camera::followPlayer() {
+        btTransform t;
+        t = this->player->vehicle->getChassisWorldTransform();
+
+        btVector3 forward = this->player->vehicle->getForwardVector();
+        btVector3 pos = t.getOrigin() - forward * 8;
+
+        Position = glm::vec3(float(pos.getX()), float(pos.getY()) + 2, float(pos.getZ()));
+    }
+
+    void setTarget(PlayerVehicle* p) { player = p; }
+
 private:
     // calculates the front vector from the Camera's (updated) Euler Angles
     void updateCameraVectors()
@@ -128,9 +140,5 @@ private:
         Right = glm::normalize(glm::cross(Front, WorldUp));  // normalize the vectors, because their length gets closer to 0 the more you look up or down which results in slower movement.
         Up    = glm::normalize(glm::cross(Right, Front));
     }
-
-    void followPlayer();
-
-    void setTarget(PlayerVehicle* p) { player = p; }
 };
 #endif
