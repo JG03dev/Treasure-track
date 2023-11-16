@@ -3,37 +3,61 @@
 //
 #pragma once
 
-#include <cstdio>
-#include <cstring>
 #include <string>
+#include <map>
+#include <fstream>
+#include <sstream>
 #include <iostream>
 #include <fstream>
 
-#include <GL/glew.h>
+#include "stdafx.h"
 
 class Shader {
+
 public:
-    Shader();
+	Shader();
 
-    void CreateFromString(const char* vertexCode, const char* fragmentCode, const char* geometricCode="");
-    void CreateFromFiles(std::string vertexLocation, std::string fragmentLocation, std::string geometricLocation="");
+	Shader(const char* vsFilename, const char* fsFilename, const char* gsFilename = NULL);
 
-    std::string ReadFile(const char* fileLocation);
+	~Shader();
 
-    GLuint GetProjectionLocation(){ return uniformProjection; }
-    GLuint GetModelLocation(){ return uniformModel; }
-    GLuint GetViewLocation(){ return uniformView; }
-    GLuint GetShaderID() { return shaderID; }
+	enum ShaderType
+	{
+		VERTEX,
+		FRAGMENT,
+		GEOMETRY,
+		PROGRAM
+	};
 
-    void UseShader();
-    void ClearShader();
+	void use();
 
-    ~Shader();
+	GLuint ID() const;
+
+	bool loadShaders(const char* vsFilename, const char* fsFilename, const char* gsFilename = NULL);
+
+	void setUniform(const std::string& name, bool value);
+	void setUniform(const std::string& name, int value);
+	void setUniform(const std::string& name, float value);
+	void setUniform(const std::string& name, float x, float y);
+	void setUniform(const std::string& name, float x, float y, float z);
+	void setUniform(const std::string& name, float x, float y, float z, float w);
+	void setUniform(const std::string& name, const glm::vec2& v);
+	void setUniform(const std::string& name, const glm::vec3& v);
+	void setUniform(const std::string& name, const glm::vec4& v);
+	void setUniform(const std::string& name, const glm::mat2& m);
+	void setUniform(const std::string& name, const glm::mat3& m);
+	void setUniform(const std::string& name, const glm::mat4& m);
 
 private:
-    GLuint shaderID, uniformProjection, uniformModel, uniformView;
 
-    void CompileShader(const char* vertexCode, const char* fragmentCode, const char* geometricCode = "");
-    void AddShader(GLuint theProgram, const char* shaderCode, GLenum shaderType);
+	std::string fileToString(const std::string& filename);
+
+	void  checkCompileErrors(GLuint shader, ShaderType type);
+
+	GLint getUniformLocation(const GLchar* name);
+
+	GLuint mHandle;
+	std::map<std::string, GLint> mUniformLocations;
 };
 
+#endif // SHADER_H

@@ -14,31 +14,34 @@ find_package(OpenAL CONFIG REQUIRED)
 find_package(Bullet CONFIG REQUIRED)
 find_package(glfw3 REQUIRED)
 find_package(soil2 CONFIG REQUIRED)
+find_package(assimp REQUIRED)
 
-add_executable(VGI-ABP src/main.cpp
+add_executable(VGI-ABP 
+# Ficheros principales
+        src/main.cpp
+# Ficheros de funcionalidades extra
+        src/stdafx.h
+        src/Primitives.h
+        src/Primitives.cpp
+        
+# Fiechros de funcionalidades del juego
+        src/Camera.h
+        src/Camera.cpp
+        src/Skybox.h
+        src/Skybox.cpp
+        src/Shadow.h
+        src/Shadow.cpp
+
+# Ficheros de Objecto
+        src/Model.h
+        src/Model.cpp
+        src/Shader.h
+        src/Shader.cpp
         src/Mesh.h
         src/Mesh.cpp
-        src/Shader.cpp
-        src/Shader.h
-        src/Window.cpp
-        src/Window.h
-        src/Camera.cpp
-        src/Camera.h        
-        src/Entorn/objLoader.cpp
-        src/Entorn/objLoader.h
-        src/Entorn/escena.cpp
-        src/Entorn/escena.h
-        src/Entorn/constants.h
-        src/Entorn/glut_geometry.cpp
-        src/Entorn/glut_geometry.h
-        "src/Material.cpp"
-        "src/Material.h"
-        src/StringHandler.cpp
-        "src/stdafx.h"
-        src/Entorn/visualitzacio.h
-        src/Entorn/visualitzacio.cpp
-        src/Entorn/quatern.cpp
-        src/Entorn/quatern.h "src/Entorn/shader.cpp" "src/Entorn/shader.h" "src/skybox.cpp" "src/skybox.h") 
+        src/Texture.h
+        src/Texture.cpp)
+
 
 # target_link_libraries(VGI-ABP PRIVATE glfw "${ASSIMP_INCLUDE_DIRS}/assimp" "${BULLET_LIBRARIES}" GLEW::glew OpenAL::OpenAL)
 target_link_libraries(VGI-ABP PRIVATE OpenAL::OpenAL)
@@ -47,3 +50,4 @@ target_link_libraries(VGI-ABP PRIVATE GLEW::GLEW)
 target_link_libraries(VGI-ABP PRIVATE glfw)
 target_link_libraries(VGI-ABP PRIVATE "${BULLET_LIBRARIES}")
 target_link_libraries(VGI-ABP PRIVATE soil2)
+target_link_libraries(VGI-ABP PRIVATE ${ASSIMP_LIBRARIES})

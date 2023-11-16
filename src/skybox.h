@@ -1,22 +1,32 @@
-#pragma once
+#ifndef SKYBOX_H
+#define SKYBOX_H
+
+#include <vector>
 
 #include "Entorn/stdafx.h"
 #include "Shader.h"
 
-class Skybox 
-{
+
+class Skybox {
+
 public:
+
+	const unsigned int active_texture_unit;
+
 	Skybox();
-	Skybox(std::vector<std::string> faces, std::string vertexLocation, std::string fragmentLocation);
 
-	void loadCubeSkyboxVAO();
-	void loadCubemap(std::vector<std::string> faces);
-	void drawSkybox(char eix_Polar, glm::mat4 MatriuProjeccio, glm::mat4 MatriuVista);
+	void Draw(Shader& shader, glm::mat4& view, glm::mat4& projection);
+	void LoadTexture(std::vector<std::string>& faces);
 
-	~Skybox();
+	unsigned int VBO() { return vbo; }
+	unsigned int VAO() { return vao; }
+	unsigned int EBO() { return ebo; }
+	unsigned int TID() { return tid; }
 
 private:
-	CVAO SkyVAO; //VAO del skybox (spoiler es un cub)
-	GLuint SkyTexture; //Textura del skybox
-	Shader SkyShader;
+	unsigned int vbo, vao, ebo, tid;
+
+	void setup();
 };
+
+#endif

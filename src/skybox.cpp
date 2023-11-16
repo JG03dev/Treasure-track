@@ -1,158 +1,132 @@
-#include "Entorn/stdafx.h"
-#include "skybox.h"
+#include "Skybox.h"
 
-void CubeSkybox(GLdouble dSize)
-{
-	Set_VAOList(CUBE_SKYBOX, loadCubeSkybox_VAO());
-	drawCubeSkybox();
-	deleteVAOList(CUBE_SKYBOX);
-}
+std::vector<float> skyboxVertices = {
+	// front
+	-1.0, -1.0,  1.0, // 0
+	 1.0, -1.0,  1.0, // 1
+	 1.0,  1.0,  1.0, // 2
+	-1.0,  1.0,  1.0, // 3
+	// back
+	-1.0, -1.0, -1.0, // 4
+	 1.0, -1.0, -1.0, // 5
+	 1.0,  1.0, -1.0, // 6
+	-1.0,  1.0, -1.0, // 7
+};
+
+std::vector<unsigned int> skyboxElements = {
+	// right
+	1, 2, 6,
+	6, 5, 1,
+	// left
+	4, 7, 3,
+	3, 0, 4,
+	// top
+	3, 7, 6,
+	6, 2, 3,
+	// bottom
+	4, 0, 1,
+	1, 5, 4,
+	// front
+	0, 3, 2,
+	2, 1, 0,
+	// back
+	7, 4, 5,
+	5, 6, 7,
+};
 
 Skybox::Skybox()
+	: active_texture_unit(15)
 {
-	loadCubeSkyboxVAO();
-	SkyTexture = 0;
+	setup();
 }
 
-Skybox::Skybox(std::vector<std::string> faces, std::string vertexLocation, std::string fragmentLocation)
-{
-	loadCubeSkyboxVAO();
-	SkyTexture = 0;
-	loadCubemap(faces);
-	SkyShader.CreateFromFiles(vertexLocation, fragmentLocation);
+void Skybox::setup() {
+
+	glGenBuffers(1, &vbo); // Generate an empty vertex buffer on the GPU
+	glGenBuffers(1, &ebo);
+	glGenVertexArrays(1, &vao); // Tell OpenGL to create new Vertex Array Object
+
+	glBindVertexArray(vao); // Make the vertices buffer the current one
+
+	glBindBuffer(GL_ARRAY_BUFFER, vbo); // "bind" or set as the current buffer we are working with
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * skyboxVertices.size(),
+		skyboxVertices.data(), GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * skyboxElements.size(),
+		skyboxElements.data(), GL_STATIC_DRAW);
+
+	glEnableVertexAttribArray(0); // vertex positions
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), NULL);
+
+	glBindVertexArray(0); // Release control of vao
 }
 
-void Skybox::loadCubeSkyboxVAO()
-{
-	GLfloat skyboxVertices[] = {
-		// positions          
-		-1.0f,  1.0f, -1.0f,
-		-1.0f, -1.0f, -1.0f,
-		 1.0f, -1.0f, -1.0f,
-		 1.0f, -1.0f, -1.0f,
-		 1.0f,  1.0f, -1.0f,
-		-1.0f,  1.0f, -1.0f,
+void Skybox::Draw(Shader& shader, glm::mat4& view, glm::mat4& projection) {
 
-		-1.0f, -1.0f,  1.0f,
-		-1.0f, -1.0f, -1.0f,
-		-1.0f,  1.0f, -1.0f,
-		-1.0f,  1.0f, -1.0f,
-		-1.0f,  1.0f,  1.0f,
-		-1.0f, -1.0f,  1.0f,
+	shader.use();
+	shader.setUniform("uView", view);
+	shader.setUniform("uProjection", projection);
+	shader.setUniform("uSkybox", 0); // no other texture units
 
-		 1.0f, -1.0f, -1.0f,
-		 1.0f, -1.0f,  1.0f,
-		 1.0f,  1.0f,  1.0f,
-		 1.0f,  1.0f,  1.0f,
-		 1.0f,  1.0f, -1.0f,
-		 1.0f, -1.0f, -1.0f,
+	glDepthMask(GL_FALSE);
+	glDepthFunc(GL_LEQUAL); // change depth func so depth test passes when val == depth buffer
 
-		-1.0f, -1.0f,  1.0f,
-		-1.0f,  1.0f,  1.0f,
-		 1.0f,  1.0f,  1.0f,
-		 1.0f,  1.0f,  1.0f,
-		 1.0f, -1.0f,  1.0f,
-		-1.0f, -1.0f,  1.0f,
+	glBindVertexArray(vao);
+	glActiveTexture(GL_TEXTURE0 + active_texture_unit);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, tid);
+	glDrawElements(GL_TRIANGLES, skyboxElements.size(), GL_UNSIGNED_INT, 0);
 
-		-1.0f,  1.0f, -1.0f,
-		 1.0f,  1.0f, -1.0f,
-		 1.0f,  1.0f,  1.0f,
-		 1.0f,  1.0f,  1.0f,
-		-1.0f,  1.0f,  1.0f,
-		-1.0f,  1.0f, -1.0f,
-
-		-1.0f, -1.0f, -1.0f,
-		-1.0f, -1.0f,  1.0f,
-		 1.0f, -1.0f, -1.0f,
-		 1.0f, -1.0f, -1.0f,
-		-1.0f, -1.0f,  1.0f,
-		 1.0f, -1.0f,  1.0f
-	};
-
-	// skybox VAO
-	CVAO SkyVAO;
-	SkyVAO.vaoId = 0;	SkyVAO.vboId = 0;	SkyVAO.eboId = 0;	SkyVAO.nVertexs = 0; SkyVAO.nIndices = 0;
-
-	glGenVertexArrays(1, &SkyVAO.vaoId); //glGenVertexArrays(1, &skyboxVAO);
-	glGenBuffers(1, &SkyVAO.vboId); //glGenBuffers(1, &skyboxVBO);
-	glBindVertexArray(SkyVAO.vaoId); // glBindVertexArray(skyboxVAO);
-	glBindBuffer(GL_ARRAY_BUFFER, SkyVAO.vboId); // glBindBuffer(GL_ARRAY_BUFFER, skyboxVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), &skyboxVertices, GL_STATIC_DRAW);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
-
-	SkyVAO.nVertexs = 36;
+	glBindVertexArray(0); // Unbind
+	glActiveTexture(GL_TEXTURE0);
+	glDepthFunc(GL_LESS); // restore default depth func
+	glDepthMask(GL_TRUE);
 }
 
-void Skybox::loadCubemap(std::vector<std::string> faces)
-{
-	GLuint auxTexture = SkyTexture; //Auxiliar texture in case something fails
+void Skybox::LoadTexture(std::vector<std::string>& faces) {
 
-	glGenTextures(1, &SkyTexture);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, SkyTexture);
+	/**
+	* loads a cubemap texture from 6 individual texture faces
+	* order:
+	* +X (right)
+	* -X (left)
+	* +Y (top)
+	* -Y (bottom)
+	* +Z (front)
+	* -Z (back)
+	*/
 
-	int width, height; // nrChannels;
-	for (unsigned int i = 0; i < faces.size(); i++)
-	{
-		//unsigned char* data = stbi_load(faces[i].c_str(), &width, &height, &nrChannels, 0);
-		unsigned char* data = SOIL_load_image(faces[i].c_str(), &width, &height, 0, SOIL_LOAD_RGB);
-		if (data)
-		{
-			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-			SOIL_free_image_data(data);
+	unsigned int textureID{};
+	glGenTextures(1, &textureID);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
+
+	int width, height, nrComponents;
+
+	for (unsigned int i = 0; i < faces.size(); i++) {
+
+		unsigned char* data = SOIL_load_image(faces[i].c_str(), &width, &height, &nrComponents, 0);
+
+		if (!data)
+			std::cerr << "LoadCubemap: Texture failed to load at path: " << faces[i] << "\n";
+
+		else {
+			GLenum imageFormat;
+			if (nrComponents == 1) imageFormat = GL_RED;
+			else if (nrComponents == 3) imageFormat = GL_RGB;
+			else if (nrComponents == 4) imageFormat = GL_RGBA;
+
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
+				0, imageFormat, width, height, 0, imageFormat, GL_UNSIGNED_BYTE, data);
 		}
-		else
-		{	//std::cout << "Cubemap texture failed to load at path: " << faces[i] << std::endl;
-			fprintf(stderr, "Cubemap texture failed to load at path: %s \n", faces[i].c_str());
-			SOIL_free_image_data(data);
-			SkyTexture = auxTexture;
-		}
+
+		SOIL_free_image_data(data);
 	}
+
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-}
 
-void Skybox::drawSkybox(char eix_Polar, glm::mat4 MatriuProjeccio, glm::mat4 MatriuVista)
-{
-	GLuint sk_programID = SkyShader.GetShaderID();
-	glm::mat4 ModelMatrix(1.0);
-
-	glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
-
-	// Activació shader per a cub skybox
-	glUseProgram(sk_programID);
-
-	// Pas Matrius Projecció i Vista a shader
-	glUniformMatrix4fv(glGetUniformLocation(sk_programID, "projectionMatrix"), 1, GL_FALSE, &MatriuProjeccio[0][0]);
-	glUniformMatrix4fv(glGetUniformLocation(sk_programID, "viewMatrix"), 1, GL_FALSE, &MatriuVista[0][0]);
-
-	// Rotar skyBox per a orientar sobre eix superior Z o X en Vista Esfèrica (POLARX, POLARY, POLARZ)
-	if (eix_Polar == POLARZ) ModelMatrix = glm::rotate(ModelMatrix, radians(90.0f), vec3(1.0f, 0.0f, 0.0f));
-	else if (eix_Polar == POLARX) ModelMatrix = glm::rotate(ModelMatrix, radians(-90.0f), vec3(0.0f, 0.0f, 1.0f));
-
-	// Escalar Cub Skybox a 5000 per encabir objectes escena a l'interior
-	ModelMatrix = glm::scale(ModelMatrix, vec3(5000.0f, 5000.0f, 5000.0f));		//glScaled(5000.0, 5000.0, 5000.0);
-	glUniformMatrix4fv(glGetUniformLocation(sk_programID, "modelMatrix"), 1, GL_FALSE, &ModelMatrix[0][0]);
-
-	// Activar textura cubemaps del Skybox per encabir objectes escena
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, SkyTexture);
-
-	// Attribute Locations must be setup before calling glLinkProgram()
-	glBindAttribLocation(sk_programID, 0, "in_Vertex"); // Vèrtexs
-
-	//  Dibuix del Skybox
-	glBindVertexArray(SkyVAO.vaoId);
-	glDrawArrays(GL_TRIANGLES, 0, SkyVAO.nVertexs);
-	glBindVertexArray(0);
-
-	glDepthFunc(GL_LESS); // set depth function back to default
-}
-
-Skybox::~Skybox()
-{
-	//TODO clear VAO
+	tid = textureID;
 }

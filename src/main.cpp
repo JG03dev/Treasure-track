@@ -1,442 +1,402 @@
+#include <iostream>
+#include <sstream>
+#include <string>
+#include <memory>
 
-#include "Entorn/stdafx.h"
+#include "stdafx.h"
 
-// Llibreries del entorn VGI
-#include "Entorn/objLoader.h"
-#include "Entorn/material.h"
-#include "Entorn/escena.h"
-#include "Entorn/visualitzacio.h"
-#include "Entorn/quatern.h"
-#include "Entorn/quatern.h"
+/** Camera Wrapper */
+#include "Camera.h"
 
-#include "Shader.h"
-#include "skybox.h"
+/** Model Wrapper */
+#include "Model.h"
+#include "Primitives.h"
+#include "Skybox.h"
+#include "Shadow.h"
 
-const float toRadians = 3.14159265f / 180.0f;
+// Global Variables
+const char* APP_TITLE = "VGI-ABP";
+const int gWindowWidth = 1280;
+const int gWindowHeight = 720;
+GLFWwindow* gWindow = NULL;
 
-std::vector<Mesh*> meshList;
-std::vector<Shader> shaderList;
-Camera camera;
+// Camera system
+Camera camera(glm::vec3(0.0f, 0.0f, 30.0f));
+float c_near = 0.1f;
+float c_far = 500.0f;
 
-GLfloat deltaTime = 0.0f;
-GLfloat lastTime = 0.0f;
+// Shader control
+bool enableTorch = true;
+bool enableNormal = true;
+float adjustGamma = 2.2f;
+float adjustParallax = 0.01f;
 
-// Vertex Shader
-static const char* vShader = "../../../Shaders/shader.vert";
-// Fragment shader
-static const char* fShader = "../../../Shaders/shader.frag";
+// Function prototypes
+void processInput(GLFWwindow* window);
+void mouseCallback(GLFWwindow* window, double xpos, double ypos);
+void scrollCallback(GLFWwindow* window, double xoffset, double yoffset);
+void glfw_onFramebufferSize(GLFWwindow* window, int width, int height);
+void showFPS(GLFWwindow* window);
+bool initOpenGL();
+void renderScene(Shader& shader);
 
-//void InitGL()
-//{
-//	// TODO: agregar aquí el código de construcción
-//
-//	//------ Entorn VGI: Inicialització de les variables globals de CEntornVGIView
-//	int i;
-//
-//	// Entorn VGI: Variable de control per a Status Bar (consola) 
-//	statusB = false;
-//
-//	// Entorn VGI: Variables de control per Menú Càmera: Esfèrica, Navega, Mòbil, Zoom, Satelit, Polars... 
-//	camera = CAM_ESFERICA;
-//	mobil = true;	zzoom = true;		zzoomO = false;		satelit = false;
-//
-//	// Entorn VGI: Variables de control de l'opció Càmera->Navega?
-//	n[0] = 0.0;		n[1] = 0.0;		n[2] = 0.0;
-//	opvN.x = 10.0;	opvN.y = 0.0;		opvN.z = 0.0;
-//	angleZ = 0.0;
-//	ViewMatrix = glm::mat4(1.0);		// Inicialitzar a identitat
-//
-//	// Entorn VGI: Variables de control de l'opció Càmera->Geode?
-//	OPV_G.R = 15.0;		OPV_G.alfa = 0.0;	OPV_G.beta = 0.0;	// Origen PV en esfèriques per a Vista_Geode
-//
-//	// Entorn VGI: Variables de control per Menú Vista: Pantalla Completa, Pan, dibuixar eixos i grids 
-//	fullscreen = false;
-//	pan = false;
-//	eixos = true;	eixos_programID = 0;  eixos_Id = 0;
-//	sw_grid = false;
-//	grid.x = false;	grid.y = false;		grid.z = false;		grid.w = false;
-//	hgrid.x = 0.0;	hgrid.y = 0.0;		hgrid.z = 0.0;		hgrid.w = 0.0;
-//
-//	// Entorn VGI: Variables opció Vista->Pan
-//	fact_pan = 1;
-//	tr_cpv.x = 0;	tr_cpv.y = 0;	tr_cpv.z = 0;		tr_cpvF.x = 0;	tr_cpvF.y = 0;	tr_cpvF.z = 0;
-//
-//	// Entorn VGI: Variables de control per les opcions de menú Projecció, Objecte
-//	projeccio = CAP;	// projeccio = PERSPECT;
-//	ProjectionMatrix = glm::mat4(1.0);	// Inicialitzar a identitat
-//	objecte = CAP;		// objecte = TETERA;
-//
-//	// Entorn VGI: Variables de control Skybox Cube
-//	SkyBoxCube = false;		skC_programID = 0;
-//	skC_VAOID.vaoId = 0;	skC_VAOID.vboId = 0;	skC_VAOID.nVertexs = 0;
-//	cubemapTexture = 0;
-//
-//	// Entorn VGI: Variables de control del menú Transforma
-//	transf = false;		trasl = false;		rota = false;		escal = false;
-//	fact_Tras = 1;		fact_Rota = 90;
-//	TG.VTras.x = 0.0;	TG.VTras.y = 0.0;	TG.VTras.z = 0;	TGF.VTras.x = 0.0;	TGF.VTras.y = 0.0;	TGF.VTras.z = 0;
-//	TG.VRota.x = 0;		TG.VRota.y = 0;		TG.VRota.z = 0;	TGF.VRota.x = 0;	TGF.VRota.y = 0;	TGF.VRota.z = 0;
-//	TG.VScal.x = 1;		TG.VScal.y = 1;		TG.VScal.z = 1;	TGF.VScal.x = 1;	TGF.VScal.y = 1;	TGF.VScal.z = 1;
-//
-//	transX = false;		transY = false;		transZ = false;
-//	GTMatrix = glm::mat4(1.0);		// Inicialitzar a identitat
-//
-//	// Entorn VGI: Variables de control per les opcions de menú Ocultacions
-//	front_faces = true;	test_vis = false;	oculta = false;		back_line = false;
-//
-//	// Entorn VGI: Variables de control del menú Iluminació		
-//	ilumina = FILFERROS;			ifixe = false;					ilum2sides = false;
-//	// Reflexions actives: Ambient [1], Difusa [2] i Especular [3]. No actives: Emission [0]. 
-//	sw_material[0] = false;			sw_material[1] = true;			sw_material[2] = true;			sw_material[3] = true;	sw_material[4] = true;
-//	sw_material_old[0] = false;		sw_material_old[1] = true;		sw_material_old[2] = true;		sw_material_old[3] = true;	sw_material_old[4] = true;
-//	textura = false;				t_textura = CAP;				textura_map = true;
-//	for (i = 0; i < NUM_MAX_TEXTURES; i++) texturesID[i] = -1;
-//	tFlag_invert_Y = false;
-//
-//	// Entorn VGI: Variables de control del menú Llums
-//	// Entorn VGI: Inicialització variables Llums
-//	llum_ambient = true;
-//	for (i = 1; i < NUM_MAX_LLUMS; i++) llumGL[i].encesa = false;
-//	for (i = 0; i < NUM_MAX_LLUMS; i++) {
-//		llumGL[i].encesa = false;
-//		llumGL[i].difusa[0] = 1.0f;	llumGL[i].difusa[1] = 1.0f;	llumGL[i].difusa[2] = 1.0f;	llumGL[i].difusa[3] = 1.0f;
-//		llumGL[i].especular[0] = 1.0f; llumGL[i].especular[1] = 1.0f; llumGL[i].especular[2] = 1.0f; llumGL[i].especular[3] = 1.0f;
-//	}
-//
-//	// LLum 0: Atenuació constant (c=1), sobre l'eix Z, no restringida.
-//	llumGL[0].encesa = true;
-//	llumGL[0].difusa[0] = 1.0f;			llumGL[0].difusa[1] = 1.0f;			llumGL[0].difusa[2] = 1.0f;		llumGL[0].difusa[3] = 1.0f;
-//	llumGL[0].especular[0] = 1.0f;		llumGL[0].especular[1] = 1.0f;		llumGL[0].especular[2] = 1.0f;	llumGL[0].especular[3] = 1.0f;
-//
-//	llumGL[0].posicio.R = 200.0;		llumGL[0].posicio.alfa = 90.0;		llumGL[0].posicio.beta = 0.0;		// Posició llum (x,y,z)=(0,0,200)
-//	llumGL[0].atenuacio.a = 0.0;		llumGL[0].atenuacio.b = 0.0;		llumGL[0].atenuacio.c = 1.0;		// Llum sense atenuació per distància (a,b,c)=(0,0,1)
-//	llumGL[0].restringida = false;
-//	llumGL[0].spotdirection[0] = 0.0;	llumGL[0].spotdirection[1] = 0.0;	llumGL[0].spotdirection[2] = 0.0;
-//	llumGL[0].spotcoscutoff = 0.0;		llumGL[0].spotexponent = 0.0;
-//
-//	// LLum 1: Atenuació constant (c=1), sobre l'eix X, no restringida.
-//	llumGL[1].encesa = false;
-//	llumGL[1].difusa[0] = 1.0f;			llumGL[1].difusa[1] = 1.0f;			llumGL[1].difusa[2] = 1.0f;		llumGL[1].difusa[3] = 1.0f;
-//	llumGL[1].especular[0] = 1.0f;		llumGL[1].especular[1] = 1.0f;		llumGL[1].especular[2] = 1.0f;	llumGL[1].especular[3] = 1;
-//
-//	llumGL[1].posicio.R = 75.0;			llumGL[1].posicio.alfa = 0.0;		llumGL[1].posicio.beta = 0.0;// (x,y,z)=(75,0,0)
-//	llumGL[1].atenuacio.a = 0.0;		llumGL[1].atenuacio.b = 0.0;		llumGL[1].atenuacio.c = 1.0;
-//	llumGL[1].restringida = false;
-//	llumGL[1].spotdirection[0] = 0.0;	llumGL[1].spotdirection[1] = 0.0;	llumGL[1].spotdirection[2] = 0.0;
-//	llumGL[1].spotcoscutoff = 0.0;		llumGL[1].spotexponent = 0.0;
-//
-//	// LLum 2: Atenuació constant (c=1), sobre l'eix Y, no restringida.
-//	llumGL[2].encesa = false;
-//	llumGL[2].difusa[1] = 1.0f;			llumGL[2].difusa[1] = 1.0f;			llumGL[2].difusa[2] = 1.0f;		llumGL[2].difusa[3] = 1.0f;
-//	llumGL[2].especular[1] = 1.0f;		llumGL[2].especular[1] = 1.0f;		llumGL[2].especular[2] = 1.0f;	llumGL[2].especular[3] = 1;
-//
-//	llumGL[2].posicio.R = 75.0;			llumGL[2].posicio.alfa = 0.0;		llumGL[2].posicio.beta = 90.0;	// (x,y,z)=(0,75,0)
-//	llumGL[2].atenuacio.a = 0.0;		llumGL[2].atenuacio.b = 0.0;		llumGL[2].atenuacio.c = 1.0;
-//	llumGL[2].restringida = false;
-//	llumGL[2].spotdirection[0] = 0.0;	llumGL[2].spotdirection[1] = 0.0;	llumGL[2].spotdirection[2] = 0.0;
-//	llumGL[2].spotcoscutoff = 0.0;		llumGL[2].spotexponent = 0.0;
-//
-//	// LLum 3: Atenuació constant (c=1), sobre l'eix Y=X, no restringida.
-//	llumGL[3].encesa = false;
-//	llumGL[3].difusa[0] = 1.0f;			llumGL[2].difusa[1] = 1.0f;			llumGL[3].difusa[2] = 1.0f;		llumGL[3].difusa[3] = 1.0f;
-//	llumGL[3].especular[0] = 1.0f;		llumGL[2].especular[1] = 1.0f;		llumGL[3].especular[2] = 1.0f;	llumGL[3].especular[3] = 1;
-//
-//	llumGL[3].posicio.R = 75.0;			llumGL[3].posicio.alfa = 45.0;		llumGL[3].posicio.beta = 45.0;// (x,y,z)=(75,75,75)
-//	llumGL[3].atenuacio.a = 0.0;		llumGL[3].atenuacio.b = 0.0;		llumGL[3].atenuacio.c = 1.0;
-//	llumGL[3].restringida = false;
-//	llumGL[3].spotdirection[0] = 0.0;	llumGL[3].spotdirection[1] = 0.0;	llumGL[3].spotdirection[2] = 0.0;
-//	llumGL[3].spotcoscutoff = 0.0;		llumGL[3].spotexponent = 0.0;
-//
-//	// LLum 4: Atenuació constant (c=1), sobre l'eix -Z, no restringida.
-//	llumGL[4].encesa = false;
-//	llumGL[4].difusa[0] = 1.0f;			llumGL[4].difusa[1] = 1.0f;			llumGL[4].difusa[2] = 1.0f;		llumGL[4].difusa[3] = 1.0f;
-//	llumGL[4].especular[0] = 1.0f;		llumGL[4].especular[1] = 1.0f;		llumGL[4].especular[2] = 1.0f;	llumGL[4].especular[3] = 1;
-//
-//	llumGL[4].posicio.R = 75.0;			llumGL[4].posicio.alfa = -90.0;		llumGL[4].posicio.beta = 0.0;// (x,y,z)=(0,0,-75)
-//	llumGL[4].atenuacio.a = 0.0;		llumGL[4].atenuacio.b = 0.0;		llumGL[4].atenuacio.c = 1.0;
-//	llumGL[4].restringida = false;
-//	llumGL[4].spotdirection[0] = 0.0;	llumGL[4].spotdirection[1] = 0.0;	llumGL[4].spotdirection[2] = 0.0;
-//	llumGL[4].spotcoscutoff = 0.0;		llumGL[4].spotexponent = 0.0;
-//
-//	// LLum #5:
-//	llumGL[5].encesa = false;
-//	llumGL[5].difusa[0] = 1.0f;			llumGL[5].difusa[1] = 1.0f;			llumGL[5].difusa[2] = 1.0f;		llumGL[5].difusa[3] = 1.0f;
-//	llumGL[5].especular[0] = 1.0f;		llumGL[5].especular[1] = 1.0f;		llumGL[5].especular[2] = 1.0f;	llumGL[5].especular[3] = 1;
-//
-//	llumGL[5].posicio.R = 75.0;			llumGL[5].posicio.alfa = 0.0;		llumGL[5].posicio.beta = -90.0; // (x,y,z)=(0,-75,0)
-//	llumGL[5].atenuacio.a = 0.0;		llumGL[5].atenuacio.b = 0.0;		llumGL[5].atenuacio.c = 1.0;
-//	llumGL[5].restringida = false;
-//	llumGL[5].spotdirection[0] = 0.0;	llumGL[5].spotdirection[1] = 0.0;	llumGL[5].spotdirection[2] = 0.0;
-//	llumGL[5].spotcoscutoff = 0.0;		llumGL[5].spotexponent = 0.0;
-//
-//	// LLum #6: Llum Vaixell, configurada a la funció vaixell() en escena.cpp.
-//	llumGL[6].encesa = false;
-//	llumGL[6].difusa[0] = 1.0f;			llumGL[6].difusa[1] = 1.0f;			llumGL[6].difusa[2] = 1.0f;		llumGL[6].difusa[3] = 1.0f;
-//	llumGL[6].especular[0] = 1.0f;		llumGL[6].especular[1] = 1.0f;		llumGL[6].especular[2] = 1.0f;	llumGL[6].especular[3] = 1;
-//
-//	llumGL[6].posicio.R = 0.0;			llumGL[6].posicio.alfa = 0.0;		llumGL[6].posicio.beta = 0.0; // Cap posició definida, definida en funció vaixell() en escena.cpp
-//	llumGL[6].atenuacio.a = 0.0;		llumGL[6].atenuacio.b = 0.0;		llumGL[6].atenuacio.c = 1.0;
-//	llumGL[6].restringida = false;
-//	llumGL[6].spotdirection[0] = 0.0;	llumGL[6].spotdirection[1] = 0.0;	llumGL[6].spotdirection[2] = 0.0;
-//	llumGL[6].spotcoscutoff = 0.0;		llumGL[6].spotexponent = 0.0;
-//
-//	// LLum #7: Llum Far, configurada a la funció faro() en escena.cpp.
-//	llumGL[7].encesa = false;
-//	llumGL[7].difusa[0] = 1.0f;			llumGL[7].difusa[1] = 1.0f;			llumGL[7].difusa[2] = 1.0f;		llumGL[7].difusa[3] = 1.0f;
-//	llumGL[7].especular[0] = 1.0f;		llumGL[7].especular[1] = 1.0f;		llumGL[7].especular[2] = 1.0f;	llumGL[7].especular[3] = 1;
-//
-//	llumGL[7].posicio.R = 0.0;			llumGL[7].posicio.alfa = 0.0;		llumGL[7].posicio.beta = 0.0; // Cap posició definida, definida en funció faro() en escena.cpp
-//	llumGL[7].atenuacio.a = 0.0;		llumGL[7].atenuacio.b = 0.0;		llumGL[7].atenuacio.c = 1.0;
-//	llumGL[7].restringida = false;
-//	llumGL[7].spotdirection[0] = 0.0;	llumGL[7].spotdirection[1] = 0.0;	llumGL[7].spotdirection[2] = 0.0;
-//	llumGL[7].spotcoscutoff = 0.0;		llumGL[7].spotexponent = 0.0;
-//
-//	// Entorn VGI: Variables de control del menú Shaders
-//	shader = CAP_SHADER;  shader_programID = 0;
-//	shaderLighting.releaseAllShaders();
-//	fprintf(stderr, "Gouraud_shdrML: \n");
-//	if (!shader_programID) shader_programID = shaderLighting.loadFileShaders(".\\shaders\\gouraud_shdrML.vert", ".\\shaders\\gouraud_shdrML.frag");
-//	shader = GOURAUD_SHADER;
-//
-//
-//	// Càrrega SHADERS
-//	// Càrrega Shader Eixos
-//	fprintf(stderr, "Eixos: \n");
-//	if (!eixos_programID) eixos_programID = shaderEixos.loadFileShaders(".\\shaders\\eixos.VERT", ".\\shaders\\eixos.FRAG");
-//
-//	// Càrrega Shader Skybox
-//	fprintf(stderr, "SkyBox: \n");
-//	if (!skC_programID) skC_programID = shader_SkyBoxC.loadFileShaders(".\\shaders\\skybox.VERT", ".\\shaders\\skybox.FRAG");
-//
-//	// Càrrega VAO Skybox Cube
-//	if (skC_VAOID.vaoId == 0) skC_VAOID = loadCubeSkybox_VAO();
-//	Set_VAOList(CUBE_SKYBOX, skC_VAOID);
-//
-//	if (!cubemapTexture)
-//	{	// load Skybox textures
-//		// -------------
-//		std::vector<std::string> faces =
-//		{ ".\\textures\\skybox\\right.jpg",
-//			".\\textures\\skybox\\left.jpg",
-//			".\\textures\\skybox\\top.jpg",
-//			".\\textures\\skybox\\bottom.jpg",
-//			".\\textures\\skybox\\front.jpg",
-//			".\\textures\\skybox\\back.jpg"
-//		};
-//		cubemapTexture = loadCubemap(faces);
-//	}
-//
-//	// Entorn VGI: Variables de control dels botons de mouse
-//	m_PosEAvall.x = 0;			m_PosEAvall.y = 0;			m_PosDAvall.x = 0;			m_PosDAvall.y = 0;
-//	m_ButoEAvall = false;		m_ButoDAvall = false;
-//	m_EsfeEAvall.R = 0.0;		m_EsfeEAvall.alfa = 0.0;	m_EsfeEAvall.beta = 0.0;
-//	m_EsfeIncEAvall.R = 0.0;	m_EsfeIncEAvall.alfa = 0.0;	m_EsfeIncEAvall.beta = 0.0;
-//
-//	// Entorn VGI: Variables que controlen paràmetres visualització: Mides finestra Windows i PV
-//	w = 640;			h = 480;			// Mides de la finestra Windows (w-amplada,h-alçada)
-//	width_old = 640;	height_old = 480;	// Mides de la resolució actual de la pantalla (finestra Windows)
-//	w_old = 640;		h_old = 480;		// Mides de la finestra Windows (w-amplada,h-alçada) per restaurar Finestra des de fullscreen
-//	OPV.R = cam_Esferica[0];	OPV.alfa = cam_Esferica[1];		OPV.beta = cam_Esferica[2];		// Origen PV en esfèriques
-//	//OPV.R = 15.0;		OPV.alfa = 0.0;		OPV.beta = 0.0;										// Origen PV en esfèriques
-//	Vis_Polar = POLARZ;
-//
-//	// Entorn VGI: Color de fons i de l'objecte
-//	fonsR = true;		fonsG = true;		fonsB = true;
-//	c_fons.r = clear_colorB.x;		c_fons.g = clear_colorB.y;		c_fons.b = clear_colorB.z;			c_fons.b = clear_colorB.w;
-//	//c_fons.r = 0.0;		c_fons.g = 0.0;		c_fons.b = 0.0;			c_fons.b = 1.0;
-//	sw_color = false;
-//	col_obj.r = clear_colorO.x;	col_obj.g = clear_colorO.y;	col_obj.b = clear_colorO.z;		col_obj.a = clear_colorO.w;
-//	//col_obj.r = 1.0;	col_obj.g = 1.0;	col_obj.b = 1.0;		col_obj.a = 1.0;
-//
-//// Entorn VGI: Objecte OBJ
-//	ObOBJ = NULL;		vao_OBJ.vaoId = 0;		vao_OBJ.vboId = 0;		vao_OBJ.nVertexs = 0;
-//
-//	// Entorn VGI: OBJECTE --> Corba B-Spline i Bezier
-//	npts_T = 0;
-//	for (i = 0; i < MAX_PATCH_CORBA; i = i++)
-//	{
-//		PC_t[i].x = 0.0;
-//		PC_t[i].y = 0.0;
-//		PC_t[i].z = 0.0;
-//	}
-//
-//	pas_CS = PAS_BSPLINE;
-//	sw_Punts_Control = false;
-//
-//	// TRIEDRE DE FRENET / DARBOUX: VT: vector Tangent, VNP: Vector Normal Principal, VBN: vector BiNormal
-//	dibuixa_TriedreFrenet = false;		dibuixa_TriedreDarboux = false;
-//	VT = { 0.0, 0.0, 1.0 };		VNP = { 1.0, 0.0, 0.0 };	VBN = { 0.0, 1.0, 0.0 };
-//
-//	// Entorn VGI: Variables del Timer
-//	t = 0;			anima = false;
-//
-//	// Entorn VGI: Variables de l'objecte FRACTAL
-//	t_fractal = CAP;	soroll = 'C';
-//	pas = 64;			pas_ini = 64;
-//	sw_il = true;		palcolFractal = false;
-//
-//	// Entorn VGI: Altres variables
-//	mida = 1.0;			nom = "";		buffer = "";
-//	initVAOList();	// Inicialtzar llista de VAO'S.
-//}
+//-----------------------------------------------------------------------------
+// Models
+//-----------------------------------------------------------------------------
+std::shared_ptr<Model> pObjCity1, pObjCar1;
 
+//-----------------------------------------------------------------------------
+// Main Application Entry Point
+//-----------------------------------------------------------------------------
+int main() {
 
-void CreateObjects()
-{
-    unsigned int indices[] = {
-      0, 3, 1,
-      1, 3, 2,
-      2, 3, 0,
-      0, 1, 2
-    };
-
-	GLfloat vertices[] = {
-		-1.0f, -1.0f, 0.0f,
-        0.0f, -1.0f, 1.0f,
-		1.0f, -1.0f, 0.0f,
-		0.0f, 1.0f, 0.0f
-	};
-
-    Mesh *obj1 = new Mesh();
-    // TODO: clear magic numbers
-    obj1->CreateMesh(vertices, indices, 12, 12);
-    meshList.push_back(obj1);
-
-    Mesh *obj2 = new Mesh();
-    obj2->CreateMesh(vertices, indices, 12, 12);
-    meshList.push_back(obj2);
-
-
-}
-
-void CreateShader()
-{
-    auto* shader1 = new Shader();
-    shader1->CreateFromFiles(vShader, fShader);
-    shaderList.push_back(*shader1);
-}
-
-/*
-* This should return the Imported, the Device and the context from 
-* the libraries, but for now is to test that it compiles and links 
-* them correctly.
-*/
-
-int initialize_libraries()
-{
-    // Initialize OpenAL
-    ALCdevice* device = alcOpenDevice(NULL);
-    if (!device) {
-        std::cerr << "Failed to initialize OpenAL device" << std::endl;
-        return -1;
-    }
-
-    ALCcontext* context = alcCreateContext(device, NULL);
-    if (!context) {
-        std::cerr << "Failed to initialize OpenAL context" << std::endl;
-        return -1;
-    }
-
-    alcMakeContextCurrent(context);
-
-    // Since this is just for testing we destroy everything after initialization
-
-    alcMakeContextCurrent(NULL);
-    alcDestroyContext(context);
-    alcCloseDevice(device);
-    return 0;
-}
-
-Skybox loadSkybox()
-{
-    //Load Faces
-    std::vector<std::string> faces =
-    { "../../../Assets/skybox/right.jpg",
-        "../../../Assets/skybox/left.jpg",
-        "../../../Assets/skybox/top.jpg",
-        "../../../Assets/skybox/bottom.jpg",
-        "../../../Assets/skybox/front.jpg",
-        "../../../Assets/skybox/back.jpg"
-    };
-    //Load Skybox with shaders
-    return Skybox(faces, "../../../Shaders/skybox.VERT", "../../../Shaders/skybox.FRAG");
-}
-
-int main(int argc, char* argv[])
-{
-
-    COBJModel* obj = new COBJModel;
-    obj->LoadModel("../../../Assets/Skull/12140_Skull_v3_L2.obj");
-
-    Skybox Sky = loadSkybox();
-
-    Window mainWindow = Window(800, 600);
-    mainWindow.Initialise();
-
-	CreateObjects();
-    CreateShader();
-
-    camera = Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f, 5.0f, 1.0f);
-
-    // Test other libraries
-    if (initialize_libraries() < 0)
-        return -1;
-
-    GLuint uniformProjection = 0, uniformModel = 0, uniformView = 0;
-
-    glm::mat4 projection = glm::perspective(glm::radians(45.0f), (GLfloat) mainWindow.getBufferWidth() / (GLfloat) mainWindow.getBufferHeight(), 0.1f, 100.0f);
-
-	// Loop until window closed
-	while (!mainWindow.getShouldClose())
-	{
-        GLfloat now = (GLfloat) glfwGetTime();
-        deltaTime = now - lastTime;
-        lastTime = now;
-
-		// Get + Handle user input events
-		glfwPollEvents();
-
-        camera.keyControl(mainWindow.getKeys(), deltaTime);
-        camera.mouseControl(mainWindow.getXChange(), mainWindow.getYChange());
-
-		// Clear window
-		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        shaderList[0].UseShader();
-        uniformModel = shaderList[0].GetModelLocation();
-        uniformProjection = shaderList[0].GetProjectionLocation();
-        uniformView = shaderList[0].GetViewLocation();
-
-
-		glm::mat4 model(1.0f);
-        model = glm::translate(model, glm::vec3(0.0f, 0.0f, -2.5f));
-		model = glm::scale(model, glm::vec3(0.4f, 0.4f, 1.0f));
-		glUniformMatrix4fv((int) uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-        glUniformMatrix4fv((int) uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
-        glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(camera.calculateViewMatrix()));
-
-        meshList[0]->RenderMesh();
-
-        model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(0.0f, 1.0f, -2.5f));
-        model = glm::scale(model, glm::vec3(0.4f, 0.4f, 1.0f));
-        glUniformMatrix4fv((int) uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-
-        //TODO: import shaders
-        obj->draw_TriVAO_OBJ();	// Dibuixar VAO a pantalla
-
-        meshList[1]->RenderMesh();
-
-        //Skybox
-
-
-
-        glUseProgram(0);
-
-		mainWindow.swapBuffers();
-
+	if (!initOpenGL()) {
+		// An error occured
+		std::cerr << "GLFW initialization failed" << std::endl;
+		return -1;
 	}
 
+	// Shader loader
+	Shader objectShader, skyboxShader, shadowShader;
+	objectShader.loadShaders("../../../Shaders/object.vert", "../../../Shaders/object.frag");
+	skyboxShader.loadShaders("../../../Shaders/skybox.vert", "../../../Shaders/skybox.frag");
+	shadowShader.loadShaders("../../../Shaders/shadow.vert", "../../../Shaders/shadow.frag");
+
+
+
+	// Model loader
+	pObjCity1 = std::make_shared<Model>("../../../Assets/textures/town.obj");
+	//pObjCar1 = std::make_shared<Model>("");
+
+	// Shadow
+	ParallelShadow shadowMap;
+
+	/** Skybox Mapping Order
+		  _______
+		  | Top |
+		  |  3  |
+	______|_____|____________
+	|Left |Front|Right| Back|
+	|  2  |  5  |  1  |  6  |
+	|_____|_____|_____|_____|
+		  |Botom|
+		  |  4  |
+		  |_____|
+	*/
+
+	Skybox skybox;
+	std::vector<std::string> faces = {
+		"../../../Assets/skybox/right.jpg",			// right
+		"../../../Assets/skybox/left.jpg",			// left
+		"../../../Assets/skybox/top.jpg",			// top
+		"../../../Assets/skybox/bottom.jpg",		// bottom
+		"../../../Assets/skybox/front.jpg",			// front
+		"../../../Assets/skybox/back.jpg"			// back
+	};
+	skybox.LoadTexture(faces);
+
+
+
+	// Light global
+	glm::vec3 pointLightPos[] = {
+		glm::vec3(3.0f,  0.0f,  0.0f),
+		glm::vec3(-3.0f,  0.0f,  0.0f),
+		glm::vec3(0.0f,  0.0f, -3.0f),
+		glm::vec3(0.0f,  0.0f,  3.0f)
+	};
+	glm::vec3 directionalLightDirection(-1.0f, 0.0f, 0.0f);
+
+	// Object shader config
+	objectShader.use();
+	// Light config
+	// Directional light
+	objectShader.setUniform("uDirectionalLight.direction", directionalLightDirection);
+	objectShader.setUniform("uDirectionalLight.ambient", 0.0f, 0.0f, 0.0f);
+	objectShader.setUniform("uDirectionalLight.diffuse", 1.0f, 1.0f, 1.0f);
+	objectShader.setUniform("uDirectionalLight.specular", 0.0f, 0.0f, 0.0f);
+	// Spot light
+	objectShader.setUniform("uSpotLight.innerCutOff", glm::cos(glm::radians(12.5f)));
+	objectShader.setUniform("uSpotLight.outerCutOff", glm::cos(glm::radians(17.5f)));
+	objectShader.setUniform("uSpotLight.ambient", 0.0f, 0.0f, 0.0f);
+	objectShader.setUniform("uSpotLight.diffuse", 1.0f, 1.0f, 1.0f);
+	objectShader.setUniform("uSpotLight.specular", 1.0f, 1.0f, 1.0f);
+	objectShader.setUniform("uSpotLight.constant", 1.0f);
+	objectShader.setUniform("uSpotLight.linear", 0.09f);
+	objectShader.setUniform("uSpotLight.quadratic", 0.032f);
+
+
+
+	// Camera global
+	float aspect = (float)gWindowWidth / (float)gWindowHeight;
+
+
+
+	// Rendering loop
+	while (!glfwWindowShouldClose(gWindow)) {
+
+		// Display FPS on title
+		showFPS(gWindow);
+
+		// Key input
+		processInput(gWindow);
+
+		// Create transformations
+		glm::mat4 view = camera.getViewMatrix();
+		glm::mat4 projection = glm::perspective(glm::radians(camera.fov), aspect, c_near, c_far);
+
+		/** Shadow */
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+		// get light transformation
+		glm::mat4 lightProjection, lightView;
+		float near_plane = 1.0f, far_plane = 100.0f;
+		lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
+		lightView = glm::lookAt(glm::vec3(50.0f, 0.0f, 0.0f), glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
+		// render scene from light's point of view
+		shadowShader.use();
+		shadowShader.setUniform("uView", lightView);
+		shadowShader.setUniform("uProjection", lightProjection);
+		// get shadow map
+		glViewport(0, 0, shadowMap.width, shadowMap.height);
+		shadowMap.Bind();
+		glClear(GL_DEPTH_BUFFER_BIT);
+		glCullFace(GL_FRONT);
+		renderScene(shadowShader);
+		glCullFace(GL_BACK);
+		shadowMap.Unbind();
+
+
+
+		/** General scene */
+#ifdef __APPLE__
+		glViewport(0, 0, 2 * gWindowWidth, 2 * gWindowHeight);
+#else
+		glViewport(0, 0, gWindowWidth, gWindowHeight);
+#endif
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		// Skybox
+		glm::mat4 staticView = glm::mat4(glm::mat3(view)); // remove translation composition
+		skybox.Draw(skyboxShader, staticView, projection);
+		// Object shader
+		objectShader.use();
+		objectShader.setUniform("uView", view);
+		objectShader.setUniform("uProjection", projection);
+		objectShader.setUniform("uCameraPos", camera.position);
+		// Spot light
+		objectShader.setUniform("uEnableTorch", enableTorch);
+		objectShader.setUniform("uSpotLight.position", camera.position);
+		objectShader.setUniform("uSpotLight.direction", camera.front);
+		// Shadow map
+		objectShader.setUniform("uLightSpaceMatrix", lightProjection * lightView);
+		objectShader.setUniform("uShadowMap", (int)shadowMap.active_texture_unit);
+		glActiveTexture(GL_TEXTURE0 + shadowMap.active_texture_unit);
+		glBindTexture(GL_TEXTURE_2D, shadowMap.TID());
+		// Draw scene
+		renderScene(objectShader);
+
+		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
+		glfwPollEvents();
+		glfwSwapBuffers(gWindow);
+	}
+
+	glfwTerminate();
+
 	return 0;
+}
+
+void renderScene(Shader& shader) {
+
+	// Set geological configurations
+	float currentTime = (float)glfwGetTime();
+
+	// render the loaded model
+	glm::mat4 model = glm::mat4(1.0f);
+	model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
+	model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));	// it's a bit too big for our scene, so scale it down
+	shader.use();
+	shader.setUniform("uModel", model);
+	shader.setUniform("uTime", currentTime);
+	shader.setUniform("uGamma", adjustGamma);
+	shader.setUniform("uHeightScale", adjustParallax);
+	if (enableNormal)
+		shader.setUniform("uEnableNormal", true);
+	shader.setUniform("uEnableEmission", true);
+	pObjCity1.get()->Draw(shader);
+}
+
+//-----------------------------------------------------------------------------
+// Initialize GLFW and OpenGL
+//-----------------------------------------------------------------------------
+bool initOpenGL() {
+
+	// Intialize GLFW 
+	// GLFW is configured.  Must be called before calling any GLFW functions
+	if (!glfwInit()) {
+		// An error occured
+		std::cerr << "GLFW initialization failed" << std::endl;
+		return false;
+	}
+
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	// forward compatible with newer versions of OpenGL as they become available
+	// but not backward compatible (it will not run on devices that do not support OpenGL 3.3
+#ifdef __APPLE__
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+#endif
+
+	// Create an OpenGL 3.3 core, forward compatible context window
+	gWindow = glfwCreateWindow(gWindowWidth, gWindowHeight, APP_TITLE, NULL, NULL);
+	if (gWindow == NULL) {
+		std::cerr << "Failed to create GLFW window" << std::endl;
+		glfwTerminate();
+		return false;
+	}
+
+	// Make the window's context the current one
+	glfwMakeContextCurrent(gWindow);
+
+	// Set the required callback functions
+	//glfwSetKeyCallback(gWindow, glfw_onKey);
+	glfwSetCursorPosCallback(gWindow, mouseCallback);
+	glfwSetScrollCallback(gWindow, scrollCallback);
+	glfwSetFramebufferSizeCallback(gWindow, glfw_onFramebufferSize);
+
+	// Hide the cursor and capture it
+	glfwSetInputMode(gWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+	// Depth test
+	glEnable(GL_DEPTH_TEST);
+
+	return true;
+}
+
+//-----------------------------------------------------------------------------
+// Is called whenever a key is pressed/released via GLFW
+//-----------------------------------------------------------------------------
+void processInput(GLFWwindow* window) {
+
+	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+		glfwSetWindowShouldClose(window, GL_TRUE);
+
+	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+		camera.processAccerlate(true);
+	else
+		camera.processAccerlate(false);
+
+	static float deltaTime = 0.0f;
+	static float lastFrame = 0.0f;
+	// Per-frame time
+	float currentFrame = (float)glfwGetTime();
+	deltaTime = currentFrame - lastFrame;
+	lastFrame = currentFrame;
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+		camera.processKeyboard(FORWARD, deltaTime);
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+		camera.processKeyboard(BACKWARD, deltaTime);
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+		camera.processKeyboard(LEFT, deltaTime);
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+		camera.processKeyboard(RIGHT, deltaTime);
+	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+		camera.processKeyboard(UP, deltaTime);
+	if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
+		camera.processKeyboard(DOWN, deltaTime);
+
+	static bool gWireframe = false;
+	if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS) {
+		gWireframe = !gWireframe;
+		if (gWireframe) glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		else glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS)
+		enableTorch = !enableTorch;
+	if (glfwGetKey(window, GLFW_KEY_N) == GLFW_PRESS)
+		enableNormal = !enableNormal;
+
+	if (glfwGetKey(window, GLFW_KEY_EQUAL) == GLFW_PRESS)
+		adjustGamma = adjustGamma >= 4.0f ? 4.0f : adjustGamma + 0.01f;
+	if (glfwGetKey(window, GLFW_KEY_MINUS) == GLFW_PRESS)
+		adjustGamma = adjustGamma <= 1.0f ? 1.0f : adjustGamma - 0.01f;
+	if (glfwGetKey(window, GLFW_KEY_PERIOD) == GLFW_PRESS)
+		adjustParallax = adjustParallax >= 1.0f ? 1.0f : adjustParallax + 0.0005f;
+	if (glfwGetKey(window, GLFW_KEY_COMMA) == GLFW_PRESS)
+		adjustParallax = adjustParallax <= 0.0f ? 0.0f : adjustParallax - 0.0005f;
+}
+
+//-----------------------------------------------------------------------------
+// Is called whenever mouse movement is detected via GLFW
+//-----------------------------------------------------------------------------
+void mouseCallback(GLFWwindow* window, double xpos, double ypos) {
+
+	static bool  firstMouse = true;
+	static float lastX = gWindowWidth / 2;
+	static float lastY = gWindowHeight / 2;
+
+	if (firstMouse) {
+		lastX = xpos;
+		lastY = ypos;
+		firstMouse = false;
+	}
+
+	float xoffset = xpos - lastX;
+	float yoffset = lastY - ypos; // reversed since y-coord range from buttom to top
+	lastX = xpos;
+	lastY = ypos;
+
+	camera.processMouse(xoffset, yoffset);
+}
+
+//-----------------------------------------------------------------------------
+// Is called whenever scroller is detected via GLFW
+//-----------------------------------------------------------------------------
+void scrollCallback(GLFWwindow* window, double xoffset, double yoffset) {
+	camera.processScroll(yoffset);
+}
+
+//-----------------------------------------------------------------------------
+// Is called when the window is resized
+//-----------------------------------------------------------------------------
+void glfw_onFramebufferSize(GLFWwindow* window, int width, int height)
+{
+	glViewport(0, 0, width, height);
+}
+
+//-----------------------------------------------------------------------------
+// Code computes the average frames per second, and also the average time it takes
+// to render one frame.  These stats are appended to the window caption bar.
+//-----------------------------------------------------------------------------
+void showFPS(GLFWwindow* window)
+{
+	static double previousSeconds = 0.0;
+	static int frameCount = 0;
+	double elapsedSeconds;
+	double currentSeconds = glfwGetTime(); // returns number of seconds since GLFW started, as double float
+
+	elapsedSeconds = currentSeconds - previousSeconds;
+
+	// Limit text updates to 4 times per second
+	if (elapsedSeconds > 0.25)
+	{
+		previousSeconds = currentSeconds;
+		double fps = (double)frameCount / elapsedSeconds;
+		double msPerFrame = 1000.0 / fps;
+
+		// The C++ way of setting the window title
+		std::ostringstream outs;
+		outs.precision(3);	// decimal places
+		outs << std::fixed
+			<< APP_TITLE << "    "
+			<< "FPS: " << fps << "    "
+			<< "Frame Time: " << msPerFrame << " (ms)";
+		glfwSetWindowTitle(window, outs.str().c_str());
+
+		// Reset for next average.
+		frameCount = 0;
+	}
+
+	frameCount++;
 }

@@ -1,23 +1,53 @@
-//
-// Created by jg03dev on 10/9/23.
-//
+#ifndef MESH_H
+#define MESH_H
 
-#pragma once
+#include <string>
+#include <vector>
+
 #include "stdafx.h"
+#include "Texture.h"
+#include "Shader.h"
 
+struct Pixel {
+	glm::vec2 position;
+	glm::vec2 texCoords;
+};
+
+struct Vertex {
+	glm::vec3 position;
+	glm::vec3 normal;
+	glm::vec2 texCoords;
+	glm::vec3 tangent;
+	glm::vec3 bitangent;
+};
 
 class Mesh {
+
 public:
-    Mesh();
+	/** Mesh Data */
+	std::vector<Vertex> vertices;
+	std::vector<unsigned int> indices;
+	std::vector<Texture> textures;
 
-    void CreateMesh(GLfloat *vertices, unsigned int *indices, unsigned int numOfVertices, unsigned int numOfIndices);
-    void load_TRIANGLES_VAO(std::vector <double> vertices, std::vector <double> normals, std::vector <double> colors, std::vector <double> textures);
-    void RenderMesh();
-    void ClearMesh();
+	/** Methods */
+	Mesh(std::vector<Vertex> vertices,
+		std::vector<unsigned int> indices,
+		std::vector<Texture> textures);
+	//~Mesh();
 
-    ~Mesh();
+	void Draw(Shader& shader);
+	void DeleteBuffers();
+
+	GLuint VAO() const { return vao; }
+	GLuint VBO() const { return vbo; }
+	GLuint EBO() const { return ebo; }
 
 private:
-    GLuint VAO, VBO, IBO;
-    GLsizei indexCount, vertexCount;
+	/** Render Data */
+	GLuint vbo, ebo, vao;
+
+	/** Methods */
+	void setup();
 };
+
+#endif
