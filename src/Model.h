@@ -27,7 +27,7 @@ public:
 
 	/** Model Data */
 	std::vector<Mesh> meshes;
-	std::vector<Texture> textures_loaded; // store loaded textures to avoid loading twice
+	std::vector<Texture> textures_loaded; // stores all the textures loaded so far, optimization to make sure textures aren't loaded more than once.
 
 private:
 	/** Model Data */

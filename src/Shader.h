@@ -1,7 +1,5 @@
-//
-// Created by jg03dev on 10/9/23.
-//
-#pragma once
+#ifndef SHADER_H
+#define SHADER_H
 
 #include <string>
 #include <map>

@@ -1,150 +1,281 @@
-//
-// Created by jg03dev on 10/9/23.
-//
-
 #include "Shader.h"
 
+using std::string;
+
+//-----------------------------------------------------------------------------
+// Constructor
+//-----------------------------------------------------------------------------
 Shader::Shader()
+	: mHandle(0)
+{}
+
+Shader::Shader(
+	const char* vsFilename,
+	const char* fsFilename,
+	const char* gsFilename)
+	: mHandle(0)
 {
-    shaderID = 0;
-    uniformModel = 0;
-    uniformProjection = 0;
+	loadShaders(vsFilename, fsFilename, gsFilename);
 }
 
-void Shader::CreateFromString(const char *vertexCode, const char *fragmentCode, const char *geometricCode="")
+//-----------------------------------------------------------------------------
+// Destructor
+//-----------------------------------------------------------------------------
+Shader :: ~Shader()
 {
-    this->CompileShader(vertexCode, fragmentCode, geometricCode);
+	// Delete the program
+	glDeleteProgram(mHandle);
 }
 
-
-Shader::~Shader()
+//-----------------------------------------------------------------------------
+// Load vertex and fragment shaders, and if geometry shader exists
+//-----------------------------------------------------------------------------
+bool Shader::loadShaders(const char* vsFilename, const char* fsFilename, const char* gsFilename)
 {
-    ClearShader();
+	mHandle = glCreateProgram();
+	if (mHandle == 0) {
+		std::cerr << "Unable to create shader program!" << std::endl;
+		return false;
+	}
+
+	GLuint vs = glCreateShader(GL_VERTEX_SHADER);
+	std::string vsString = fileToString(vsFilename);
+	const GLchar* vsSourcePtr = vsString.c_str();
+	glShaderSource(vs, 1, &vsSourcePtr, NULL);
+	glCompileShader(vs);
+	checkCompileErrors(vs, VERTEX);
+	glAttachShader(mHandle, vs);
+
+	GLuint fs = glCreateShader(GL_FRAGMENT_SHADER);
+	std::string fsString = fileToString(fsFilename);
+	const GLchar* fsSourcePtr = fsString.c_str();
+	glShaderSource(fs, 1, &fsSourcePtr, NULL);
+	glCompileShader(fs);
+	checkCompileErrors(fs, FRAGMENT);
+	glAttachShader(mHandle, fs);
+
+	GLuint gs;
+	if (gsFilename) {
+		gs = glCreateShader(GL_GEOMETRY_SHADER);
+		std::string gsString = fileToString(gsFilename);
+		const GLchar* gsSourcePtr = gsString.c_str();
+		glShaderSource(gs, 1, &gsSourcePtr, NULL);
+		glCompileShader(gs);
+		checkCompileErrors(gs, GEOMETRY);
+		glAttachShader(mHandle, gs);
+	}
+
+	glLinkProgram(mHandle);
+	checkCompileErrors(mHandle, PROGRAM);
+
+	glDeleteShader(vs);
+	glDeleteShader(fs);
+	if (gsFilename)
+		glDeleteShader(gs);
+
+	mUniformLocations.clear();
+
+	return true;
 }
 
-void Shader::UseShader()
+//-----------------------------------------------------------------------------
+// Opens and reads contents of ASCII file to a string.  Returns the string.
+// Not good for very large files.
+//-----------------------------------------------------------------------------
+string Shader::fileToString(const string& filename)
 {
-    glUseProgram(shaderID);
+	std::stringstream ss;
+	std::ifstream file;
+
+	try
+	{
+		file.open(filename, std::ios::in);
+
+		if (!file.fail())
+		{
+			// Using a std::stringstream is easier than looping through each line of the file
+			ss << file.rdbuf();
+		}
+
+		file.close();
+	}
+	catch (std::exception ex)
+	{
+		std::cerr << "Error reading shader filename!" << std::endl;
+	}
+
+	return ss.str();
 }
 
-void Shader::ClearShader()
+//-----------------------------------------------------------------------------
+// Activate the shader program
+//-----------------------------------------------------------------------------
+void Shader::use()
 {
-    if (shaderID != 0)
-    {
-        glDeleteProgram(shaderID);
-        shaderID = 0;
-    }
-
-    uniformModel = 0;
-    uniformProjection = 0;
+	if (mHandle > 0)
+		glUseProgram(mHandle);
 }
 
-void Shader::CompileShader(const char *vertexCode, const char *fragmentCode, const char *geometricCode="")
+//-----------------------------------------------------------------------------
+// Checks for shader compiler errors
+//-----------------------------------------------------------------------------
+void  Shader::checkCompileErrors(GLuint shader, ShaderType type)
 {
-    shaderID = glCreateProgram();
+	int status = 0;
 
-    if (!shaderID)
-    {
-        printf("Error creating shader program! \n");
-        return;
-    }
+	if (type == PROGRAM)
+	{
+		glGetProgramiv(mHandle, GL_LINK_STATUS, &status);
+		if (status == GL_FALSE)
+		{
+			GLint length = 0;
+			glGetProgramiv(mHandle, GL_INFO_LOG_LENGTH, &length);
 
-    AddShader(shaderID, vertexCode, GL_VERTEX_SHADER);
-    AddShader(shaderID, fragmentCode, GL_FRAGMENT_SHADER);
-    if (geometricCode != "")
-        AddShader(shaderID, geometricCode, GL_GEOMETRY_SHADER);
+			// The length includes the NULL character
+			string errorLog(length, ' ');	// Resize and fill with space character
+			glGetProgramInfoLog(mHandle, length, &length, &errorLog[0]);
+			std::cerr << "Error! Shader program failed to link. " << errorLog << std::endl;
+		}
+	}
+	else
+	{
+		glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
+		if (status == GL_FALSE)
+		{
+			GLint length = 0;
+			glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &length);
 
-    // Linking shaders
-    GLint result = 0;
-    GLchar eLog[1024] = { 0 };
+			// The length includes the NULL character
+			string errorLog(length, ' ');  // Resize and fill with space character
+			glGetShaderInfoLog(shader, length, &length, &errorLog[0]);
+			std::cerr << "Error! Shader failed to compile. " << errorLog << std::endl;
+		}
+	}
 
-    glLinkProgram(shaderID);
-    glGetProgramiv(shaderID, GL_LINK_STATUS, &result);
-    if (!result)
-    {
-        glGetProgramInfoLog(shaderID, sizeof(eLog), NULL, eLog);
-        printf("Error linking program '%s'\n", eLog);
-        return;
-    }
-
-    // Validating shaders
-    glValidateProgram(shaderID);
-    glGetProgramiv(shaderID, GL_VALIDATE_STATUS, &result);
-    if (!result)
-    {
-        glGetProgramInfoLog(shaderID, sizeof(eLog), NULL, eLog);
-        printf("Error validating program '%s'\n", eLog);
-        return;
-    }
-
-    //TODO: make sure ALL shaders have this or change Class structure
-    uniformModel = glGetUniformLocation(shaderID, "model");
-    uniformProjection = glGetUniformLocation(shaderID, "projection");
-    uniformView = glGetUniformLocation(shaderID, "view");
 }
 
-void Shader::AddShader(GLuint theProgram, const char *shaderCode, GLenum shaderType)
+//-----------------------------------------------------------------------------
+// Returns the active shader program
+//-----------------------------------------------------------------------------
+GLuint Shader::ID() const
 {
-    GLuint theShader = glCreateShader(shaderType);
-
-    const GLchar* theCode[1];
-    theCode[0] = shaderCode;
-
-    GLint codeLength[1];
-    codeLength[0] = (GLint) strlen(shaderCode);
-
-    glShaderSource(theShader, 1, theCode, codeLength);
-
-    // Compiling shader
-    GLint result = 0;
-    GLchar eLog[1024] = { 0 };
-
-    glCompileShader(theShader);
-    glGetShaderiv(theShader, GL_COMPILE_STATUS, &result);
-    if (!result)
-    {
-        glGetProgramInfoLog(theShader, sizeof(eLog), NULL, eLog);
-        fprintf(stderr, "Error compiling the %d shader: '%s'\n", shaderType, eLog);
-        return;
-    }
-
-    glAttachShader(theProgram, theShader);
+	return mHandle;
 }
 
-//TODO: Change Locations to std::strings and add an optional geometry shader
-void Shader::CreateFromFiles(std::string vertexLocation, std::string fragmentLocation, std::string geometricLocation="")
+//-----------------------------------------------------------------------------
+// Sets a boolean shader uniform
+//-----------------------------------------------------------------------------
+void Shader::setUniform(const string& name, bool value)
 {
-    std::string vertexString = ReadFile(vertexLocation.c_str());
-    std::string fragmentString = ReadFile(fragmentLocation.c_str());
-    std::string geometricString = "";
-    if (geometricLocation != "")
-        geometricString = ReadFile(geometricLocation.c_str());
-
-    const char* vertexCode = vertexString.c_str();
-    const char* fragmentCode =  fragmentString.c_str();
-    const char* geometricCode = geometricString.c_str();
-
-    CompileShader(vertexCode, fragmentCode);
+	GLint loc = getUniformLocation(name.c_str());
+	glUniform1i(loc, (int)value);
 }
 
-std::string Shader::ReadFile(const char *fileLocation)
+//-----------------------------------------------------------------------------
+// Sets an integer shader uniform
+//-----------------------------------------------------------------------------
+void Shader::setUniform(const string& name, int value)
 {
-    std::string content;
-    std::ifstream fileStream(fileLocation, std::ios::in);
+	GLint loc = getUniformLocation(name.c_str());
+	glUniform1i(loc, value);
+}
 
-    if(!fileStream.is_open())
-    {
-        printf("Failed to read %s! File doesn't exist.", fileLocation);
-        return "";
-    }
+//-----------------------------------------------------------------------------
+// Sets a float shader uniform
+//-----------------------------------------------------------------------------
+void Shader::setUniform(const string& name, float value)
+{
+	GLint loc = getUniformLocation(name.c_str());
+	glUniform1f(loc, value);
+}
 
-    std::string line = "";
-    while(!fileStream.eof())
-    {
-        std::getline(fileStream, line);
-        content.append(line + "\n");
-    }
+//-----------------------------------------------------------------------------
+// Sets a glm::vec2 shader uniform
+//-----------------------------------------------------------------------------
+void Shader::setUniform(const string& name, const glm::vec2& v)
+{
+	GLint loc = getUniformLocation(name.c_str());
+	glUniform2fv(loc, 1, &v[0]);
+}
 
-    fileStream.close();
-    return content;
+void Shader::setUniform(const string& name, float x, float y)
+{
+	GLint loc = getUniformLocation(name.c_str());
+	glUniform2f(loc, x, y);
+}
+
+//-----------------------------------------------------------------------------
+// Sets a glm::vec3 shader uniform
+//-----------------------------------------------------------------------------
+void Shader::setUniform(const string& name, const glm::vec3& v)
+{
+	GLint loc = getUniformLocation(name.c_str());
+	glUniform3fv(loc, 1, &v[0]);
+}
+
+void Shader::setUniform(const string& name, float x, float y, float z)
+{
+	GLint loc = getUniformLocation(name.c_str());
+	glUniform3f(loc, x, y, z);
+}
+
+//-----------------------------------------------------------------------------
+// Sets a glm::vec4 shader uniform
+//-----------------------------------------------------------------------------
+void Shader::setUniform(const string& name, const glm::vec4& v)
+{
+	GLint loc = getUniformLocation(name.c_str());
+	glUniform4fv(loc, 1, &v[0]);
+}
+
+void Shader::setUniform(const string& name, float x, float y, float z, float w)
+{
+	GLint loc = getUniformLocation(name.c_str());
+	glUniform4f(loc, x, y, z, w);
+}
+
+//-----------------------------------------------------------------------------
+// Sets a glm::mat2 shader uniform
+//-----------------------------------------------------------------------------
+void Shader::setUniform(const string& name, const glm::mat2& m)
+{
+	GLint loc = getUniformLocation(name.c_str());
+	glUniformMatrix2fv(loc, 1, GL_FALSE, &m[0][0]);
+}
+
+//-----------------------------------------------------------------------------
+// Sets a glm::mat3 shader uniform
+//-----------------------------------------------------------------------------
+void Shader::setUniform(const string& name, const glm::mat3& m)
+{
+	GLint loc = getUniformLocation(name.c_str());
+	glUniformMatrix3fv(loc, 1, GL_FALSE, &m[0][0]);
+}
+
+//-----------------------------------------------------------------------------
+// Sets a glm::mat4 shader uniform
+//-----------------------------------------------------------------------------
+void Shader::setUniform(const string& name, const glm::mat4& m)
+{
+	GLint loc = getUniformLocation(name.c_str());
+	glUniformMatrix4fv(loc, 1, GL_FALSE, &m[0][0]);
+}
+
+//-----------------------------------------------------------------------------
+// Returns the uniform identifier given it's string name.
+// NOTE: Shader must be currently active first.
+//-----------------------------------------------------------------------------
+GLint Shader::getUniformLocation(const GLchar* name)
+{
+	std::map<string, GLint>::iterator it = mUniformLocations.find(name);
+
+	// Only need to query the shader program IF it doesn't already exist.
+	if (it == mUniformLocations.end())
+	{
+		// Find it and add it to the map
+		mUniformLocations[name] = glGetUniformLocation(mHandle, name);
+	}
+
+	// Return it
+	return mUniformLocations[name];
 }

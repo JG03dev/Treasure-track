@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include "Entorn/stdafx.h"
+#include "stdafx.h"
 #include "Shader.h"
 
 

@@ -27,8 +27,8 @@ void Model::loadModel(std::string& path) {
 
 	// Read file via ASSIMP
 	Assimp::Importer importer;
-	const aiScene* scene = importer.ReadFile(path,
-		aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
+	const aiScene* scene = importer.ReadFile(path, 
+		aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
 
 	/**
 	* iProcess_Triangulate : if the model does not (entirely) consist of triangles,
