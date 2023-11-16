@@ -12,14 +12,18 @@ find_package(GLEW REQUIRED)
 find_package(glm CONFIG REQUIRED)
 find_package(OpenAL CONFIG REQUIRED)
 find_package(Bullet CONFIG REQUIRED)
-find_package(assimp REQUIRED)
 find_package(glfw3 REQUIRED)
 find_package(SndFile REQUIRED)
+find_package(soil2 CONFIG REQUIRED)
+find_package(assimp REQUIRED)
 
-add_executable(VGI-ABP src/main.cpp
-        src/Mesh.h
-        src/Mesh.cpp
-        src/Shader.cpp
+add_executable(VGI-ABP 
+# Ficheros principales
+        src/main.cpp
+# Ficheros de funcionalidades extra
+        src/stdafx.h
+        src/constants.h
+# Fiechros de funcionalidades del juego
         src/Shader.h
         src/Window.cpp
         src/Window.h
@@ -39,13 +43,21 @@ add_executable(VGI-ABP src/main.cpp
         src/SoundSource.cpp 
         src/SoundSource.h
         src/MusicBuffer.h 
-        src/MusicBuffer.cpp)
+        src/MusicBuffer.cpp
+        src/skybox.h 
+        src/skybox.cpp
+        src/Light.cpp 
+        src/Light.h
+# Ficheros de Objecto
+        src/Model.h
+        src/Mesh.h)
 
 # target_link_libraries(VGI-ABP PRIVATE glfw "${ASSIMP_INCLUDE_DIRS}/assimp" "${BULLET_LIBRARIES}" GLEW::glew OpenAL::OpenAL)
-target_link_libraries(VGI-ABP PRIVATE ${ASSIMP_LIBRARIES})
 target_link_libraries(VGI-ABP PRIVATE OpenAL::OpenAL)
 target_link_libraries(VGI-ABP PRIVATE OpenGL::GL)
 target_link_libraries(VGI-ABP PRIVATE GLEW::GLEW)
 target_link_libraries(VGI-ABP PRIVATE glfw)
 target_link_libraries(VGI-ABP PRIVATE "${BULLET_LIBRARIES}")
 target_link_libraries(VGI-ABP PRIVATE SndFile::sndfile)
+target_link_libraries(VGI-ABP PRIVATE soil2)
+target_link_libraries(VGI-ABP PRIVATE ${ASSIMP_LIBRARIES})
