@@ -105,7 +105,7 @@ int main()
     // load models
     // -----------
     //Model ourModel("../../../Assets/Skull/12140_Skull_v3_L2.obj");
-    Model ourModel("../../../Assets/HIGHWAY_INTERSTATE_SOURCE/Highway\ Interchange.obj");
+    Model ourModel("../../../Assets/textures/town.obj");
 
     shader.use();
     shader.setInt("texture1", 0);
