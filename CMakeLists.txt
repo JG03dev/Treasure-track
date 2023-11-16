@@ -47,6 +47,8 @@ add_executable(VGI-ABP
         src/skybox.cpp
         src/Light.cpp 
         src/Light.h
+        src/Game.cpp
+        src/Game.h
 # Ficheros de Objeto
         src/Model.h
         src/Mesh.h)
