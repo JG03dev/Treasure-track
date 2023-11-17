@@ -40,7 +40,7 @@ public:
 		return false; // ??
 	}
 
-	bool keyboardCallback(bool* keys, GLfloat deltaTime, int state);
+	bool keyboardCallback(bool* keys, GLfloat deltaTime, int state, bool estado);
 
 	// Public Methods
 

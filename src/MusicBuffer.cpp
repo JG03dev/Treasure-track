@@ -176,3 +176,4 @@ void MusicBuffer::Pause()
 {
 	alSourcePause(p_Source);
 }
+

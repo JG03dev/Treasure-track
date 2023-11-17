@@ -20,7 +20,7 @@ PlayerVehicle::~PlayerVehicle() {
 
 // Public Callbacks
 
-bool PlayerVehicle::keyboardCallback(bool* keys, GLfloat deltaTime, int state) {
+bool PlayerVehicle::keyboardCallback(bool* keys, GLfloat deltaTime, int state, bool estado) {
 	bool handled = false;
 
 	// 0 => rueda delantera
@@ -35,6 +35,7 @@ bool PlayerVehicle::keyboardCallback(bool* keys, GLfloat deltaTime, int state) {
 			this->vehicle->applyEngineForce(this->vehicleParams.m_fEngineForce, 2); 
 			this->vehicle->applyEngineForce(this->vehicleParams.m_fEngineForce, 3);
 			handled = true;
+			estado = true;
 		}
 		if (keys[GLFW_KEY_S])
 		{

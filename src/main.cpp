@@ -23,6 +23,8 @@
 #include "SoundDevice.h"
 #include <iostream>
 #include "MusicBuffer.h"
+#include "SoundEffectsLibrary.h"
+#include "SoundEffectsPlayer.h"
 #include "MainLoop/MainLoop.h"  // for looping
 #include <Windows.h>  // for keyboard press
 
@@ -43,6 +45,9 @@ GLfloat lastTime = 0.0f;
 static const char* vShader = "../../../Shaders/shader.vert";
 // Fragment shader
 static const char* fShader = "../../../Shaders/shader.frag";
+
+//sonidos
+uint32_t sound1, sound2;
 
 Shader* CreateShader()
 {
@@ -86,6 +91,11 @@ int initialize_libraries()
     return 0;
 }
 
+void initialize_sounds()
+{
+    
+}
+
 int main(int argc, char* argv[])
 {
     Renderer* renderer = Renderer::getInstance();
@@ -109,7 +119,11 @@ int main(int argc, char* argv[])
     GLuint uniformProjection = 0, uniformModel = 0, uniformView = 0;
 
     SoundDevice::init();
+    
+    static SoundEffectsPlayer effectsPlayer1;
+    static uint32_t sound1 = SE_LOAD("../../../music/sounds/arranque.wav");
     static MusicBuffer myMusic("../../../music/coconut.wav");
+    bool estado = false;
 	// Loop until window closed
 	while (!renderer->mainWindow->getShouldClose())
 	{
@@ -121,7 +135,7 @@ int main(int argc, char* argv[])
         static float musiccontrolcooldown = 1;
         musiccontrolcooldown += deltaTime;
         if (musiccontrolcooldown > 0 && GetKeyState('Q') & 0x8000)
-        {
+        {          
             if (myMusic.isPlaying()) // toggle play/pause
             {
                 myMusic.Pause();
@@ -132,14 +146,34 @@ int main(int argc, char* argv[])
             }
             _sleep(100);
             musiccontrolcooldown = 0;
-        }        
+        } else if (musiccontrolcooldown > 0 && GetKeyState('Z') & 0x8000)
+        {
+            if (myMusic.isPlaying()) // toggle play/pause
+            {
+                myMusic.Pause();
+
+                static MusicBuffer myMusic("../../../music/cars.wav");
+                myMusic.Play();
+            }
+            else
+            {
+                static MusicBuffer myMusic("../../../music/cars.wav");
+            }
+            _sleep(100);    
+            musiccontrolcooldown = 0;
+        }
 
         pE.stepSimulation(deltaTime);
 
 		// Get + Handle user input events
 		glfwPollEvents();
 
-        pE.player->keyboardCallback(renderer->getKeys(), deltaTime, 1);
+        pE.player->keyboardCallback(renderer->getKeys(), deltaTime, 1, estado);
+        if (estado)
+        {
+            
+            estado = false;
+        }
 
         //camera.keyControl(mainWindow.getKeys(), deltaTime);
         renderer->updateCameraPos();
