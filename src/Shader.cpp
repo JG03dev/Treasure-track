@@ -32,46 +32,50 @@ Shader :: ~Shader()
 //-----------------------------------------------------------------------------
 bool Shader::loadShaders(const char* vsFilename, const char* fsFilename, const char* gsFilename)
 {
+	GLuint vs, fs, gs;
+	
+	vs = glCreateShader(GL_VERTEX_SHADER);
+	std::string vsString = fileToString(vsFilename);
+	const GLchar* vsCode = vsString.c_str();
+	glShaderSource(vs, 1, &vsCode, NULL);
+	glCompileShader(vs);
+	checkCompileErrors(vs, VERTEX);
+
+	fs = glCreateShader(GL_FRAGMENT_SHADER);
+	std::string fsString = fileToString(fsFilename);
+	const GLchar* fsCode = fsString.c_str();
+	glShaderSource(fs, 1, &fsCode, NULL);
+	glCompileShader(fs);
+	checkCompileErrors(fs, FRAGMENT);
+
+	if (gsFilename) {
+		gs = glCreateShader(GL_GEOMETRY_SHADER);
+		std::string gsString = fileToString(gsFilename);
+		const GLchar* gsCode = gsString.c_str();
+		glShaderSource(gs, 1, &gsCode, NULL);
+		glCompileShader(gs);
+		checkCompileErrors(gs, GEOMETRY);
+	}
+
 	mHandle = glCreateProgram();
 	if (mHandle == 0) {
 		std::cerr << "Unable to create shader program!" << std::endl;
 		return false;
 	}
 
-	GLuint vs = glCreateShader(GL_VERTEX_SHADER);
-	std::string vsString = fileToString(vsFilename);
-	const GLchar* vsSourcePtr = vsString.c_str();
-	glShaderSource(vs, 1, &vsSourcePtr, NULL);
-	glCompileShader(vs);
-	checkCompileErrors(vs, VERTEX);
 	glAttachShader(mHandle, vs);
-
-	GLuint fs = glCreateShader(GL_FRAGMENT_SHADER);
-	std::string fsString = fileToString(fsFilename);
-	const GLchar* fsSourcePtr = fsString.c_str();
-	glShaderSource(fs, 1, &fsSourcePtr, NULL);
-	glCompileShader(fs);
-	checkCompileErrors(fs, FRAGMENT);
 	glAttachShader(mHandle, fs);
-
-	GLuint gs;
 	if (gsFilename) {
-		gs = glCreateShader(GL_GEOMETRY_SHADER);
-		std::string gsString = fileToString(gsFilename);
-		const GLchar* gsSourcePtr = gsString.c_str();
-		glShaderSource(gs, 1, &gsSourcePtr, NULL);
-		glCompileShader(gs);
-		checkCompileErrors(gs, GEOMETRY);
 		glAttachShader(mHandle, gs);
 	}
-
 	glLinkProgram(mHandle);
 	checkCompileErrors(mHandle, PROGRAM);
 
 	glDeleteShader(vs);
 	glDeleteShader(fs);
-	if (gsFilename)
+	if (gsFilename) {
 		glDeleteShader(gs);
+	}
 
 	mUniformLocations.clear();
 
