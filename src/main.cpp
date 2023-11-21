@@ -65,7 +65,7 @@ int main() {
 
 
 	// Model loader
-	pObjCity1 = std::make_shared<Model>("../../../Assets/textures/town.obj");
+	pObjCity1 = std::make_shared<Model>("../../../Assets/UH60/uh60.obj");
 	//pObjCar1 = std::make_shared<Model>("");
 
 	// Shadow
