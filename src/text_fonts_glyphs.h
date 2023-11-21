@@ -1,4 +1,16 @@
 #pragma once // https://docs.microsoft.com/en-us/windows/win32/gdi/raster--vector--truetype--and-opentype-fonts
+#include <string>
+#include <vector>
+#include <iostream>
+
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
+#include "freetype/freetype.h"
+#include FT_FREETYPE_H
+
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 class Text
 {

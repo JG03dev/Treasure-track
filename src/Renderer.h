@@ -28,7 +28,7 @@ public:
 
 	// Public Methods
 
-	void startWindow(GLint windowWidth = 800, GLint windowHeight = 600) { 
+	void startWindow(GLint windowWidth = 1280, GLint windowHeight = 720) { 
 		mainWindow = new Window(windowWidth, windowHeight); 
 		mainWindow->Initialise(); 
 		projection = glm::perspective(glm::radians(45.0f), (GLfloat)mainWindow->getBufferWidth() / (GLfloat)mainWindow->getBufferHeight(), 0.1f, 100.0f);
