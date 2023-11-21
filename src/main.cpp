@@ -267,6 +267,8 @@ bool initOpenGL() {
 	// Hide the cursor and capture it
 	glfwSetInputMode(gWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
+	GLenum err = glewInit();
+
 	// Depth test
 	glEnable(GL_DEPTH_TEST);
 
