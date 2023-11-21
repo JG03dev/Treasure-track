@@ -4,7 +4,10 @@
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include "freetype/freetype.h"
+#include FT_FREETYPE_H
 
+#include <map>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -15,6 +18,8 @@
 
 #include "Mesh.h"
 #include "Shader.h"
+#include "text_fonts_glyphs.h"
+
 #include "Window.h"
 #include "Camera.h"
 #include "Renderer.h"
@@ -27,8 +32,6 @@
 #include "SoundEffectsPlayer.h"
 #include "MainLoop/MainLoop.h"  // for looping
 #include <Windows.h>  // for keyboard press
-
-
 
 const float toRadians = 3.14159265f / 180.0f;
 
@@ -48,6 +51,17 @@ static const char* fShader = "../../../Shaders/shader.frag";
 
 //sonidos
 uint32_t sound1, sound2;
+
+/// Holds all state information relevant to a character as loaded using FreeType
+struct Character {
+    unsigned int TextureID; // ID handle of the glyph texture
+    glm::ivec2   Size;      // Size of glyph
+    glm::ivec2   Bearing;   // Offset from baseline to left/top of glyph
+    unsigned int Advance;   // Horizontal offset to advance to next glyph
+};
+
+std::map<GLchar, Character> Characters;
+unsigned int VAO, VBO;
 
 Shader* CreateShader()
 {
@@ -118,6 +132,56 @@ int main(int argc, char* argv[])
 
     GLuint uniformProjection = 0, uniformModel = 0, uniformView = 0;
 
+    // (3) Compile Shaders & Initialise Camera 
+   // -----------------------------------------------------
+    const char* vert_shader_text = "../../../Shaders/shader_text.frag";
+    const char* frag_shader_text = "../../../Shaders/shader_text.frag";
+
+    Shader text_shader(vert_shader_text, frag_shader_text);
+    text_shader.UseShader();
+
+    // (4) Initialise FreeType & Declare Text Objects
+    FT_Library free_type;
+    FT_Error error_code = FT_Init_FreeType(&free_type);
+    if (error_code)
+    {
+        std::cout << "\n   Error code: " << error_code << " --- " << "An error occurred during initialising the FT_Library";
+        int keep_console_open;
+        std::cin >> keep_console_open;
+    }
+
+    const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+
+    int monitor_width = mode->width; // Monitor's width and height.
+    int monitor_height = mode->height;
+
+    int window_width = (int)(monitor_width * 0.75f); // Example: monitor_width * 0.5f... will be 50% the monitor's size.
+    int window_height = (int)(monitor_height * 0.75f);
+
+    Text text_object2(free_type, window_width, window_height, "01234567890Get Rady.Timr:owns&ClBgfb"); // Declare a new text object, passing in your chosen alphabet.	
+    text_object2.create_text_message("Get Ready... Timer: 000", 150, 100, "C:/Users/jacot/source/repos/ProjectPrueba/x64/Release/Text Fonts/arialbi.ttf", 50, true); // True indicates that the message will be modified.
+
+    int num_replace = 3;
+    size_t vec_size = text_object2.messages[0].characters_quads.size();
+    float start_pos = text_object2.messages[0].start_x_current[vec_size - num_replace];
+
+    int display_counting = 0;
+    int get_ready = 0;
+    bool running = false;
+
+    /* unsigned int view_mat_text_loc = glGetUniformLocation(text_shader.ID, "view");
+    unsigned int proj_mat_text_loc = glGetUniformLocation(text_shader.ID, "projection");
+    unsigned int anim_text_loc = glGetUniformLocation(text_shader.ID, "animate");
+
+    glUniformMatrix4fv(view_mat_text_loc, 1, GL_FALSE, glm::value_ptr(view));
+    glUniformMatrix4fv(proj_mat_text_loc, 1, GL_FALSE, glm::value_ptr(projection)); */
+
+    glUniform1i(glGetUniformLocation(text_shader.ID, "alphabet_texture"), 31);
+
+    glm::vec3 _RGB(10.0f, 120.0f, 105.0f);
+    unsigned int font_colour_loc = glGetUniformLocation(text_shader.ID, "font_colour");
+    glUniform3fv(font_colour_loc, 1, glm::value_ptr(_RGB));
+
     SoundDevice::init();
     
     static SoundEffectsPlayer effectsPlayer1;
@@ -163,6 +227,9 @@ int main(int argc, char* argv[])
             musiccontrolcooldown = 0;
         }
 
+        glClearColor(210.0f / 255, 240.0f / 255, 250.0f / 255, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
         pE.stepSimulation(deltaTime);
 
 		// Get + Handle user input events
@@ -183,7 +250,40 @@ int main(int argc, char* argv[])
         renderer->clearWindow();
 
         renderer->render(pE.groundRB, pE.player->vehicle->getChassisWorldTransform());
+
+        if (!running)
+            ++get_ready;
+        if (get_ready > 125)
+            running = true;
+
+        if (running)
+        {
+            ++display_counting;
+            if (display_counting == 300)
+                display_counting = 0;
+
+            unsigned num1 = display_counting / 100 % 10; // Left digit.
+            unsigned num2 = display_counting / 10 % 10;
+            unsigned num3 = display_counting % 10;
+
+            float advance1 = text_object2.messages[0].alphabet_vec[num1].glyph_advance_x;
+            float advance2 = advance1 + (text_object2.messages[0].alphabet_vec[num2].glyph_advance_x);
+
+            text_object2.messages[0].characters_quads.resize(vec_size - num_replace);
+            text_object2.messages[0].text_start_x = start_pos;
+
+            text_object2.process_text_index(text_object2.messages[0], num1, 0); // Important: the number of calls to: process_text_index(...) must = "num_replace_characters"
+            text_object2.process_text_index(text_object2.messages[0], num2, advance1);
+            text_object2.process_text_index(text_object2.messages[0], num3, advance2);
+
+            text_object2.update_buffer_data_message(text_object2.messages[0], (int)(vec_size - num_replace));
+        }
+        text_object2.draw_messages(0);
+        text_object2.draw_alphabets();
+
+        glfwPollEvents();
 	}
 
 	return 0;
 }
+
