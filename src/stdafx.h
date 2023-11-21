@@ -32,9 +32,6 @@
 #include <glm/gtc/type_ptr.hpp>
 using namespace glm;
 
-// VGI: Llibreries OpenGL
-//#include "Entorn/glut_geometry.h"			// Fonts dels Objectes de la llibreria freeglut
-
 // VGI: Llibreria SOIL2 (actualització de SOIL) per llegir imatges de diferents formats 
 //     (BMP,JPG,TIF,GIF,etc.) en la funció loadIMA (visualitzacio.cpp)
 #include <SOIL2/SOIL2.h>
