@@ -51,7 +51,7 @@ add_executable(VGI-ABP
         src/Game.h
 # Ficheros de Objeto
         src/Model.h
-        src/Mesh.h)
+        src/Mesh.h  "src/Object.h" "src/Object.cpp" "src/Player.h" "src/Player.cpp")
 
 # target_link_libraries(VGI-ABP PRIVATE glfw "${ASSIMP_INCLUDE_DIRS}/assimp" "${BULLET_LIBRARIES}" GLEW::glew OpenAL::OpenAL)
 target_link_libraries(VGI-ABP PRIVATE OpenAL::OpenAL)
