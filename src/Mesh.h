@@ -1,53 +1,20 @@
-#ifndef MESH_H
-#define MESH_H
+#pragma once
 
-#include <string>
-#include <vector>
+#include <GL\glew.h>
 
-#include "stdafx.h"
-#include "Texture.h"
-#include "Shader.h"
-
-struct Pixel {
-	glm::vec2 position;
-	glm::vec2 texCoords;
-};
-
-struct Vertex {
-	glm::vec3 position;
-	glm::vec3 normal;
-	glm::vec2 texCoords;
-	glm::vec3 tangent;
-	glm::vec3 bitangent;
-};
-
-class Mesh {
-
+class Mesh
+{
 public:
-	/** Mesh Data */
-	std::vector<Vertex> vertices;
-	std::vector<unsigned int> indices;
-	std::vector<Texture> textures;
+	Mesh();
 
-	/** Methods */
-	Mesh(std::vector<Vertex> vertices,
-		std::vector<unsigned int> indices,
-		std::vector<Texture> textures);
-	//~Mesh();
+	void CreateMesh(GLfloat *vertices, unsigned int *indices, unsigned int numOfVertices, unsigned int numOfIndices);
+	void RenderMesh();
+	void ClearMesh();
 
-	void Draw(Shader& shader);
-	void DeleteBuffers();
-
-	GLuint VAO() const { return vao; }
-	GLuint VBO() const { return vbo; }
-	GLuint EBO() const { return ebo; }
+	~Mesh();
 
 private:
-	/** Render Data */
-	GLuint vbo, ebo, vao;
-
-	/** Methods */
-	void setup();
+	GLuint VAO, VBO, IBO;
+	GLsizei indexCount;
 };
 
-#endif

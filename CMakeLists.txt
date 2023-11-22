@@ -20,17 +20,16 @@ add_executable(VGI-ABP
 # Ficheros principales
         src/main.cpp
 # Ficheros de funcionalidades extra
-        src/stdafx.h
-        src/Primitives.h
-        src/Primitives.cpp
+        src/CommonValues.h
+        src/stb_image.h
         
 # Fiechros de funcionalidades del juego
         src/Camera.h
         src/Camera.cpp
         src/Skybox.h
         src/Skybox.cpp
-        src/Shadow.h
-        src/Shadow.cpp
+        src/Window.cpp
+        src/Window.h
 
 # Ficheros de Objecto
         src/Model.h
@@ -40,7 +39,25 @@ add_executable(VGI-ABP
         src/Mesh.h
         src/Mesh.cpp
         src/Texture.h
-        src/Texture.cpp "src/Lights/DirectionalLight.cpp" "src/Lights/DirectionalLight.h" "src/Lights/Light.cpp" "src/Lights/Light.h" "src/Lights/PointLight.cpp" "src/Lights/PointLight.h" "src/Lights/SpotLight.cpp" "src/Lights/SpotLight.h" "src/stb_image.h")
+        src/Texture.cpp
+        src/Material.cpp
+        src/Material.h
+
+# Ficheros de Luz
+        src/DirectionalLight.cpp
+        src/DirectionalLight.h
+        src/Light.cpp
+        src/Light.h 
+        src/PointLight.cpp 
+        src/PointLight.h 
+        src/SpotLight.cpp
+        src/SpotLight.h
+
+# Ficheros de Sombras
+        src/OmniShadowMap.cpp
+        src/OmniShadowMap.h
+        src/ShadowMap.h
+        src/ShadowMap.cpp)
 
 
 # target_link_libraries(VGI-ABP PRIVATE glfw "${ASSIMP_INCLUDE_DIRS}/assimp" "${BULLET_LIBRARIES}" GLEW::glew OpenAL::OpenAL)
