@@ -1,16 +1,18 @@
 #pragma once
 #include <AL\al.h>
-#include "sndfile.h"
+#include <sndfile.h>
 class MusicBuffer
 {
 public:
 	void Play();
-	//void Pause();
-	//void Stop();
+	void Pause();
+	void Stop();
+	void Resume();
 
 	void UpdateBufferStream();
-	void Pause();
+
 	ALint getSource();
+
 	bool isPlaying();
 
 	MusicBuffer(const char* filename);

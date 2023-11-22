@@ -39,13 +39,20 @@ void MusicBuffer::Play()
 
 }
 
-//void MusicBuffer::Pause()
-//{
-//}
+void MusicBuffer::Pause()
+{
+	alSourcePause(p_Source);
+}
 
-//void MusicBuffer::Stop()
-//{
-//}
+void MusicBuffer::Stop()
+{
+	alSourceStop(p_Source);
+}
+
+void MusicBuffer::Resume()
+{
+	alSourcePlay(p_Source);
+}
 
 void MusicBuffer::UpdateBufferStream()
 {
@@ -110,6 +117,13 @@ ALint MusicBuffer::getSource()
 	return p_Source;
 }
 
+bool MusicBuffer::isPlaying()
+{
+	ALint state;
+	alGetSourcei(p_Source, AL_SOURCE_STATE, &state);
+	return (state == AL_PLAYING);
+}
+
 MusicBuffer::MusicBuffer(const char* filename)
 {
 	alGenSources(1, &p_Source);
@@ -164,16 +178,3 @@ MusicBuffer::~MusicBuffer()
 	alDeleteBuffers(NUM_BUFFERS, p_Buffers);
 
 }
-
-bool MusicBuffer::isPlaying()
-{
-	ALint state;
-	alGetSourcei(p_Source, AL_SOURCE_STATE, &state);
-	return (state == AL_PLAYING);
-}
-
-void MusicBuffer::Pause()
-{
-	alSourcePause(p_Source);
-}
-

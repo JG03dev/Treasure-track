@@ -122,39 +122,13 @@ int main(int argc, char* argv[])
         return -1;
 
     GLuint uniformProjection = 0, uniformModel = 0, uniformView = 0;
-
-    SoundDevice::init();
     
+    SoundDevice::Init();
     static SoundEffectsPlayer effectsPlayer1;
     static uint32_t sound1 = SE_LOAD("../../../music/sounds/arranque.wav");
+
     static MusicBuffer myMusic("../../../music/coconut.wav");
     bool estado = false;
-
-    // compilar shader texto
-    const char* vert_shader_text = "../../../Shaders/shader_text.vert";
-    const char* frag_shader_text = "../../../Shaders/shader_text.frag";
-
-    Shader text_shader(vert_shader_text, frag_shader_text);
-    text_shader.UseShader();
-
-    // inicializar freetype (texto)
-    FT_Library free_type;
-    FT_Error error_code = FT_Init_FreeType(&free_type);
-    if (error_code)
-    {
-        std::cout << "\n   Error code: " << error_code << " --- " << "An error occurred during initialising the FT_Library";
-        int keep_console_open;
-        std::cin >> keep_console_open;
-    }
-    Text text_object2(free_type, 1280, 720, "01234567890Get Rady.Timr:owns&ClBgfb");
-    text_object2.create_text_message("Get Ready... Timer: 000", 0, 0, "../../../Text Fonts/arialbi.ttf", 50, true);
-
-    glUniform1i(glGetUniformLocation(text_shader.ID, "alphabet_texture"), 31);
-
-    //color letras
-    glm::vec3 _RGB(10.0f, 120.0f, 105.0f);
-    unsigned int font_colour_loc = glGetUniformLocation(text_shader.ID, "font_colour");
-    glUniform3fv(font_colour_loc, 1, glm::value_ptr(_RGB));
 
 	while (!renderer->mainWindow->getShouldClose())
 	{
@@ -162,6 +136,23 @@ int main(int argc, char* argv[])
         GLfloat now = (GLfloat) glfwGetTime();
         deltaTime = now - lastTime;
         lastTime = now;
+        
+        static float healcooldown = 3;
+        healcooldown += deltaTime;
+        static float failcooldown = .8f;
+        failcooldown += deltaTime;
+        if (GetKeyState('A') & 0x8000)
+        {
+            if (healcooldown > 3) {
+                effectsPlayer1.Play(sound1);
+                healcooldown = 0;
+                failcooldown = 0;
+            }
+            else if (effectsPlayer1.isPlaying() && failcooldown > .8f) {
+                effectsPlayer1.Play(sound2);
+                failcooldown = 0;
+            }
+        }
 
         static float musiccontrolcooldown = 1;
         musiccontrolcooldown += deltaTime;
@@ -194,11 +185,12 @@ int main(int argc, char* argv[])
             musiccontrolcooldown = 0;
         }
 
-        //imprimir texto
-        glDisable(GL_DEPTH_TEST);
-        text_object2.draw_alphabets();
-        glEnable(GL_DEPTH_TEST);
-        
+        MainLoop::Get()->AddToDelayedUpdate([]() {
+            if (myMusic.isPlaying())
+            {
+                myMusic.UpdateBufferStream();
+            }
+            });
         
         pE.stepSimulation(deltaTime);
 		glfwPollEvents();
