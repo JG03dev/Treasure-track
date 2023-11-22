@@ -14,11 +14,11 @@ DirectionalLight::DirectionalLight(GLfloat red, GLfloat green, GLfloat blue,
 
 void DirectionalLight::UseLight(Shader s)
 {
-	glUniform3f(ambientColourLocation, colour.x, colour.y, colour.z);
+	/*glUniform3f(ambientColourLocation, colour.x, colour.y, colour.z);
 	glUniform1f(ambientIntensityLocation, ambientIntensity);
 
 	glUniform3f(directionLocation, direction.x, direction.y, direction.z);
-	glUniform1f(diffuseIntensityLocation, diffuseIntensity);
+	glUniform1f(diffuseIntensityLocation, diffuseIntensity);*/
 }
 
 DirectionalLight::~DirectionalLight()
