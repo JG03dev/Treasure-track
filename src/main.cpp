@@ -57,16 +57,17 @@ int main() {
 	}
 
 	// Shader loader
-	Shader objectShader, skyboxShader, shadowShader;
+	Shader objectShader, skyboxShader, shadowShader, general;
 	objectShader.loadShaders("../../../Shaders/object.vert", "../../../Shaders/object.frag");
 	skyboxShader.loadShaders("../../../Shaders/skybox.vert", "../../../Shaders/skybox.frag");
 	shadowShader.loadShaders("../../../Shaders/shadow.vert", "../../../Shaders/shadow.frag");
 	// TODO: setup general lighting shader
+	general.loadShaders("../../../Shaders/general_lighting.vert", "../../../Shaders/general_lighting.frag");
 
 
 	// Model loader
-	pObjCity1 = std::make_shared<Model>("../../../Assets/cotxe/cotxe.obj");
-	//pObjCar1 = std::make_shared<Model>("");
+	pObjCity1 = std::make_shared<Model>("../../../Assets/town/town.obj");
+	pObjCar1 = std::make_shared<Model>("../../../Assets/cotxe/cotxe.obj");
 
 	// Shadow
 	ParallelShadow shadowMap;

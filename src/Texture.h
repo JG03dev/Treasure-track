@@ -2,7 +2,7 @@
 #define TEXTURE_H
 
 /** Only include this once */
-#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
 
 #include <iostream>
 #include <vector>

@@ -40,7 +40,7 @@ add_executable(VGI-ABP
         src/Mesh.h
         src/Mesh.cpp
         src/Texture.h
-        src/Texture.cpp "src/Lights/DirectionalLight.cpp" "src/Lights/DirectionalLight.h" "src/Lights/Light.cpp" "src/Lights/Light.h" "src/Lights/PointLight.cpp" "src/Lights/PointLight.h" "src/Lights/SpotLight.cpp" "src/Lights/SpotLight.h")
+        src/Texture.cpp "src/Lights/DirectionalLight.cpp" "src/Lights/DirectionalLight.h" "src/Lights/Light.cpp" "src/Lights/Light.h" "src/Lights/PointLight.cpp" "src/Lights/PointLight.h" "src/Lights/SpotLight.cpp" "src/Lights/SpotLight.h" "src/stb_image.h")
 
 
 # target_link_libraries(VGI-ABP PRIVATE glfw "${ASSIMP_INCLUDE_DIRS}/assimp" "${BULLET_LIBRARIES}" GLEW::glew OpenAL::OpenAL)

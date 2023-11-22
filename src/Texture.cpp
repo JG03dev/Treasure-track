@@ -15,8 +15,8 @@ unsigned int LoadTexture(const std::string filename, bool gamma) {
 	unsigned int textureID{};
 	glGenTextures(1, &textureID);
 
-	int width, height, nrComponents;
-	unsigned char* data = SOIL_load_image(filename.c_str(), &width, &height, &nrComponents, 0);
+	int width, height, bitDepth;
+	unsigned char* data = stbi_load(filename.c_str(), &width, &height, &bitDepth, 0);
 
 	if (!data)
 		std::cerr << "LoadTexture: Texture failed to load at path: " << filename << "\n";
@@ -24,15 +24,15 @@ unsigned int LoadTexture(const std::string filename, bool gamma) {
 	else {
 		GLenum imageFormat;
 		GLenum dataFormat;
-		if (nrComponents == 1) {
+		if (bitDepth == 1) {
 			imageFormat = GL_RED;
 			dataFormat = GL_RED;
 		}
-		else if (nrComponents == 3) {
+		else if (bitDepth == 3) {
 			imageFormat = gamma ? GL_SRGB : GL_RGB;
 			dataFormat = GL_RGB;
 		}
-		else if (nrComponents == 4) {
+		else if (bitDepth == 4) {
 			imageFormat = gamma ? GL_SRGB_ALPHA : GL_RGBA;
 			dataFormat = GL_RGBA;
 		}
@@ -47,7 +47,7 @@ unsigned int LoadTexture(const std::string filename, bool gamma) {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	}
 
-	SOIL_free_image_data(data);
+	stbi_image_free(data);
 
 	return textureID;
 }
