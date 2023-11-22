@@ -61,7 +61,7 @@ int main() {
 	objectShader.loadShaders("../../../Shaders/object.vert", "../../../Shaders/object.frag");
 	skyboxShader.loadShaders("../../../Shaders/skybox.vert", "../../../Shaders/skybox.frag");
 	shadowShader.loadShaders("../../../Shaders/shadow.vert", "../../../Shaders/shadow.frag");
-
+	// TODO: setup general lighting shader
 
 
 	// Model loader
