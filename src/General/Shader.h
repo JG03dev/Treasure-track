@@ -1,14 +1,7 @@
 #ifndef SHADER_H
 #define SHADER_H
 
-#include <string>
-#include <map>
-#include <fstream>
-#include <sstream>
-#include <iostream>
-#include <fstream>
-
-#include "stdafx.h"
+#include "../include/stdafx.h"
 
 class Shader {
 

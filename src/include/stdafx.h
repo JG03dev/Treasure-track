@@ -32,21 +32,34 @@
 #include <glm/gtc/type_ptr.hpp>
 using namespace glm;
 
-// VGI: Llibreria SOIL2 (actualització de SOIL) per llegir imatges de diferents formats 
-//     (BMP,JPG,TIF,GIF,etc.) en la funció loadIMA (visualitzacio.cpp)
-#include <SOIL2/SOIL2.h>
-
-// VGI: Includes per lectura fitxers, funcions trigonomètriques i nombres aleatoris.
+/// Llibreries standard de C++
+//Streaming
+#include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
+#include <sstream>
+#include <fstream>
+//System&Utilities
 #include <math.h>
 #include <time.h>
+#include <memory>
+//Datastructures
 #include <vector>
 #include <string>
+#include <map>
+#include <unordered_map>
 
 // LLibreria de Open AL per a sounds 3D
 #include <AL/al.h>
 #include <AL/alc.h>
+
+//Llibreria d'importacio de imatges stb_image
+#include "stb_image.h"
+
+//Llibreria d'importacio de models
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
 
 // Desactivar en llistat compilació warning C4244: 'argumento': conversión de 'double' a 'GLfloat'; posible pérdida de datos
 #  pragma warning (disable:4244)  // Disable bogus VC++ 4.2 conversion warnings.

@@ -7,7 +7,7 @@
 #ifndef GLMATERIAL_H
 #define GLMATERIAL_H
 
-#include "stdafx.h"
+#include "../include/stdafx.h"
 
 // TODO: Mirar quins defines ens interessen (per tipus de materials etc.)
 #define MAX_MATERIALS  11

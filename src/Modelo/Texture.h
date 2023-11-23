@@ -1,15 +1,7 @@
 #ifndef TEXTURE_H
 #define TEXTURE_H
 
-/** Only include this once */
-#include "stb_image.h"
-
-#include <iostream>
-#include <vector>
-#include <string>
-#include <unordered_map>
-
-#include "stdafx.h"
+#include "../include/stdafx.h"
 
 enum TextureType {
 	TEX_UNKNOWN,

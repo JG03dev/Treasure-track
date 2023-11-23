@@ -1,7 +1,5 @@
-#include <iostream>
-#include <sstream>
-#include <string>
-#include <memory>
+//main.cpp
+
 
 #include "include/stdafx.h"
 
@@ -10,10 +8,11 @@
 
 /** Model Wrapper */
 #include "Modelo/Model.h"
-#include "Skybox.h"
+#include "General/Skybox.h"
 #include "Sombras/ShadowMap.h"
 #include "Sombras/OmniShadowMap.h"
 
+//Merge-Note: Globals should be on a separated file/class
 // Global Variables
 const char* APP_TITLE = "VGI-ABP";
 const int gWindowWidth = 1280;
@@ -40,6 +39,7 @@ void showFPS(GLFWwindow* window);
 bool initOpenGL();
 void renderScene(Shader& shader);
 
+//Merge-Note: Models (except for important ones) shold be mapped outside the code to later load them in loop
 //-----------------------------------------------------------------------------
 // Models
 //-----------------------------------------------------------------------------
@@ -150,17 +150,17 @@ int main() {
 		lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
 		lightView = glm::lookAt(glm::vec3(50.0f, 0.0f, 0.0f), glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
 		// render scene from light's point of view
-		shadowShader.use();
-		shadowShader.setUniform("uView", lightView);
-		shadowShader.setUniform("uProjection", lightProjection);
-		// get shadow map
-		glViewport(0, 0, shadowMap.width, shadowMap.height);
-		shadowMap.Bind();
+		//shadowShader.use();
+		//shadowShader.setUniform("uView", lightView);
+		//shadowShader.setUniform("uProjection", lightProjection);
+		//// get shadow map
+		//glViewport(0, 0, shadowMap.width, shadowMap.height);
+		/*shadowMap.Bind();
 		glClear(GL_DEPTH_BUFFER_BIT);
 		glCullFace(GL_FRONT);
-		renderScene(shadowShader);
+		renderScene(shadowShader);*/
 		glCullFace(GL_BACK);
-		shadowMap.Unbind();
+		//shadowMap.Unbind();
 
 
 
@@ -185,9 +185,9 @@ int main() {
 		objectShader.setUniform("uSpotLight.direction", camera.front);
 		// Shadow map
 		objectShader.setUniform("uLightSpaceMatrix", lightProjection * lightView);
-		objectShader.setUniform("uShadowMap", (int)shadowMap.active_texture_unit);
-		glActiveTexture(GL_TEXTURE0 + shadowMap.active_texture_unit);
-		glBindTexture(GL_TEXTURE_2D, shadowMap.TID());
+		//objectShader.setUniform("uShadowMap", (int)shadowMap.active_texture_unit);
+		//glActiveTexture(GL_TEXTURE0 + shadowMap.active_texture_unit);
+		//glBindTexture(GL_TEXTURE_2D, shadowMap.TID());
 		// Draw scene
 		renderScene(objectShader);
 
@@ -201,6 +201,7 @@ int main() {
 	return 0;
 }
 
+//Merge-Note: This should go to a Game or Scene class
 void renderScene(Shader& shader) {
 
 	// Set geological configurations
@@ -225,6 +226,7 @@ void renderScene(Shader& shader) {
 //-----------------------------------------------------------------------------
 // Initialize GLFW and OpenGL
 //-----------------------------------------------------------------------------
+//Merge-Note: This should go to a Game class constructor
 bool initOpenGL() {
 
 	// Intialize GLFW 
@@ -271,6 +273,8 @@ bool initOpenGL() {
 
 	return true;
 }
+
+//Merge-Note: All this code below should be to a I/O or Window handler class
 
 //-----------------------------------------------------------------------------
 // Is called whenever a key is pressed/released via GLFW

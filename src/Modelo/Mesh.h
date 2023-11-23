@@ -1,12 +1,9 @@
 #ifndef MESH_H
 #define MESH_H
 
-#include <string>
-#include <vector>
-
-#include "stdafx.h"
+#include "../include/stdafx.h"
+#include "../General/Shader.h"
 #include "Texture.h"
-#include "Shader.h"
 
 struct Pixel {
 	glm::vec2 position;

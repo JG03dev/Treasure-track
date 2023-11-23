@@ -1,20 +1,9 @@
 #ifndef MODEL_H
 #define MODEL_H
 
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
-
-#include <string>
-#include <fstream>
-#include <sstream>
-#include <iostream>
-#include <map>
-#include <vector>
-
-#include "stdafx.h"
+#include "../include/stdafx.h"
 #include "Mesh.h"
-#include "Shader.h"
+#include "../General/Shader.h"
 #include "Texture.h"
 
 class Model

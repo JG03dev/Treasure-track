@@ -1,35 +1,30 @@
-#pragma once
+#ifndef SKYBOX_H
+#define SKYBOX_H
 
-#include <vector>
-#include <string>
+#include "../include/stdafx.h"
+#include "../General/Shader.h"
 
-#include <GL\glew.h>
 
-#include <glm\glm.hpp>
-#include <glm\gtc\matrix_transform.hpp>
-#include <glm\gtc\type_ptr.hpp>
+class Skybox {
 
-#include "CommonValues.h"
-
-#include "Mesh.h"
-#include "Shader.h"
-
-class Skybox
-{
 public:
+
+	const unsigned int active_texture_unit;
+
 	Skybox();
 
-	Skybox(std::vector<std::string> faceLocations);
+	void Draw(Shader& shader, glm::mat4& view, glm::mat4& projection);
+	void LoadTexture(std::vector<std::string>& faces);
 
-	void DrawSkybox(glm::mat4 viewMatrix, glm::mat4 projectionMatrix);
-
-	~Skybox();
+	unsigned int VBO() { return vbo; }
+	unsigned int VAO() { return vao; }
+	unsigned int EBO() { return ebo; }
+	unsigned int TID() { return tid; }
 
 private:
-	Mesh* skyMesh;
-	Shader* skyShader;
+	unsigned int vbo, vao, ebo, tid;
 
-	GLuint textureId;
-	GLuint uniformProjection, uniformView;
+	void setup();
 };
 
+#endif
