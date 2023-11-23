@@ -65,7 +65,9 @@ int main() {
 
 
 	// Model loader
+	//pObjCity1 = std::make_shared<Model>("../../../Assets/skull/12140_Skull_v3_L2.obj");
 	pObjCity1 = std::make_shared<Model>("../../../Assets/UH60/uh60.obj");
+	//pObjCity1 = std::make_shared<Model>("../../../Assets/HIGHWAY_INTERSTATE_SOURCE/Highway Interchange.obj");
 	//pObjCar1 = std::make_shared<Model>("");
 
 	// Shadow
@@ -111,18 +113,18 @@ int main() {
 	// Light config
 	// Directional light
 	objectShader.setUniform("uDirectionalLight.direction", directionalLightDirection);
-	objectShader.setUniform("uDirectionalLight.ambient", 0.0f, 0.0f, 0.0f);
+	objectShader.setUniform("uDirectionalLight.ambient", 1.0f, 1.0f, 1.0f);
 	objectShader.setUniform("uDirectionalLight.diffuse", 1.0f, 1.0f, 1.0f);
 	objectShader.setUniform("uDirectionalLight.specular", 0.0f, 0.0f, 0.0f);
 	// Spot light
-	objectShader.setUniform("uSpotLight.innerCutOff", glm::cos(glm::radians(12.5f)));
-	objectShader.setUniform("uSpotLight.outerCutOff", glm::cos(glm::radians(17.5f)));
+	//objectShader.setUniform("uSpotLight.innerCutOff", glm::cos(glm::radians(12.5f)));
+	//objectShader.setUniform("uSpotLight.outerCutOff", glm::cos(glm::radians(17.5f)));
 	objectShader.setUniform("uSpotLight.ambient", 0.0f, 0.0f, 0.0f);
-	objectShader.setUniform("uSpotLight.diffuse", 1.0f, 1.0f, 1.0f);
-	objectShader.setUniform("uSpotLight.specular", 1.0f, 1.0f, 1.0f);
+	objectShader.setUniform("uSpotLight.diffuse", 0.0f, 0.0f, 0.0f);
+	objectShader.setUniform("uSpotLight.specular", 0.0f, 0.0f, 0.0f);
 	objectShader.setUniform("uSpotLight.constant", 1.0f);
-	objectShader.setUniform("uSpotLight.linear", 0.09f);
-	objectShader.setUniform("uSpotLight.quadratic", 0.032f);
+	//objectShader.setUniform("uSpotLight.linear", 0.09f);
+	//objectShader.setUniform("uSpotLight.quadratic", 0.032f);
 
 
 
