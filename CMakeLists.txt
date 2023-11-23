@@ -20,27 +20,34 @@ add_executable(VGI-ABP
 # Ficheros principales
         src/main.cpp
 # Ficheros de funcionalidades extra
-        src/stdafx.h
-        src/Primitives.h
-        src/Primitives.cpp
+        "src/include/stdafx.h"
+        "src/include/stb_image.h"
         
 # Fiechros de funcionalidades del juego
-        src/Camera.h
-        src/Camera.cpp
-        src/Skybox.h
-        src/Skybox.cpp
-        src/Shadow.h
-        src/Shadow.cpp
+        src/General/Camera.h
+        src/General/Camera.cpp
+        src/General/Skybox.h
+        src/General/Skybox.cpp
+        src/General/Shader.h
+        src/General/Shader.cpp
 
 # Ficheros de Objecto
-        src/Model.h
-        src/Model.cpp
-        src/Shader.h
-        src/Shader.cpp
-        src/Mesh.h
-        src/Mesh.cpp
-        src/Texture.h
-        src/Texture.cpp "src/Lights/DirectionalLight.cpp" "src/Lights/DirectionalLight.h" "src/Lights/Light.cpp" "src/Lights/Light.h" "src/Lights/PointLight.cpp" "src/Lights/PointLight.h" "src/Lights/SpotLight.cpp" "src/Lights/SpotLight.h" "src/stb_image.h")
+        src/Modelo/Model.h
+        src/Modelo/Model.cpp
+        src/Modelo/Mesh.h
+        src/Modelo/Mesh.cpp
+        src/Modelo/Texture.h
+        src/Modelo/Texture.cpp 
+
+# Ficheros para la iluminacion
+        src/Luces/DirectionalLight.cpp
+        src/Luces/DirectionalLight.h
+        src/Luces/Light.cpp
+        src/Luces/Light.h
+        src/Luces/PointLight.cpp
+        src/Luces/PointLight.h
+        src/Luces/SpotLight.cpp
+        src/Luces/SpotLight.h)
 
 
 # target_link_libraries(VGI-ABP PRIVATE glfw "${ASSIMP_INCLUDE_DIRS}/assimp" "${BULLET_LIBRARIES}" GLEW::glew OpenAL::OpenAL)
