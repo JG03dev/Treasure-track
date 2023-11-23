@@ -65,9 +65,9 @@ void Skybox::setup() {
 void Skybox::Draw(Shader& shader, glm::mat4& view, glm::mat4& projection) {
 
 	shader.use();
-	shader.setUniform("uView", view);
-	shader.setUniform("uProjection", projection);
-	shader.setUniform("uSkybox", 0); // no other texture units
+	shader.setUniform("view", view);
+	shader.setUniform("projection", projection);
+	shader.setUniform("skybox", 0); // no other texture units
 
 	glDepthMask(GL_FALSE);
 	glDepthFunc(GL_LEQUAL); // change depth func so depth test passes when val == depth buffer

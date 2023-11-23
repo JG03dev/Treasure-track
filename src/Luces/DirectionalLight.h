@@ -1,5 +1,6 @@
 #pragma once
 #include "Light.h"
+#include "../General/Shader.h"
 
 class DirectionalLight :
 	public Light

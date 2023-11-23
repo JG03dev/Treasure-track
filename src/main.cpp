@@ -3,16 +3,16 @@
 #include <string>
 #include <memory>
 
-#include "stdafx.h"
+#include "include/stdafx.h"
 
 /** Camera Wrapper */
-#include "Camera.h"
+#include "General/Camera.h"
 
 /** Model Wrapper */
-#include "Model.h"
-#include "Primitives.h"
+#include "Modelo/Model.h"
 #include "Skybox.h"
-#include "Shadow.h"
+#include "Sombras/ShadowMap.h"
+#include "Sombras/OmniShadowMap.h"
 
 // Global Variables
 const char* APP_TITLE = "VGI-ABP";
@@ -57,20 +57,16 @@ int main() {
 	}
 
 	// Shader loader
-	Shader objectShader, skyboxShader, shadowShader, general;
-	objectShader.loadShaders("../../../Shaders/object.vert", "../../../Shaders/object.frag");
-	skyboxShader.loadShaders("../../../Shaders/skybox.vert", "../../../Shaders/skybox.frag");
-	shadowShader.loadShaders("../../../Shaders/shadow.vert", "../../../Shaders/shadow.frag");
-	// TODO: setup general lighting shader
-	general.loadShaders("../../../Shaders/general_lighting.vert", "../../../Shaders/general_lighting.frag");
+	Shader objectShader, skyboxShader, directionalShadowShader, omniShadowShader;
+	objectShader.loadShaders("../../../Shaders/shader.vert", "../../../Shaders/shader.frag");
+	skyboxShader.loadShaders("../../../Shaders/skybox.VERT", "../../../Shaders/skybox.FRAG");
+	directionalShadowShader.loadShaders("../../../Shaders/directional_shadow_map.vert", "../../../Shaders/directional_shadow_map.frag");
+	omniShadowShader.loadShaders("../../../Shaders/omni_shadow_map.vert", "../../../Shaders/omni_shadow_map.frag", "../../../Shaders/omni_shadow_map.geom");
 
 
 	// Model loader
 	pObjCity1 = std::make_shared<Model>("../../../Assets/town/town.obj");
 	pObjCar1 = std::make_shared<Model>("../../../Assets/cotxe/cotxe.obj");
-
-	// Shadow
-	ParallelShadow shadowMap;
 
 	/** Skybox Mapping Order
 		  _______

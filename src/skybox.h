@@ -1,10 +1,8 @@
 #ifndef SKYBOX_H
 #define SKYBOX_H
 
-#include <vector>
-
-#include "stdafx.h"
-#include "Shader.h"
+#include "include/stdafx.h"
+#include "General/Shader.h"
 
 
 class Skybox {

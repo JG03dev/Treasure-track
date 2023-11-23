@@ -1,17 +1,14 @@
-#version 330 core
+#version 330
 
-layout (location = 0) in vec3 aPos;
+layout (location = 0) in vec3 pos;
 
-out vec3 SkyboxCoords;
+out vec3 TexCoords;
 
-uniform mat4 uProjection;
-uniform mat4 uView;
+uniform mat4 projection;
+uniform mat4 view;
 
-void main() {
-
-	SkyboxCoords = aPos;
-	vec4 pos = uProjection * uView * vec4(aPos, 1.0);
-
-	/** Set z = 1.0 the maximum depth value */
-	gl_Position = pos.xyww;
+void main()
+{
+	TexCoords = pos;
+	gl_Position = projection * view * vec4(pos, 1.0);
 }
