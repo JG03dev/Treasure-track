@@ -1,5 +1,6 @@
 #pragma once
-#include <AL\alc.h>
+
+#include "../Encabezados/stdafx.h"
 
 /// <summary>
 /// Singleton class that initilizes our sound hardware device and allows

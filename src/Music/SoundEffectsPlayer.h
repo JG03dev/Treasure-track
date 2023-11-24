@@ -1,5 +1,6 @@
 #pragma once
-#include <AL\al.h>
+#include "../Encabezados/stdafx.h"
+
 class SoundEffectsPlayer
 {
 public:

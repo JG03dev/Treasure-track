@@ -62,29 +62,21 @@ add_executable(VGI-ABP
         src/Graficos/Luces/PointLight.h
         src/Graficos/Luces/SpotLight.cpp
         src/Graficos/Luces/SpotLight.h
+
         src/Graficos/Sombras/ShadowMap.h
         src/Graficos/Sombras/ShadowMap.cpp
         src/Graficos/Sombras/OmniShadowMap.h
         src/Graficos/Sombras/OmniShadowMap.cpp
 
 # Ficheros para el sonido
-        src/Sound/MusicBuffer.cpp
-        src/Sound/MusicBuffer.h
-        src/Sound/SoundDevice.cpp
-        src/Sound/SoundDevice.h
-        src/Sound/SoundSource.cpp
-        src/Sound/SoundSource.h
-
-# Ficheros Unknown
-        src/Unknown/Window.cpp
-        src/Unknown/Window.h
-        src/Unknown/PhysicsEngine.cpp
-        src/Unknown/PhysicsEngine.h
-        src/Unknown/PlayerVehicle.h
-        src/Unknown/PlayerVehicle.cpp
-        src/Unknown/GroundMesh.h
-        src/Unknown/GLDebugDrawer.h
-        src/Unknown/GLDebugDrawer.cpp)
+        src/Music/MusicBuffer.cpp
+        src/Music/MusicBuffer.h
+        src/Music/SoundDevice.cpp
+        src/Music/SoundDevice.h
+        src/Music/SoundEffectsLibrary.cpp
+        src/Music/SoundEffectsLibrary.h
+        src/Music/SoundEffectsPlayer.cpp
+        src/Music/SoundEffectsPlayer.h)
 
 # target_link_libraries(VGI-ABP PRIVATE glfw "${ASSIMP_INCLUDE_DIRS}/assimp" "${BULLET_LIBRARIES}" GLEW::glew OpenAL::OpenAL)
 target_link_libraries(VGI-ABP PRIVATE OpenAL::OpenAL)

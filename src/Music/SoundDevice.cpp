@@ -1,7 +1,4 @@
 #include "SoundDevice.h"
-#include <AL\al.h>
-#include <stdio.h>
-#include <vector>
 
 static SoundDevice* _instance = nullptr;
 

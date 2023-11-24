@@ -86,6 +86,17 @@ void Camera::processAccerlate(bool accer) {
 	else speed = SPEED;
 }
 
+void Camera::followPlayer()
+{
+	btTransform t;
+	t = this->player->vehicle->getChassisWorldTransform();
+
+	btVector3 forward = this->player->vehicle->getForwardVector();
+	btVector3 pos = t.getOrigin() - forward * 8;
+
+	position = glm::vec3(float(pos.getX()), float(pos.getY()) + 2, float(pos.getZ()));
+}
+
 // Update front vector of the camera
 void Camera::update() {
 	glm::vec3 tmpFront;

@@ -23,15 +23,8 @@
 
 #pragma endregion
 
-#pragma region UNKNOWN
-
-#include "Unknown/Window.h"
-
-#pragma endregion
-
 // --OTHER INCLUDES--
 
-#include <memory>
 
 class Game
 {
@@ -90,7 +83,7 @@ private:
 
 	std::vector<Shader*> m_Shaders;
 	Player* m_Player;
-	vector<Object*> m_Objects;
+	std::vector<Object*> m_Objects;
 
 	btDiscreteDynamicsWorld* m_dynamicsWorld;
 };

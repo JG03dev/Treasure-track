@@ -20,13 +20,15 @@ public:
 
 	~Model();
 
+	std::vector<Mesh*> meshList;
+
 private:
 
 	void LoadNode(aiNode *node, const aiScene *scene);
 	void LoadMesh(aiMesh *mesh, const aiScene *scene);
 	void LoadMaterials(const aiScene *scene);
 
-	std::vector<Mesh*> meshList;
+	
 	std::vector<Texture*> textureList;
 	std::vector<unsigned int> meshToTex;
 	std::string m_name;

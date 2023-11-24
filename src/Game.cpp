@@ -12,7 +12,7 @@ Skybox Game::loadSkybox()
         "../../../Assets/skybox/back.jpg"
     };
     //Load Skybox with shaders
-    return Skybox(faces, "../../../Shaders/skybox.VERT", "../../../Shaders/skybox.FRAG");
+    return Skybox(faces);
 }
 
 void Game::Initializer()
@@ -170,52 +170,5 @@ void Game::Actualizar()
 
 void Game::Render()
 {
-    glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    // don't forget to enable shader before setting uniforms
-    m_Shaders[1]->use();
-
-    // view/projection transformations
-    glm::mat4 projection = glm::perspective(glm::radians(m_Camera->Zoom), (float)m_SCR_WIDTH / (float)m_SCR_HEIGHT, 0.1f, 100.0f);
-    glm::mat4 view = m_Camera->GetViewMatrix();
-    m_Shaders[1]->setMat4("projection", projection);
-    m_Shaders[1]->setMat4("view", view);
-
-    // set light uniforms
-    m_Shaders[1]->setVec3("viewPos", m_Camera->Position);
-    m_Shaders[1]->setVec3("lightPos", m_lightPos);
-    m_Shaders[1]->setInt("blinn", m_blinn);
-
-    for (int i = 0; i < m_Objects.size(); i++)
-    {
-        // render the loaded model
-        glm::mat4 model = glm::mat4(1.0f);
-
-        btTransform t = btTransform();
-        m_Objects[i]->rb->getMotionState()->getWorldTransform(t);
-        t.getOpenGLMatrix(glm::value_ptr(model));
-
-        model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));	// it's a bit too big for our scene, so scale it down
-        m_Shaders[1]->setMat4("modelMatrix", glm::mat4(1.0f));
-        m_Objects[i]->Draw(*m_Shaders[1]);
-    }
-
-    // render the loaded model
-    glm::mat4 model = glm::mat4(1.0f);
-
-    btTransform t = btTransform();
-    m_Player->vehicle->getChassisWorldTransform().getOpenGLMatrix(glm::value_ptr(model));
-
-    model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));	// it's a bit too big for our scene, so scale it down
-    m_Shaders[1]->setMat4("modelMatrix", glm::mat4(1.0f));
-    m_Player->Draw(*m_Shaders[1]);
-
-    //Skybox
-    m_skybox.drawSkybox('Y', projection, view);
-
-    // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
-    // -------------------------------------------------------------------------------
-    glfwSwapBuffers(m_Window);
-    glfwPollEvents();
+    
 }

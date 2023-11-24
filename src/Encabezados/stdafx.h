@@ -39,19 +39,24 @@ using namespace glm;
 #include <stdlib.h>
 #include <sstream>
 #include <fstream>
+#include <cstddef>
 //System&Utilities
 #include <math.h>
 #include <time.h>
 #include <memory>
+#include <malloc.h>
 //Datastructures
 #include <vector>
 #include <string>
 #include <map>
 #include <unordered_map>
+#include <inttypes.h>
 
 // LLibreria de Open AL per a sounds 3D
 #include <AL/al.h>
 #include <AL/alc.h>
+#include <AL\alext.h>
+#include <sndfile.h>
 
 //Llibreria d'importacio de imatges stb_image
 #include "stb_image.h"

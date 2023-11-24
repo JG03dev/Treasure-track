@@ -2,7 +2,7 @@
 
 // Constructors
 
-Object::Object(string const& modelPath, btDiscreteDynamicsWorld* dynamicsWorld) {
+Object::Object(std::string const& modelPath, btDiscreteDynamicsWorld* dynamicsWorld) {
 	model = new Model(modelPath);
 
 	this->CreateRigidBody();
@@ -25,11 +25,12 @@ void Object::CreateRigidBody() {
 	objectTransform.setIdentity();
 	objectTransform.setOrigin(btVector3(0, 0, 0));
 
-	for (int i = 0, numMeshes = model->meshes.size(); i < numMeshes; i++) {
+	for (int i = 0, numMeshes = model->meshList.size(); i < numMeshes; i++) {
 		btTriangleMesh* triangleMesh = new btTriangleMesh();
 
-		Mesh* mesh = &this->model->meshes.front();
-		for (int i = 0; i < mesh->indices.size(); i += 3) {
+		//TODO: Adaptar a nuevo mesh
+		Mesh* mesh = this->model->meshList[i];
+		for (int j = 0; j < mesh->indices.size(); j += 3) {
 			btVector3 v1(mesh->vertices[i].Position.x, mesh->vertices[i].Position.y, mesh->vertices[i].Position.z);
 			btVector3 v2(mesh->vertices[i + 1].Position.x, mesh->vertices[i + 1].Position.y, mesh->vertices[i + 1].Position.z);
 			btVector3 v3(mesh->vertices[i + 2].Position.x, mesh->vertices[i + 2].Position.y, mesh->vertices[i + 2].Position.z);

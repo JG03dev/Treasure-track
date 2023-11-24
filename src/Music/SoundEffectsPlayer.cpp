@@ -1,5 +1,4 @@
 #include "SoundEffectsPlayer.h"
-#include <iostream>
 
 SoundEffectsPlayer::SoundEffectsPlayer()
 {

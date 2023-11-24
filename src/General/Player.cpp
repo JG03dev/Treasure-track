@@ -2,7 +2,7 @@
 
 // Constructor
 
-Player::Player(string const& modelPath, btDiscreteDynamicsWorld* dynamicsWorld) {
+Player::Player(std::string const& modelPath, btDiscreteDynamicsWorld* dynamicsWorld) {
 	model = new Model(modelPath);
 
 	this->CreateVehicle(modelPath, dynamicsWorld); // Doesn't use a compound shape as a test to see how it works
@@ -76,7 +76,7 @@ void Player::InputMethod(int key, bool keyPressed) {
 
 // Private Methods
 
-void Player::CreateVehicle(string const& modelPath, btDiscreteDynamicsWorld* dynamicsWorld) {
+void Player::CreateVehicle(std::string const& modelPath, btDiscreteDynamicsWorld* dynamicsWorld) {
 	// --------- Mesh Load to Get the chassis half extents for the box shape
 
 	btCompoundShape* tempShape = new btCompoundShape();
@@ -88,6 +88,7 @@ void Player::CreateVehicle(string const& modelPath, btDiscreteDynamicsWorld* dyn
 	for (int i = 0, numModels = model->meshes.size(); i < numModels; i++) {
 		btTriangleMesh* triangleMesh = new btTriangleMesh();
 
+		//TODO: Adaptar a nuevo mesh
 		Mesh* mesh = &this->model->meshes.front();
 		for (int i = 0; i < mesh->indices.size(); i += 3) {
 			btVector3 v1(mesh->vertices[i].Position.x, mesh->vertices[i].Position.y, mesh->vertices[i].Position.z);

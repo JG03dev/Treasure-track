@@ -8,9 +8,12 @@ Mesh::Mesh()
 	indexCount = 0;
 }
 
-void Mesh::CreateMesh(GLfloat *vertices, unsigned int *indices, unsigned int numOfVertices, unsigned int numOfIndices)
+void Mesh::CreateMesh(std::vector<GLfloat> vertices, unsigned int *indices, unsigned int numOfVertices, unsigned int numOfIndices)
 {
 	indexCount = numOfIndices;
+
+	raw_vertices = vertices;
+	GLfloat* vertInGPU = &vertices[0];
 
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
@@ -21,13 +24,16 @@ void Mesh::CreateMesh(GLfloat *vertices, unsigned int *indices, unsigned int num
 
 	glGenBuffers(1, &VBO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices[0]) * numOfVertices, vertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertInGPU[0]) * numOfVertices, vertInGPU, GL_STATIC_DRAW);
 
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vertices[0]) * 8, 0);
+	//Posicion del vertice (x, y, z)
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vertInGPU[0]) * 8, 0);
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(vertices[0]) * 8, (void*)(sizeof(vertices[0]) * 3));
+	//Mapeo de la textura (u, v)
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(vertInGPU[0]) * 8, (void*)(sizeof(vertInGPU[0]) * 3));
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(vertices[0]) * 8, (void*)(sizeof(vertices[0]) * 5));
+	//Vector Normal de la cara a la cara a la que forma parte (Nx, Ny, Nz)
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(vertInGPU[0]) * 8, (void*)(sizeof(vertInGPU[0]) * 5));
 	glEnableVertexAttribArray(2);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);

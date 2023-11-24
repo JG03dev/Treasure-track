@@ -1,7 +1,5 @@
 #include "SoundEffectsLibrary.h"
-#include <sndfile.h>
-#include <inttypes.h>
-#include <AL\alext.h>
+
 
 /// <summary>
 /// Static class access.

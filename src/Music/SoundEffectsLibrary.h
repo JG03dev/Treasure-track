@@ -1,6 +1,5 @@
 #pragma once
-#include <AL\al.h>
-#include <vector>
+#include "../Encabezados/stdafx.h"
 
 /// <summary>
 /// SoundEffectsLibrary: Singleton class that keeps track of the shorter sounds
