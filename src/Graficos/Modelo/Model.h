@@ -31,6 +31,9 @@ private:
 	std::vector<unsigned int> meshToTex;
 	std::string m_name;
 
+	//TODO: Manage to do this as a constant
+	const char* PLAIN_PATH = "../../../Assets/plain.png"; //Path for default imag
+
 	//EXTRA: Material custom añadido
 	Material materialModel;
 };

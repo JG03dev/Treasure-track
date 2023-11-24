@@ -166,12 +166,16 @@ void Renderer::SetSpotLights(unsigned int textureUnit, unsigned int offset)
 
 void Renderer::RenderObjects(glm::mat4 viewMatrix, glm::mat4 projectionMatrix, Camera c)
 {
-
+#ifdef __APPLE__
+	glViewport(0, 0, 2 * vwidth, 2 * vheight);
+#else
+	glViewport(0, 0, vwidth, vheight);
+#endif
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	//Skybox
-	skybox->Draw(*sSkybox, glm::mat4(glm::mat3(viewMatrix)), projectionMatrix); //Remove 
+	skybox->Draw(*sSkybox, glm::mat4(glm::mat3(viewMatrix)), projectionMatrix); //TODO: Check if we can save parameters
 
 	///Objects
 	sObject->use();

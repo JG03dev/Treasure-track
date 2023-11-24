@@ -32,11 +32,11 @@ public:
 	// TODO: Improve constructors
 
 	Renderer() : skybox(NULL), sObject(NULL), sSkybox(NULL), sDirShadow(NULL), sOmniShadow(NULL),
-		mainLight(NULL), pointLightCount(0), spotLightCount(0) {}	
+		mainLight(NULL), pointLightCount(0), spotLightCount(0), vwidth(1366), vheight(768) {}
 
-	Renderer(Shader* sObject, Shader *sSky, Shader*sDirSha, Shader *sOmniSha, Skybox* s) : 
+	Renderer(Shader* sObject, Shader *sSky, Shader*sDirSha, Shader *sOmniSha, Skybox* s, GLsizei viewPortWidth, GLsizei viewPortHeight) : 
 		skybox(s), sObject(sObject), sSkybox(sSky), sDirShadow(sDirSha), sOmniShadow(sOmniSha),
-		mainLight(NULL), pointLightCount(0), spotLightCount(0) {}
+		mainLight(NULL), pointLightCount(0), spotLightCount(0), vwidth(viewPortWidth), vheight(viewPortHeight) {}
 
 	// Data modifiers 
 	
@@ -80,4 +80,7 @@ private:
 	std::vector<PointLight*> pointLights;
 	std::vector<SpotLight*> spotLights;
 	GLuint pointLightCount, spotLightCount;
+
+	//Viewport (a discutir)
+	GLsizei vwidth, vheight;
 };

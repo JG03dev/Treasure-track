@@ -89,7 +89,6 @@ int main() {
 		  |_____|
 	*/
 
-	Skybox skybox;
 	std::vector<std::string> faces = {
 		"../../../Assets/skybox/right.jpg",			// right
 		"../../../Assets/skybox/left.jpg",			// left
@@ -98,12 +97,12 @@ int main() {
 		"../../../Assets/skybox/front.jpg",			// front
 		"../../../Assets/skybox/back.jpg"			// back
 	};
-	skybox.LoadTexture(faces);
+	Skybox skybox(faces);
 
 	// Light global
 	DirectionalLight mainLight(2048, 2048, /*Shadow dimensions*/
-		1.0f, 0.53f, 0.3f, /*RGB colour*/
-		0.1f, 0.5f,	/*Intensity (ambient, diffuse)*/
+		1.0f, 1.0f, 1.0f, /*RGB colour*/
+		0.9f, 0.5f,	/*Intensity (ambient, diffuse)*/
 		-10.0f, -12.0f, 18.5f /*Direction of the light*/
 	);
 
@@ -122,7 +121,7 @@ int main() {
 
 	// Initialize renderer based on what we loaded
 
-	Renderer r(&objectShader, &skyboxShader, &directionalShadowShader, &omniShadowShader, &skybox);
+	Renderer r(&objectShader, &skyboxShader, &directionalShadowShader, &omniShadowShader, &skybox, gWindowWidth, gWindowHeight);
 
 	r.AddLight(&mainLight);
 	r.AddLight(&Light1);
@@ -153,13 +152,6 @@ int main() {
 		r.setModelMatrix("cotxe", model);
 
 		// Render Everything Up
-
-#ifdef __APPLE__
-		glViewport(0, 0, 2 * gWindowWidth, 2 * gWindowHeight);
-#else
-		glViewport(0, 0, gWindowWidth, gWindowHeight);
-#endif
-
 		r.RenderEverything(view, projection, camera);
 
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)

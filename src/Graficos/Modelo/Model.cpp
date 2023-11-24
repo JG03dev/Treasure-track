@@ -120,7 +120,7 @@ void Model::LoadMaterials(const aiScene * scene)
 
 		if (!textureList[i])
 		{
-			textureList[i] = new Texture("../../../Assets/plain.png");
+			textureList[i] = new Texture(PLAIN_PATH);
 			textureList[i]->LoadTextureA();
 		}
 	}
