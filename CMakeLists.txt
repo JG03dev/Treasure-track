@@ -57,7 +57,7 @@ add_executable(VGI-ABP
         src/Graficos/Sombras/ShadowMap.h
         src/Graficos/Sombras/ShadowMap.cpp
         src/Graficos/Sombras/OmniShadowMap.h
-        src/Graficos/Sombras/OmniShadowMap.cpp )
+        src/Graficos/Sombras/OmniShadowMap.cpp)
 
 
 # target_link_libraries(VGI-ABP PRIVATE glfw "${ASSIMP_INCLUDE_DIRS}/assimp" "${BULLET_LIBRARIES}" GLEW::glew OpenAL::OpenAL)
