@@ -1,102 +1,86 @@
-#pragma once
 /*
-// --OUR INCLUDES--
+* Classe Renderer: Esta classe se encargara de hacer las funciones de renderizacion de objetos, luces y sombras de la escena,
+* Esta evita tener un main o una classe game de 4k lineas por el exceso de funciones que no pertenecen estar en un archivo tan
+* general
+*/
 
-#pragma region GRAFICOS
+#include "../Encabezados/stdafx.h"
 
-#include "Modelo/Mesh.h"
+// Renderizacion General
 #include "Shader.h"
-
-#pragma endregion
-
-#pragma region GENERAL
-
+#include "Skybox.h"
 #include "../General/Camera.h"
+#include "Modelo/Model.h"
 
-#pragma endregion
+// Iluminado
+#include "Luces/DirectionalLight.h"
+#include "Luces/PointLight.h"
+#include "Luces/SpotLight.h"
+#include "Sombras/ShadowMap.h"
+#include "Sombras/OmniShadowMap.h"
 
-#pragma region UNKNOWN
+//Light constants
+const int MAX_POINT_LIGHTS = 3;
+const int MAX_SPOT_LIGHTS = 3;
 
-#include "../Unknown/Window.h"
 
-#pragma endregion
-
-// --OTHER INCLUDES--
-
-#include <vector>
-
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-
-class Renderer {
+class Renderer
+{
 public:
-
 	// Constructors
 
-	Renderer() : uniformProjection(0), uniformModel(0), uniformView(0) {};
+	// TODO: Improve constructors
 
-	Renderer(const Renderer& r) = delete;
+	Renderer() : skybox(NULL), sObject(NULL), sSkybox(NULL), sDirShadow(NULL), sOmniShadow(NULL),
+		mainLight(NULL), pointLightCount(0), spotLightCount(0), vwidth(1366), vheight(768) {}
 
-	// Singleton
-	static Renderer* getInstance() {
-		if (!renderer) { renderer = new Renderer(); }
-		return renderer;
-	}
+	Renderer(Shader* sObject, Shader *sSky, Shader*sDirSha, Shader *sOmniSha, Skybox* s, GLsizei viewPortWidth, GLsizei viewPortHeight) : 
+		skybox(s), sObject(sObject), sSkybox(sSky), sDirShadow(sDirSha), sOmniShadow(sOmniSha),
+		mainLight(NULL), pointLightCount(0), spotLightCount(0), vwidth(viewPortWidth), vheight(viewPortHeight) {}
 
-	// Public Methods
+	// Data modifiers 
+	
+	// TODO: Improve data modifiers
 
-	void startWindow(GLint windowWidth = 800, GLint windowHeight = 600) { 
-		mainWindow = new Window(windowWidth, windowHeight); 
-		mainWindow->Initialise(); 
-		projection = glm::perspective(glm::radians(45.0f), (GLfloat)mainWindow->getBufferWidth() / (GLfloat)mainWindow->getBufferHeight(), 0.1f, 100.0f);
-	}
+	void AddLight(DirectionalLight* l);
+	void AddLight(PointLight* l);
+	void AddLight(SpotLight* l);
 
-	void addMesh(Mesh* m) { meshList.push_back(m); }
+	void AddModel(std::string id, Model* m, glm::mat4 modelmat);
+	void setModelMatrix(std::string id, glm::mat4 modelmat);
+	glm::mat4 getModelMatrix(std::string id);
 
-	void addShader(Shader* s) { shaderList.push_back(s); }
+	// Renders
 
-	void addCamera(Camera* c) { this->camera = c; }
+	void RenderEverything(glm::mat4 viewMatrix, glm::mat4 projectionMatrix, Camera c);
+	void RenderShadowDirLight(DirectionalLight* light);
+	void RenderShadowOmniLights(PointLight* light);
+	void RenderObjects(glm::mat4 viewMatrix, glm::mat4 projectionMatrix, Camera c);
+	void RenderScene();
 
-	void updateCameraPos() { this->camera->followPlayer(); }
+	// Funciones auxiliares
 
-	void updateCameraRotation() { this->camera->mouseControl(this->mainWindow->getXChange(), this->mainWindow->getYChange()); }
+	void SetPointLights(unsigned int textureUnit, unsigned int offset);
+	void SetSpotLights(unsigned int textureUnit, unsigned int offset);
 
-	void clearWindow() {
-		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	}
-
-	void render(btRigidBody* groundRB, btTransform chassisT);
-
-	bool* getKeys() { return mainWindow->getKeys(); }
-
-	// Destructors
-
-	~Renderer() {};
-
-	// Public Attributes
-
-	glm::mat4 projection;
-
-	Window* mainWindow;
+	~Renderer();
 
 private:
+	// Objectos de renderizacion general
+	Skybox* skybox;
 
-	// Singleton Instance
-	
-	static Renderer* renderer; // Singleton to access renderer class from anywhere
+	// SOLUCIO TEMPORAL a cargar tots els models amb les seves transformacions mapejats
+	std::map<std::string, std::pair<Model*, glm::mat4>> Models;
 
-	// Private Attributes
+	// Shaders
+	Shader* sObject, *sSkybox, *sDirShadow, *sOmniShadow;
 
-	std::vector<Mesh*> meshList;
+	// Lights (SOLUCIO TEMPORAL)
+	DirectionalLight* mainLight;
+	std::vector<PointLight*> pointLights;
+	std::vector<SpotLight*> spotLights;
+	GLuint pointLightCount, spotLightCount;
 
-	std::vector<Shader*> shaderList;
-
-	Camera* camera;
-
-	PlayerVehicle* player;
-
-	GLuint uniformProjection = 0, uniformModel = 0, uniformView = 0;
+	//Viewport (a discutir)
+	GLsizei vwidth, vheight;
 };
-*/
