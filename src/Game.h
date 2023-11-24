@@ -9,6 +9,9 @@
 #include "Camera.h"
 #include "Object.h"
 #include "Window.h"
+#include "Player.h"
+
+
 
 class Game
 {
@@ -24,39 +27,50 @@ public:
 	Game(const Game& other) = delete;
 	Game& operator==(const Game& other) = delete;
 
+	Game(GLFWwindow* w) : m_Window(w) {};
+
+
+	void Initializer();
 	void Run();
-	void ManejarEntradaDeUsuario();
+	void processInput(GLFWwindow* window);
 	void Actualizar();
-	void Renderizar();
+	void Render();
+
+	int InitializeWindow();
+
+	Skybox loadSkybox();
+
+	void AddShader(const char* s1, const char* s2);
+
+	//physics
+	void InitializePhysics();
 
 private:
-	std::unique_ptr<Window> m_Window;
-	std::unique_ptr<Camera> m_Camera;
-	std::unique_ptr<Light> m_Light;
-	std::unique_ptr<Car> m_Car;
-};
+	GLFWwindow* m_Window; 
+	Camera* m_Camera;
+	Light* m_Light;
 
-//classe pel cotxe principal
-class Car
-{
-public:
-	Object skin;
-	GLfloat getX() { return posX; }
-	GLfloat getY() { return posX; }
+	Skybox m_skybox;
 
-	void changeVelocity(GLfloat vel) { velocity = vel; }
-	void actualizarPos();
+	const unsigned int m_SCR_WIDTH = 800;
+	const unsigned int m_SCR_HEIGHT = 600;
 
-private:
-	GLfloat posX;
-	GLfloat posY;
+	float m_deltaTime;
+	float m_lastFrame;
 
-	GLfloat velocity;
+	bool m_blinn;
+	bool m_blinnKeyPressed;
 
-};
+	bool m_firstMouse;
 
-//classe pels cotxes extra que si els toquem resten punts
-class Extra
-{
+	float m_lastX;
+	float m_lastY;
 
+	glm::vec3 m_lightPos; 
+
+	std::vector<Shader*> m_Shaders;
+	//Player* m_Player;
+	//vector<Object*> m_Objects;
+
+	btDiscreteDynamicsWorld* m_dynamicsWorld;
 };

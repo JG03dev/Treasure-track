@@ -13,6 +13,7 @@
 #include <iostream>
 #include "MusicBuffer.h"
 #include "MainLoop/MainLoop.h"  // for looping
+#include "Game.h"
 
 #include <iostream>
 
@@ -119,6 +120,9 @@ int main()
 
     // render loop
     // -----------
+
+    Game game(window); //create object Game
+
     while (!glfwWindowShouldClose(window))
     {
         
