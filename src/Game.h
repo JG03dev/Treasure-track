@@ -1,17 +1,37 @@
 #pragma once
 
+// --OUR INCLUDES--
+
+#pragma region ENCABEZADOS
+
+#include "Encabezados/stdafx.h"
+
+#pragma endregion
+
+#pragma region GENERAL
+
+#include "General/Camera.h"
+#include "General/Object.h"
+#include "General/Player.h"
+
+#pragma endregion
+
+#pragma region GRAFICOS
+
+#include "Graficos/Skybox.h"
+#include "Graficos/Luces/Light.h"
+
+#pragma endregion
+
+#pragma region UNKNOWN
+
+#include "Unknown/Window.h"
+
+#pragma endregion
+
+// --OTHER INCLUDES--
+
 #include <memory>
-
-#include "stdafx.h"
-
-#include "skybox.h"
-#include "Light.h"
-#include "Camera.h"
-#include "Object.h"
-#include "Window.h"
-#include "Player.h"
-
-
 
 class Game
 {
@@ -69,8 +89,8 @@ private:
 	glm::vec3 m_lightPos; 
 
 	std::vector<Shader*> m_Shaders;
-	//Player* m_Player;
-	//vector<Object*> m_Objects;
+	Player* m_Player;
+	vector<Object*> m_Objects;
 
 	btDiscreteDynamicsWorld* m_dynamicsWorld;
 };

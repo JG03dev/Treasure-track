@@ -20,38 +20,53 @@ find_package(assimp REQUIRED)
 add_executable(VGI-ABP 
 # Ficheros principales
         src/main.cpp
-# Ficheros de funcionalidades extra
-        src/stdafx.h
-        src/constants.h
-# Ficheros de funcionalidades del juego
-        src/Shader.h
-        src/Window.cpp
-        src/Window.h
-        src/Camera.h
-        src/PhysicsEngine.cpp
-        src/PhysicsEngine.h
-        src/PlayerVehicle.h
-        src/PlayerVehicle.cpp
-        src/GroundMesh.h
-        src/Renderer.h
-        src/Renderer.cpp
-        src/GLDebugDrawer.h
-        src/GLDebugDrawer.cpp
-        src/SoundDevice.h
-        src/SoundDevice.cpp 
-        src/SoundSource.cpp 
-        src/SoundSource.h
-        src/MusicBuffer.h 
-        src/MusicBuffer.cpp
-        src/skybox.h 
-        src/skybox.cpp
-        src/Light.cpp 
-        src/Light.h
         src/Game.cpp
         src/Game.h
+
+# Ficheros de funcionalidades extra
+        src/Encabezados/stdafx.h
+        src/Encabezados/constants.h
+
+# Ficheros de funcionalidades del juego
+        src/General/Camera.h
+        src/General/Object.cpp
+        src/General/Object.h
+        src/General/Player.cpp
+        src/General/Player.h
+
+# Parte Graficos
+        src/Graficos/Renderer.h 
+        src/Graficos/Renderer.cpp
+        src/Graficos/Shader.h
+        src/Graficos/Skybox.h
+        src/Graficos/Skybox.cpp
+
 # Ficheros de Objeto
-        src/Model.h
-        src/Mesh.h  "src/Object.h" "src/Object.cpp" "src/Player.h" "src/Player.cpp")
+        src/Graficos/Modelo/Model.h
+        src/Graficos/Modelo/Mesh.h
+
+# Ficheros para la iluminacion
+        src/Graficos/Luces/Light.cpp
+        src/Graficos/Luces/Light.h
+
+# Ficheros para el sonido
+        src/Sound/MusicBuffer.cpp
+        src/Sound/MusicBuffer.h
+        src/Sound/SoundDevice.cpp
+        src/Sound/SoundDevice.h
+        src/Sound/SoundSource.cpp
+        src/Sound/SoundSource.h
+
+# Ficheros Unknown
+        src/Unknown/Window.cpp
+        src/Unknown/Window.h
+        src/Unknown/PhysicsEngine.cpp
+        src/Unknown/PhysicsEngine.h
+        src/Unknown/PlayerVehicle.h
+        src/Unknown/PlayerVehicle.cpp
+        src/Unknown/GroundMesh.h
+        src/Unknown/GLDebugDrawer.h
+        src/Unknown/GLDebugDrawer.cpp)
 
 # target_link_libraries(VGI-ABP PRIVATE glfw "${ASSIMP_INCLUDE_DIRS}/assimp" "${BULLET_LIBRARIES}" GLEW::glew OpenAL::OpenAL)
 target_link_libraries(VGI-ABP PRIVATE OpenAL::OpenAL)

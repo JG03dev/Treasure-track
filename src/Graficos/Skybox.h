@@ -1,8 +1,19 @@
 #pragma once
 
-#include "stdafx.h"
+// --OUR INCLUDES--
+
+#pragma region ENCABEZADOS
+
+#include "../Encabezados/stdafx.h"
+#include "../Encabezados/constants.h"
+
+#pragma endregion
+
+#pragma region GRAFICOS
+
 #include "Shader.h"
-#include "constants.h"
+
+#pragma endregion
 
 class Skybox 
 {

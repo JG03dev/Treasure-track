@@ -1,7 +1,12 @@
 #pragma once
 
-#include "stdafx.h"
-#include "constants.h"
+// --OUR INCLUDES--
+
+#pragma region ENCABEZADOS
+#include "../../Encabezados/stdafx.h"
+#include "../../Encabezados/constants.h"
+#pragma endregion
+
 /*
 * Aquesta classe representa una instancia de Llum dins de l'escena
 * aquest configurara els parametres de la shader d'il·luminació per a que es pugui utilitzar al nostre favor.

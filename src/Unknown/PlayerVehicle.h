@@ -1,3 +1,4 @@
+/*
 #pragma once
 
 #include <GL/glew.h>
@@ -110,3 +111,4 @@ private:
 
 	btAlignedObjectArray<btCollisionShape*> collisionShapes;	// Array of shapes used for the vehicle. For reuse and memory cleaning purposes
 };
+*/

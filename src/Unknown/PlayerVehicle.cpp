@@ -1,3 +1,4 @@
+/*
 #include "PlayerVehicle.h"
 
 // Constructors
@@ -227,4 +228,4 @@ void PlayerVehicle::addWheels(btVector3* halfExtents, btRaycastVehicle* vehicle,
 		wheel.m_wheelsDampingRelaxation = btScalar(0.5) * 2 * btSqrt(wheel.m_suspensionStiffness);//1;
 	}
 }
-
+*/

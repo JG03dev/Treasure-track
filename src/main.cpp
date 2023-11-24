@@ -3,17 +3,48 @@
 * the libraries, but for now is to test that it compiles and links
 * them correctly.
 */
-#include "Shader.h"
-#include "Camera.h"
-#include "Model.h"
-#include "stdafx.h"
-#include "skybox.h"
-#include "Light.h"
-#include "SoundDevice.h"
-#include <iostream>
-#include "MusicBuffer.h"
-#include "MainLoop/MainLoop.h"  // for looping
+
+// --OUR INCLUDES--
+
+#pragma region ENCABEZADOS
+
+#include "Encabezados/stdafx.h"
+
+#pragma endregion
+
+#pragma region GENERAL
+
 #include "Game.h"
+#include "General/Camera.h"
+#include "General/Object.h"
+#include "General/Player.h"
+
+#pragma endregion
+
+#pragma region GRAFICOS
+
+#include "Graficos/Skybox.h"
+#include "Graficos/Shader.h"
+#include "Graficos/Modelo/Model.h"
+#include "Graficos/Luces/Light.h"
+
+#pragma endregion
+
+#pragma region SOUND
+
+#include "Sound/SoundDevice.h"
+#include "Sound/MusicBuffer.h"
+#include "MainLoop/MainLoop.h"  // for looping
+
+#pragma endregion
+
+#pragma region UNKNOWN
+
+#include "Unknown/Window.h"
+
+#pragma endregion
+
+// --OTHER INCLUDES--
 
 #include <iostream>
 

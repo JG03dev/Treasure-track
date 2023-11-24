@@ -1,5 +1,10 @@
-#include "stdafx.h"
 #include "skybox.h"
+
+#pragma region ENCABEZADOS
+
+#include "../Encabezados/stdafx.h"
+
+#pragma endregion
 
 Skybox::Skybox() : SkyShader("", "")
 {

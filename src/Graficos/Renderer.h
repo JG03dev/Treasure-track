@@ -1,15 +1,33 @@
 #pragma once
+/*
+// --OUR INCLUDES--
+
+#pragma region GRAFICOS
+
+#include "Modelo/Mesh.h"
+#include "Shader.h"
+
+#pragma endregion
+
+#pragma region GENERAL
+
+#include "../General/Camera.h"
+
+#pragma endregion
+
+#pragma region UNKNOWN
+
+#include "../Unknown/Window.h"
+
+#pragma endregion
+
+// --OTHER INCLUDES--
 
 #include <vector>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-
-#include "Mesh.h"
-#include "Shader.h"
-#include "Camera.h"
-#include "Window.h"
 
 class Renderer {
 public:
@@ -81,3 +99,4 @@ private:
 
 	GLuint uniformProjection = 0, uniformModel = 0, uniformView = 0;
 };
+*/

@@ -1,7 +1,15 @@
 #ifndef SHADER_H
 #define SHADER_H
 
-#include "stdafx.h"
+// --OUR INCLUDES--
+
+#pragma region ENCABEZADOS
+
+#include "../Encabezados/stdafx.h"
+
+#pragma endregion
+
+// --OTHER INCLUDES--
 
 #include <string>
 #include <fstream>

@@ -1,3 +1,4 @@
+/*
 #include "Renderer.h"
 
 void Renderer::render(btRigidBody* groundRB, btTransform chassisT) {
@@ -31,3 +32,4 @@ void Renderer::render(btRigidBody* groundRB, btTransform chassisT) {
 
     mainWindow->swapBuffers();
 }
+*/

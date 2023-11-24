@@ -103,38 +103,38 @@ void Game::processInput(GLFWwindow* window)
 
     //W
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        m_Player->inputMethod(GLFW_KEY_W, true);
+        m_Player->InputMethod(GLFW_KEY_W, true);
 
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_RELEASE)
-        m_Player->inputMethod(GLFW_KEY_W, false);
+        m_Player->InputMethod(GLFW_KEY_W, false);
 
     //S
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        m_Player->inputMethod(GLFW_KEY_S, true);
+        m_Player->InputMethod(GLFW_KEY_S, true);
 
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_RELEASE)
-        m_Player->inputMethod(GLFW_KEY_S, false);
+        m_Player->InputMethod(GLFW_KEY_S, false);
 
     //A
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        m_Player->inputMethod(GLFW_KEY_A, true);
+        m_Player->InputMethod(GLFW_KEY_A, true);
 
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_RELEASE)
-        m_Player->inputMethod(GLFW_KEY_A, false);
+        m_Player->InputMethod(GLFW_KEY_A, false);
 
     //D
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        m_Player->inputMethod(GLFW_KEY_D, true);
+        m_Player->InputMethod(GLFW_KEY_D, true);
 
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_RELEASE)
-        m_Player->inputMethod(GLFW_KEY_D, false);
+        m_Player->InputMethod(GLFW_KEY_D, false);
 
     //Ctrl
     if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
-        m_Player->inputMethod(GLFW_KEY_LEFT_CONTROL, true);
+        m_Player->InputMethod(GLFW_KEY_LEFT_CONTROL, true);
 
     if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_RELEASE)
-        m_Player->inputMethod(GLFW_KEY_LEFT_CONTROL, false);
+        m_Player->InputMethod(GLFW_KEY_LEFT_CONTROL, false);
 }
 
 void Game::Run()
@@ -198,7 +198,7 @@ void Game::Render()
 
         model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));	// it's a bit too big for our scene, so scale it down
         m_Shaders[1]->setMat4("modelMatrix", glm::mat4(1.0f));
-        m_Objects[i]->Draw(m_Shaders[1]);
+        m_Objects[i]->Draw(*m_Shaders[1]);
     }
 
     // render the loaded model
@@ -209,11 +209,10 @@ void Game::Render()
 
     model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));	// it's a bit too big for our scene, so scale it down
     m_Shaders[1]->setMat4("modelMatrix", glm::mat4(1.0f));
-    m_Player->Draw(m_Shaders[1]);
+    m_Player->Draw(*m_Shaders[1]);
 
     //Skybox
     m_skybox.drawSkybox('Y', projection, view);
-
 
     // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
     // -------------------------------------------------------------------------------

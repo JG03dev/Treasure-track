@@ -1,5 +1,6 @@
 #pragma once
 
+/*
 #include "btBulletDynamicsCommon.h"
 #include "PlayerVehicle.h"
 
@@ -54,3 +55,4 @@ private:
 
 	Renderer* renderer;
 };
+*/

@@ -1,14 +1,20 @@
 #pragma once
 
-#include "Model.h"
+// --OUR INCLUDES--
+
+#pragma region MODELO
+
+#include "../Graficos/Modelo/Model.h"
+
+#pragma endregion
+
+// --OTHER INCLUDES--
+
 #include "btBulletDynamicsCommon.h"
+#include <GLFW/glfw3.h>
 
 class Player {
 public:
-	// ATTENTION:
-	// ONLY 1 MESH IS USED FOR THIS CLASS RB
-	// MORE WILL BE ADDED AS SOON AS I TEST THIS WORKS
-	// AND WILL PROBABLY MAKE A RB WITH A COMPOUND SHAPE COLLISION SHAPE
 
 	// Public Attributes
 	Model* model;
@@ -17,7 +23,9 @@ public:
 	// Constructor
 	Player(string const& modelPath, btDiscreteDynamicsWorld* dynamicsWorld);
 
-	// void InputMethod();?
+	// Public Methods
+	void Draw(Shader& shader);
+	void InputMethod(int key, bool keyPressed);
 
 private:
 	// Private Attributes

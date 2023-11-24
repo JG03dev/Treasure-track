@@ -1,13 +1,26 @@
 #ifndef MODEL_H
 #define MODEL_H
 
-#include "stdafx.h"
+// --OUR INCLUDES--
+
+#pragma region ENCABEZADOS
+
+#include "../../Encabezados/stdafx.h"
+
+#pragma endregion
+
+#pragma region GRAFICOS
+
+#include "Mesh.h"
+#include "../Shader.h"
+
+#pragma endregion
+
+// --OTHER INCLUDES--
+
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
-
-#include "mesh.h"
-#include "shader.h"
 
 #include <string>
 #include <fstream>
@@ -15,6 +28,7 @@
 #include <iostream>
 #include <map>
 #include <vector>
+
 using namespace std;
 
 unsigned int TextureFromFile(const char *path, const string &directory, bool gamma = false);

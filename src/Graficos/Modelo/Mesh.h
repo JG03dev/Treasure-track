@@ -1,11 +1,25 @@
 #ifndef MESH_H
 #define MESH_H
 
-#include "stdafx.h"
-#include "shader.h"
+// --OUR INCLUDES--
+
+#pragma region ENCABEZADOS
+
+#include "../../Encabezados/stdafx.h"
+
+#pragma endregion
+
+#pragma region GRAFICOS
+
+#include "../shader.h"
+
+#pragma endregion
+
+// --OTHER INCLUDES--
 
 #include <string>
 #include <vector>
+
 using namespace std;
 
 #define MAX_BONE_INFLUENCE 4

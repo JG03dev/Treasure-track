@@ -1,6 +1,15 @@
 #pragma once
 
-#include "Model.h"
+// --OUR INCLUDES--
+
+#pragma region Graficos
+
+#include "../Graficos/Modelo/Model.h"
+
+#pragma endregion
+
+// --OTHER INCLUDES--
+
 #include "btBulletDynamicsCommon.h"
 
 class Object {
@@ -16,6 +25,9 @@ public:
 
 	// Constructor
 	Object(string const& modelPath, btDiscreteDynamicsWorld* dynamicsWorld);
+
+	// Public Methods
+	void Draw(Shader& shader);
 
 private:
 

@@ -1,11 +1,25 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
-#include "stdafx.h"
+// --OUR INCLUDES--
+
+#pragma region ENCABEZADOS
+
+#include "../Encabezados/stdafx.h"
+
+#pragma endregion
+
+#pragma region GENERAL
+
+#include "../General/Player.h"
+
+#pragma endregion
+
+// --OTHER INCLUDES--
 
 #include <vector>
 
-#include "PlayerVehicle.h"
+
 
 // Defines several possible options for camera movement. Used as abstraction to stay away from window-system specific input methods
 enum Camera_Movement {
@@ -41,7 +55,7 @@ public:
     float MouseSensitivity;
     float Zoom;
 
-    PlayerVehicle* player;
+    Player* player;
 
     // constructor with vectors
     Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), float yaw = YAW, float pitch = PITCH) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVITY), Zoom(ZOOM)
@@ -124,7 +138,7 @@ public:
         Position = glm::vec3(float(pos.getX()), float(pos.getY()) + 2, float(pos.getZ()));
     }
 
-    void setTarget(PlayerVehicle* p) { player = p; }
+    void setTarget(Player* p) { player = p; }
 
 private:
     // calculates the front vector from the Camera's (updated) Euler Angles

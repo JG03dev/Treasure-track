@@ -10,34 +10,105 @@ Player::Player(string const& modelPath, btDiscreteDynamicsWorld* dynamicsWorld) 
 	dynamicsWorld->addVehicle(this->vehicle);
 }
 
+// Public Methods
+
+void Player::Draw(Shader& shader) {
+	model->Draw(shader);
+}
+
+void Player::InputMethod(int key, bool keyPressed) {
+	// state indica si se ha pulsado o soltado
+
+	if (keyPressed) {
+		switch (key)
+		{
+		case GLFW_KEY_W:
+			this->vehicle->applyEngineForce(this->vehicleParams.m_fEngineForce, 2);
+			this->vehicle->applyEngineForce(this->vehicleParams.m_fEngineForce, 3);
+			break;
+		case GLFW_KEY_S:
+			this->vehicle->applyEngineForce(-this->vehicleParams.m_bEngineForce, 0);
+			this->vehicle->applyEngineForce(-this->vehicleParams.m_bEngineForce, 1);
+			break;
+		case GLFW_KEY_A:
+			this->vehicle->setSteeringValue(this->vehicleParams.m_steeringValue, 0);
+			this->vehicle->setSteeringValue(this->vehicleParams.m_steeringValue, 1);
+			break;
+		case GLFW_KEY_D:
+			this->vehicle->setSteeringValue(-this->vehicleParams.m_steeringValue, 0);
+			this->vehicle->setSteeringValue(-this->vehicleParams.m_steeringValue, 1);
+			break;
+		case GLFW_KEY_LEFT_CONTROL:
+			this->vehicle->setBrake(0, 2);
+			this->vehicle->setBrake(0, 3);
+			break;
+		default:
+			break;
+		}
+	}
+	else
+	{
+		switch (key)
+		{
+		case GLFW_KEY_W:
+		case GLFW_KEY_S:
+			this->vehicle->applyEngineForce(0, 2);
+			this->vehicle->applyEngineForce(0, 3);
+
+			//Default braking force, always added otherwise there is no friction on the wheels
+			this->vehicle->setBrake(10, 2);
+			this->vehicle->setBrake(10, 3);
+			break;
+		case GLFW_KEY_A:
+		case GLFW_KEY_D:
+			this->vehicle->setSteeringValue(0, 0);
+			this->vehicle->setSteeringValue(0, 1);
+			break;
+		case GLFW_KEY_LEFT_CONTROL:
+			this->vehicle->setBrake(0, 2);
+			this->vehicle->setBrake(0, 3);
+			break;
+		default:
+			break;
+		}
+	}
+}
+
 // Private Methods
+
 void Player::CreateVehicle(string const& modelPath, btDiscreteDynamicsWorld* dynamicsWorld) {
 	// --------- Mesh Load to Get the chassis half extents for the box shape
-	btTriangleMesh* triangleMesh = new btTriangleMesh();
 
-	Mesh* mesh = &this->model->meshes.front();
-	for (int i = 0; i < mesh->indices.size(); i += 3) {
-		btVector3 v1(mesh->vertices[i].Position.x, mesh->vertices[i].Position.y, mesh->vertices[i].Position.z);
-		btVector3 v2(mesh->vertices[i + 1].Position.x, mesh->vertices[i + 1].Position.y, mesh->vertices[i + 1].Position.z);
-		btVector3 v3(mesh->vertices[i + 2].Position.x, mesh->vertices[i + 2].Position.y, mesh->vertices[i + 2].Position.z);
+	btCompoundShape* tempShape = new btCompoundShape();
 
-		triangleMesh->addTriangle(v1, v2, v3);
+	btTransform chassisTransform;
+	chassisTransform.setIdentity();
+	chassisTransform.setOrigin(btVector3(0, 0, 0));
+
+	for (int i = 0, numModels = model->meshes.size(); i < numModels; i++) {
+		btTriangleMesh* triangleMesh = new btTriangleMesh();
+
+		Mesh* mesh = &this->model->meshes.front();
+		for (int i = 0; i < mesh->indices.size(); i += 3) {
+			btVector3 v1(mesh->vertices[i].Position.x, mesh->vertices[i].Position.y, mesh->vertices[i].Position.z);
+			btVector3 v2(mesh->vertices[i + 1].Position.x, mesh->vertices[i + 1].Position.y, mesh->vertices[i + 1].Position.z);
+			btVector3 v3(mesh->vertices[i + 2].Position.x, mesh->vertices[i + 2].Position.y, mesh->vertices[i + 2].Position.z);
+
+			triangleMesh->addTriangle(v1, v2, v3);
+		}
+
+		btConvexShape* convexShape = new btConvexTriangleMeshShape(triangleMesh);
+		tempShape->addChildShape(chassisTransform, convexShape);
 	}
-
-	btConvexShape* convexShape = new btConvexTriangleMeshShape(triangleMesh);
 
 	btVector3 min, max;
 
-	convexShape->getAabb(btTransform::getIdentity(), min, max);
+	tempShape->getAabb(btTransform::getIdentity(), min, max);
 	btVector3 halfExtents = (max - min) / 2;
 
 	// --------- Chassis RigidBody
 
 	btCollisionShape* chassisShape = new btBoxShape(halfExtents);
-
-	btTransform chassisTransform;
-	chassisTransform.setIdentity();
-	chassisTransform.setOrigin(btVector3(0, 0, 0));
 
 	btScalar mass(this->vehicleParams.m_mass);
 
