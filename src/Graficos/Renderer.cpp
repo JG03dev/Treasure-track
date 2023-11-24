@@ -206,7 +206,7 @@ void Renderer::RenderScene()
 	for(auto model : Models)
 	{
 		sObject->setUniform("model", model.second.second);
-		model.second.first->RenderModel();
+		model.second.first->RenderModel(*sObject);
 	}
 }
 

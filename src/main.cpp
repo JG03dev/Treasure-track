@@ -73,8 +73,8 @@ int main() {
 	//pObjCity1 = std::make_shared<Model>("../../../Assets/town/town.obj");
 	//pObjCar1 = std::make_shared<Model>("../../../Assets/cotxe/cotxe.obj");
 
-	Model pObjCity1;	pObjCity1.LoadModel("../../../Assets/town/town.obj", "cotxe");
-	Model pObjCar1;		pObjCar1.LoadModel("../../../Assets/cotxe/cotxe.obj", "town");
+	Model pObjCity1(4.0f, 256);	pObjCity1.LoadModel("../../../Assets/town/town.obj", "town");
+	Model pObjCar1(4.0f, 256);		pObjCar1.LoadModel("../../../Assets/cotxe/cotxe.obj", "cotxe");
 
 	/** Skybox Mapping Order
 		  _______

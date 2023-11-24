@@ -14,10 +14,11 @@ Material::Material(GLfloat sIntensity, GLfloat shine)
 	shininess = shine;
 }
 
-void Material::UseMaterial(GLuint specularIntensityLocation, GLuint shininessLocation)
+// TODO: En diciembre las shaders para los materiales seran mas complejos
+void Material::UseMaterial(Shader &s)
 {
-	glUniform1f(specularIntensityLocation, specularIntensity);
-	glUniform1f(shininessLocation, shininess);
+	s.setUniform("material.specularIntensity", specularIntensity);
+	s.setUniform("material.shininess", shininess);
 }
 
 Material::~Material()

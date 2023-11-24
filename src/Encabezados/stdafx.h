@@ -68,3 +68,4 @@ using namespace glm;
 #  pragma warning (disable:4099)  // Warning 'no se encontro vc120.pdb
 #  pragma warning (disable:4996)  // Disable strpcpy deprecated command in objLoader.cpp
 #  pragma warning (disable:4477)  // Disable snprintf model for printing indexes for shader uniform assign
+#  pragma warning (disable:4313)  // Warning for printf when printing GLenum as a string

@@ -4,14 +4,18 @@
 
 #include "Mesh.h"
 #include "Texture.h"
+#include "Material.h"
 
 class Model
 {
 public:
 	Model();
 
+	Model(Material& m) : materialModel(m) {};
+	Model(GLfloat sIntensity, GLfloat shine) : materialModel(sIntensity, shine) {}
+
 	void LoadModel(const std::string& fileName, std::string name);
-	void RenderModel();
+	void RenderModel(Shader& s);
 	void ClearModel();
 
 	~Model();
@@ -26,5 +30,8 @@ private:
 	std::vector<Texture*> textureList;
 	std::vector<unsigned int> meshToTex;
 	std::string m_name;
+
+	//EXTRA: Material custom añadido
+	Material materialModel;
 };
 

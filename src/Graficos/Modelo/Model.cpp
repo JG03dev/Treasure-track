@@ -4,8 +4,10 @@ Model::Model()
 {
 }
 
-void Model::RenderModel()
+void Model::RenderModel(Shader& s)
 {
+	// Como hay solo un material, este lo usamos solo una vez para el modelo (XD)
+	materialModel.UseMaterial(s);
 	for (size_t i = 0; i < meshList.size(); i++)
 	{
 		unsigned int materialIndex = meshToTex[i];
@@ -83,6 +85,7 @@ void Model::LoadMesh(aiMesh * mesh, const aiScene * scene)
 	meshToTex.push_back(mesh->mMaterialIndex);
 }
 
+// TODO: esto deberia cargar los materiales con las texturas XD
 void Model::LoadMaterials(const aiScene * scene)
 {
 	textureList.resize(scene->mNumMaterials);
@@ -117,7 +120,7 @@ void Model::LoadMaterials(const aiScene * scene)
 
 		if (!textureList[i])
 		{
-			textureList[i] = new Texture("../../../Textures/plain.png");
+			textureList[i] = new Texture("../../../Assets/plain.png");
 			textureList[i]->LoadTextureA();
 		}
 	}
