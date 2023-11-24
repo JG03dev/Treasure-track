@@ -4,13 +4,12 @@
 * general
 */
 
-#include "include/stdafx.h"
-#include "globals.h"
+#include "../Encabezados/stdafx.h"
 
 // Renderizacion General
-#include "General/Shader.h"
-#include "General/Skybox.h"
-#include "General/Camera.h"
+#include "Shader.h"
+#include "Skybox.h"
+#include "../General/Camera.h"
 #include "Modelo/Model.h"
 
 // Iluminado
@@ -19,6 +18,11 @@
 #include "Luces/SpotLight.h"
 #include "Sombras/ShadowMap.h"
 #include "Sombras/OmniShadowMap.h"
+
+//Light constants
+const int MAX_POINT_LIGHTS = 3;
+const int MAX_SPOT_LIGHTS = 3;
+
 
 class Renderer
 {
@@ -42,7 +46,7 @@ public:
 	void AddLight(PointLight* l);
 	void AddLight(SpotLight* l);
 
-	void AddModel(std::string id, Model m, glm::mat4 modelmat);
+	void AddModel(std::string id, Model* m, glm::mat4 modelmat);
 	void setModelMatrix(std::string id, glm::mat4 modelmat);
 	glm::mat4 getModelMatrix(std::string id);
 
@@ -66,7 +70,7 @@ private:
 	Skybox* skybox;
 
 	// SOLUCIO TEMPORAL a cargar tots els models amb les seves transformacions mapejats
-	std::map<std::string, std::pair<Model, glm::mat4>> Models;
+	std::map<std::string, std::pair<Model*, glm::mat4>> Models;
 
 	// Shaders
 	Shader* sObject, *sSkybox, *sDirShadow, *sOmniShadow;

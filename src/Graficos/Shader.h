@@ -1,7 +1,7 @@
 #ifndef SHADER_H
 #define SHADER_H
 
-#include "../include/stdafx.h"
+#include "../Encabezados/stdafx.h"
 
 class Shader {
 

@@ -20,34 +20,44 @@ add_executable(VGI-ABP
 # Ficheros principales
         src/main.cpp
 # Ficheros de funcionalidades extra
-        "src/include/stdafx.h"
-        "src/include/stb_image.h"
+        src/Encabezados/stdafx.h
+        src/Encabezados/stb_image.h
         
 # Fiechros de funcionalidades del juego
         src/General/Camera.h
         src/General/Camera.cpp
-        src/General/Skybox.h
-        src/General/Skybox.cpp
-        src/General/Shader.h
-        src/General/Shader.cpp
+
+# Parte Graficos
+        src/Graficos/Renderer.h 
+        src/Graficos/Renderer.cpp
+        src/Graficos/Shader.h
+        src/Graficos/Shader.cpp
+        src/Graficos/Skybox.h
+        src/Graficos/Skybox.cpp
 
 # Ficheros de Objecto
-        src/Modelo/Model.h
-        src/Modelo/Model.cpp
-        src/Modelo/Mesh.h
-        src/Modelo/Mesh.cpp
-        src/Modelo/Texture.h
-        src/Modelo/Texture.cpp 
+        src/Graficos/Modelo/Model.h
+        src/Graficos/Modelo/Model.cpp
+        src/Graficos/Modelo/Mesh.h
+        src/Graficos/Modelo/Mesh.cpp
+        src/Graficos/Modelo/Material.h
+        src/Graficos/Modelo/Material.cpp
+        src/Graficos/Modelo/Texture.h
+        src/Graficos/Modelo/Texture.cpp 
 
 # Ficheros para la iluminacion
-        src/Luces/DirectionalLight.cpp
-        src/Luces/DirectionalLight.h
-        src/Luces/Light.cpp
-        src/Luces/Light.h
-        src/Luces/PointLight.cpp
-        src/Luces/PointLight.h
-        src/Luces/SpotLight.cpp
-        src/Luces/SpotLight.h  "src/Renderer.h" "src/Renderer.cpp" "src/globals.h")
+        src/Graficos/Luces/DirectionalLight.cpp
+        src/Graficos/Luces/DirectionalLight.h
+        src/Graficos/Luces/Light.cpp
+        src/Graficos/Luces/Light.h
+        src/Graficos/Luces/PointLight.cpp
+        src/Graficos/Luces/PointLight.h
+        src/Graficos/Luces/SpotLight.cpp
+        src/Graficos/Luces/SpotLight.h
+        src/Graficos/Sombras/ShadowMap.h
+        src/Graficos/Sombras/ShadowMap.cpp
+        src/Graficos/Sombras/OmniShadowMap.h
+        src/Graficos/Sombras/OmniShadowMap.cpp )
 
 
 # target_link_libraries(VGI-ABP PRIVATE glfw "${ASSIMP_INCLUDE_DIRS}/assimp" "${BULLET_LIBRARIES}" GLEW::glew OpenAL::OpenAL)

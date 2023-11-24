@@ -1,20 +1,40 @@
 //main.cpp
-#include "include/stdafx.h"
+#include "Encabezados/stdafx.h"
 
 /** Camera Wrapper */
 #include "General/Camera.h"
 
 /** Model Wrapper */
-#include "Modelo/Model.h"
-#include "General/Skybox.h"
-#include "Luces/DirectionalLight.h"
-#include "Luces/PointLight.h"
-#include "Luces/SpotLight.h"
-#include "Sombras/ShadowMap.h"
-#include "Sombras/OmniShadowMap.h"
+#include "Graficos/Modelo/Model.h"
+#include "Graficos/Skybox.h"
+#include "Graficos/Luces/DirectionalLight.h"
+#include "Graficos/Luces/PointLight.h"
+#include "Graficos/Luces/SpotLight.h"
+#include "Graficos/Sombras/ShadowMap.h"
+#include "Graficos/Sombras/OmniShadowMap.h"
 
-#include "globals.h"
-#include "Renderer.h"
+#include "Graficos/Renderer.h"
+
+//-----------------------------------------------------------------------------
+// Globals (Merge-Note: Possibles atributs de Game o Renderer a debatir)
+//-----------------------------------------------------------------------------
+// Global Variables
+const char* APP_TITLE = "VGI-ABP";
+const int gWindowWidth = 1280;
+const int gWindowHeight = 720;
+GLFWwindow* gWindow = NULL;
+
+
+// Camera system
+Camera camera(glm::vec3(0.0f, 0.0f, 30.0f));
+float c_near = 0.1f;
+float c_far = 500.0f;
+
+// Shader control (for later versions)
+bool enableTorch = true;
+bool enableNormal = true;
+float adjustGamma = 2.2f;
+float adjustParallax = 0.01f;
 
 // Function prototypes
 void processInput(GLFWwindow* window);
@@ -23,13 +43,7 @@ void scrollCallback(GLFWwindow* window, double xoffset, double yoffset);
 void glfw_onFramebufferSize(GLFWwindow* window, int width, int height);
 void showFPS(GLFWwindow* window);
 bool initOpenGL();
-void renderScene(Shader& shader);
-
-//Merge-Note: Models (except for important ones) shold be mapped outside the code to later load them in loop
-//-----------------------------------------------------------------------------
-// Models
-//-----------------------------------------------------------------------------
-std::shared_ptr<Model> pObjCity1, pObjCar1;
+//void renderScene(Shader& shader);
 
 
 //-----------------------------------------------------------------------------
@@ -51,9 +65,16 @@ int main() {
 	omniShadowShader.loadShaders("../../../Shaders/omni_shadow_map.vert", "../../../Shaders/omni_shadow_map.frag", "../../../Shaders/omni_shadow_map.geom");
 
 
-	// Model loader
-	pObjCity1 = std::make_shared<Model>("../../../Assets/town/town.obj");
-	pObjCar1 = std::make_shared<Model>("../../../Assets/cotxe/cotxe.obj");
+	//Merge-Note: Models (except for important ones) shold be mapped outside the code to later load them in loop
+	//-----------------------------------------------------------------------------
+	// Models (Merge-Note: Mirar millor format de model)
+	//-----------------------------------------------------------------------------
+	
+	//pObjCity1 = std::make_shared<Model>("../../../Assets/town/town.obj");
+	//pObjCar1 = std::make_shared<Model>("../../../Assets/cotxe/cotxe.obj");
+
+	Model pObjCity1;	pObjCity1.LoadModel("../../../Assets/town/town.obj", "cotxe");
+	Model pObjCar1;		pObjCar1.LoadModel("../../../Assets/cotxe/cotxe.obj", "town");
 
 	/** Skybox Mapping Order
 		  _______
@@ -108,8 +129,8 @@ int main() {
 	glm::mat4 id(1.0f);
 
 	//TODO: Revisar si seria millor passar els models per referencia en comptes de per copia
-	r.AddModel("cotxe", *pObjCar1, id);
-	r.AddModel("ciutat", *pObjCity1, id);
+	r.AddModel("cotxe", &pObjCar1, id);
+	r.AddModel("ciutat", &pObjCity1, id);
 
 	// Rendering loop
 	while (!glfwWindowShouldClose(gWindow)) {
@@ -132,6 +153,13 @@ int main() {
 		r.setModelMatrix("cotxe", model);
 
 		// Render Everything Up
+
+#ifdef __APPLE__
+		glViewport(0, 0, 2 * gWindowWidth, 2 * gWindowHeight);
+#else
+		glViewport(0, 0, gWindowWidth, gWindowHeight);
+#endif
+
 		r.RenderEverything(view, projection, camera);
 
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)

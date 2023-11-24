@@ -28,14 +28,14 @@ void Renderer::AddLight(SpotLight* l)
 	}
 }
 
-void Renderer::AddModel(std::string id, Model m, glm::mat4 modelmat)
+void Renderer::AddModel(std::string id, Model* m, glm::mat4 modelmat)
 {	
-	Models[id] = std::pair<Model, glm::mat4>(m, modelmat);
+	Models[id] = std::pair<Model*, glm::mat4>(m, modelmat);
 }
 
 void Renderer::setModelMatrix(std::string id, glm::mat4 modelmat)
 {
-	std::map<std::string, std::pair<Model, glm::mat4>>::iterator it = Models.find(id);
+	std::map<std::string, std::pair<Model*, glm::mat4>>::iterator it = Models.find(id);
 
 	if (it != Models.end())
 	{
@@ -47,13 +47,14 @@ void Renderer::setModelMatrix(std::string id, glm::mat4 modelmat)
 glm::mat4 Renderer::getModelMatrix(std::string id)
 {
 
-	std::map<std::string, std::pair<Model, glm::mat4>>::iterator it = Models.find(id);
+	std::map<std::string, std::pair<Model*, glm::mat4>>::iterator it = Models.find(id);
 
 	if (it != Models.end())
 	{
 		// Find it and add it to the map
 		return Models[id].second;
 	}
+	return glm::mat4(1.0f);
 }
 
 void Renderer::RenderEverything(glm::mat4 viewMatrix, glm::mat4 projectionMatrix, Camera c)
@@ -165,11 +166,6 @@ void Renderer::SetSpotLights(unsigned int textureUnit, unsigned int offset)
 
 void Renderer::RenderObjects(glm::mat4 viewMatrix, glm::mat4 projectionMatrix, Camera c)
 {
-#ifdef __APPLE__
-	glViewport(0, 0, 2 * gWindowWidth, 2 * gWindowHeight);
-#else
-	glViewport(0, 0, gWindowWidth, gWindowHeight);
-#endif
 
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -206,10 +202,11 @@ void Renderer::RenderObjects(glm::mat4 viewMatrix, glm::mat4 projectionMatrix, C
 
 void Renderer::RenderScene()
 {
+	sObject->use();
 	for(auto model : Models)
 	{
 		sObject->setUniform("model", model.second.second);
-		model.second.first.Draw(*sObject);
+		model.second.first->RenderModel();
 	}
 }
 

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../include/stdafx.h"
-#include "../General/Shader.h"
+#include "../../Encabezados/stdafx.h"
+#include "../Shader.h"
 #include "../Sombras/ShadowMap.h"
 
 class Light

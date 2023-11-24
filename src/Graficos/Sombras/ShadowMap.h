@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../include/stdafx.h"
+#include "../../Encabezados/stdafx.h"
 
 class ShadowMap
 {
