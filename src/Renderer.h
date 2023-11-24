@@ -23,14 +23,20 @@
 class Renderer
 {
 public:
+	// Constructors
+
+	// TODO: Improve constructors
+
 	Renderer() : skybox(NULL), sObject(NULL), sSkybox(NULL), sDirShadow(NULL), sOmniShadow(NULL),
-		mainLight(NULL) {}
-	
-	// TODO: Complete class to cover up all cases
+		mainLight(NULL), pointLightCount(0), spotLightCount(0) {}	
 
 	Renderer(Shader* sObject, Shader *sSky, Shader*sDirSha, Shader *sOmniSha, Skybox* s) : 
 		skybox(s), sObject(sObject), sSkybox(sSky), sDirShadow(sDirSha), sOmniShadow(sOmniSha),
-		mainLight(NULL) {}
+		mainLight(NULL), pointLightCount(0), spotLightCount(0) {}
+
+	// Data modifiers 
+	
+	// TODO: Improve data modifiers
 
 	void AddLight(DirectionalLight* l);
 	void AddLight(PointLight* l);
@@ -41,12 +47,15 @@ public:
 	glm::mat4 getModelMatrix(std::string id);
 
 	// Renders
+
+	void RenderEverything(glm::mat4 viewMatrix, glm::mat4 projectionMatrix, Camera c);
 	void RenderShadowDirLight(DirectionalLight* light);
 	void RenderShadowOmniLights(PointLight* light);
 	void RenderObjects(glm::mat4 viewMatrix, glm::mat4 projectionMatrix, Camera c);
 	void RenderScene();
 
 	// Funciones auxiliares
+
 	void SetPointLights(unsigned int textureUnit, unsigned int offset);
 	void SetSpotLights(unsigned int textureUnit, unsigned int offset);
 

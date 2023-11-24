@@ -79,8 +79,6 @@ int main() {
 	};
 	skybox.LoadTexture(faces);
 
-
-
 	// Light global
 	DirectionalLight mainLight(2048, 2048, /*Shadow dimensions*/
 		1.0f, 0.53f, 0.3f, /*RGB colour*/
@@ -98,20 +96,20 @@ int main() {
 		20.0f /*edge*/
 	);
 
-
-	// Object shader config
-	objectShader.use();
-	// Light config
-	// Directional light
-	mainLight.UseLight(objectShader);
-	
-	// Spot light
-	Light1.UseLight(objectShader, 0);
-
 	// Camera global
 	float aspect = (float)gWindowWidth / (float)gWindowHeight;
 
 	// Initialize renderer based on what we loaded
+
+	Renderer r(&objectShader, &skyboxShader, &directionalShadowShader, &omniShadowShader, &skybox);
+
+	r.AddLight(&mainLight);
+	r.AddLight(&Light1);
+	glm::mat4 id(1.0f);
+
+	//TODO: Revisar si seria millor passar els models per referencia en comptes de per copia
+	r.AddModel("cotxe", *pObjCar1, id);
+	r.AddModel("ciutat", *pObjCity1, id);
 
 	// Rendering loop
 	while (!glfwWindowShouldClose(gWindow)) {
@@ -128,8 +126,14 @@ int main() {
 
 		// Set geological configurations
 		float currentTime = (float)glfwGetTime();
+		
+		glm::mat4 model = r.getModelMatrix("cotxe");
+		// Aqui anirien les transformacions geometriques del cotxe per cada frame
+		r.setModelMatrix("cotxe", model);
+
 		// Render Everything Up
-				
+		r.RenderEverything(view, projection, camera);
+
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		glfwPollEvents();
 		glfwSwapBuffers(gWindow);

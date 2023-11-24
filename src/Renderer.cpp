@@ -56,6 +56,24 @@ glm::mat4 Renderer::getModelMatrix(std::string id)
 	}
 }
 
+void Renderer::RenderEverything(glm::mat4 viewMatrix, glm::mat4 projectionMatrix, Camera c)
+{
+	// Render Shadows
+	RenderShadowDirLight(mainLight);
+	for (size_t i = 0; i < pointLightCount; i++)
+	{
+		RenderShadowOmniLights(pointLights[i]);
+	}
+	for (size_t i = 0; i < spotLightCount; i++)
+	{
+		RenderShadowOmniLights(spotLights[i]);
+	}
+	// Render Lights
+	RenderObjects(viewMatrix, projectionMatrix, c);
+}
+
+// TODO: check the parameters passed through these functions
+
 void Renderer::RenderShadowDirLight(DirectionalLight* light)
 {
 	sDirShadow->use();
@@ -145,8 +163,6 @@ void Renderer::SetSpotLights(unsigned int textureUnit, unsigned int offset)
 	}
 }
 
-
-// This has so many parameters that sould be inside Game / Scene class
 void Renderer::RenderObjects(glm::mat4 viewMatrix, glm::mat4 projectionMatrix, Camera c)
 {
 #ifdef __APPLE__
