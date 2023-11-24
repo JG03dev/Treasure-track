@@ -131,6 +131,8 @@ int main() {
 	r.AddModel("cotxe", &pObjCar1, id);
 	r.AddModel("ciutat", &pObjCity1, id);
 
+
+
 	// Rendering loop
 	while (!glfwWindowShouldClose(gWindow)) {
 
@@ -157,6 +159,7 @@ int main() {
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		glfwPollEvents();
 		glfwSwapBuffers(gWindow);
+
 	}
 
 	glfwTerminate();

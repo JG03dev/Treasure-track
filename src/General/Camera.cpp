@@ -2,8 +2,8 @@
 
 float Camera::YAW = -90.0f;
 float Camera::PITCH = 0.0f;
-float Camera::SPEED = 2.5f;
-float Camera::HIGH_SPEED = 10.0f;
+float Camera::SPEED = 20.0f;
+float Camera::HIGH_SPEED = 20.0f;
 float Camera::SENSITIVITY = 0.1f;
 float Camera::FOV = 45.0f;
 

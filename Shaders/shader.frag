@@ -1,7 +1,4 @@
-#version 330 core
-out vec4 FragColor;
-
-in vec2 TexCoords;
+#version 330
 
 in vec4 vCol;
 in vec2 TexCoord;
@@ -227,5 +224,9 @@ vec4 CalcSpotLights()
 
 void main()
 {
-	colour = vCol;
+	vec4 finalColour = CalcDirectionalLight();
+	finalColour += CalcPointLights();
+	finalColour += CalcSpotLights();
+	
+	colour = texture(theTexture, TexCoord) * finalColour;
 }
