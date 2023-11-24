@@ -47,7 +47,7 @@ add_executable(VGI-ABP
         src/Luces/PointLight.cpp
         src/Luces/PointLight.h
         src/Luces/SpotLight.cpp
-        src/Luces/SpotLight.h)
+        src/Luces/SpotLight.h  "src/Renderer.h" "src/Renderer.cpp" "src/globals.h")
 
 
 # target_link_libraries(VGI-ABP PRIVATE glfw "${ASSIMP_INCLUDE_DIRS}/assimp" "${BULLET_LIBRARIES}" GLEW::glew OpenAL::OpenAL)

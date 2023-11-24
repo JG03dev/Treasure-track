@@ -1,6 +1,4 @@
 //main.cpp
-
-
 #include "include/stdafx.h"
 
 /** Camera Wrapper */
@@ -9,26 +7,14 @@
 /** Model Wrapper */
 #include "Modelo/Model.h"
 #include "General/Skybox.h"
+#include "Luces/DirectionalLight.h"
+#include "Luces/PointLight.h"
+#include "Luces/SpotLight.h"
 #include "Sombras/ShadowMap.h"
 #include "Sombras/OmniShadowMap.h"
 
-//Merge-Note: Globals should be on a separated file/class
-// Global Variables
-const char* APP_TITLE = "VGI-ABP";
-const int gWindowWidth = 1280;
-const int gWindowHeight = 720;
-GLFWwindow* gWindow = NULL;
-
-// Camera system
-Camera camera(glm::vec3(0.0f, 0.0f, 30.0f));
-float c_near = 0.1f;
-float c_far = 500.0f;
-
-// Shader control
-bool enableTorch = true;
-bool enableNormal = true;
-float adjustGamma = 2.2f;
-float adjustParallax = 0.01f;
+#include "globals.h"
+#include "Renderer.h"
 
 // Function prototypes
 void processInput(GLFWwindow* window);
@@ -44,6 +30,7 @@ void renderScene(Shader& shader);
 // Models
 //-----------------------------------------------------------------------------
 std::shared_ptr<Model> pObjCity1, pObjCar1;
+
 
 //-----------------------------------------------------------------------------
 // Main Application Entry Point
@@ -95,38 +82,36 @@ int main() {
 
 
 	// Light global
-	glm::vec3 pointLightPos[] = {
-		glm::vec3(3.0f,  0.0f,  0.0f),
-		glm::vec3(-3.0f,  0.0f,  0.0f),
-		glm::vec3(0.0f,  0.0f, -3.0f),
-		glm::vec3(0.0f,  0.0f,  3.0f)
-	};
-	glm::vec3 directionalLightDirection(-1.0f, 0.0f, 0.0f);
+	DirectionalLight mainLight(2048, 2048, /*Shadow dimensions*/
+		1.0f, 0.53f, 0.3f, /*RGB colour*/
+		0.1f, 0.5f,	/*Intensity (ambient, diffuse)*/
+		-10.0f, -12.0f, 18.5f /*Direction of the light*/
+	);
+
+	SpotLight Light1(1024, 1024,/*Shadow dimensions*/
+		0.01f, 100.0f,  /*Light reach (near far)*/
+		1.0f, 1.0f, 1.0f, /*RGB colour*/
+		0.0f, 2.0f, /*Intensity (ambient, diffuse)*/
+		0.0f, 0.0f, 0.0f, /*Position of the light (x, y, z)*/
+		0.0f, -1.0f, 0.0f, /*Direction of the light*/
+		1.0f, 0.0f, 0.0f, /*Light parameters (constant, linear, exponential)*/
+		20.0f /*edge*/
+	);
+
 
 	// Object shader config
 	objectShader.use();
 	// Light config
 	// Directional light
-	objectShader.setUniform("uDirectionalLight.direction", directionalLightDirection);
-	objectShader.setUniform("uDirectionalLight.ambient", 0.1f, 0.1f, 0.1f);
-	objectShader.setUniform("uDirectionalLight.diffuse", 0.5f, 0.5f, 0.5f);
-	objectShader.setUniform("uDirectionalLight.specular", 0.3f, 0.3f, 0.3f);
+	mainLight.UseLight(objectShader);
+	
 	// Spot light
-	objectShader.setUniform("uSpotLight.innerCutOff", glm::cos(glm::radians(12.5f)));
-	objectShader.setUniform("uSpotLight.outerCutOff", glm::cos(glm::radians(17.5f)));
-	objectShader.setUniform("uSpotLight.ambient", 0.1f, 0.1f, 0.1f);
-	objectShader.setUniform("uSpotLight.diffuse", 0.5f, 0.5f, 0.5f);
-	objectShader.setUniform("uSpotLight.specular", 0.7f, 0.7f, 0.7f);
-	objectShader.setUniform("uSpotLight.constant", 1.0f);
-	objectShader.setUniform("uSpotLight.linear", 0.09f);
-	objectShader.setUniform("uSpotLight.quadratic", 0.032f);
-
-
+	Light1.UseLight(objectShader, 0);
 
 	// Camera global
 	float aspect = (float)gWindowWidth / (float)gWindowHeight;
 
-
+	// Initialize renderer based on what we loaded
 
 	// Rendering loop
 	while (!glfwWindowShouldClose(gWindow)) {
@@ -141,56 +126,10 @@ int main() {
 		glm::mat4 view = camera.getViewMatrix();
 		glm::mat4 projection = glm::perspective(glm::radians(camera.fov), aspect, c_near, c_far);
 
-		/** Shadow */
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-		// get light transformation
-		glm::mat4 lightProjection, lightView;
-		float near_plane = 1.0f, far_plane = 100.0f;
-		lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
-		lightView = glm::lookAt(glm::vec3(50.0f, 0.0f, 0.0f), glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
-		// render scene from light's point of view
-		//shadowShader.use();
-		//shadowShader.setUniform("uView", lightView);
-		//shadowShader.setUniform("uProjection", lightProjection);
-		//// get shadow map
-		//glViewport(0, 0, shadowMap.width, shadowMap.height);
-		/*shadowMap.Bind();
-		glClear(GL_DEPTH_BUFFER_BIT);
-		glCullFace(GL_FRONT);
-		renderScene(shadowShader);*/
-		glCullFace(GL_BACK);
-		//shadowMap.Unbind();
-
-
-
-		/** General scene */
-#ifdef __APPLE__
-		glViewport(0, 0, 2 * gWindowWidth, 2 * gWindowHeight);
-#else
-		glViewport(0, 0, gWindowWidth, gWindowHeight);
-#endif
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		// Skybox
-		glm::mat4 staticView = glm::mat4(glm::mat3(view)); // remove translation composition
-		skybox.Draw(skyboxShader, staticView, projection);
-		// Object shader
-		objectShader.use();
-		objectShader.setUniform("uView", view);
-		objectShader.setUniform("uProjection", projection);
-		objectShader.setUniform("uCameraPos", camera.position);
-		// Spot light
-		objectShader.setUniform("uEnableTorch", enableTorch);
-		objectShader.setUniform("uSpotLight.position", camera.position);
-		objectShader.setUniform("uSpotLight.direction", camera.front);
-		// Shadow map
-		objectShader.setUniform("uLightSpaceMatrix", lightProjection * lightView);
-		//objectShader.setUniform("uShadowMap", (int)shadowMap.active_texture_unit);
-		//glActiveTexture(GL_TEXTURE0 + shadowMap.active_texture_unit);
-		//glBindTexture(GL_TEXTURE_2D, shadowMap.TID());
-		// Draw scene
-		renderScene(objectShader);
-
+		// Set geological configurations
+		float currentTime = (float)glfwGetTime();
+		// Render Everything Up
+				
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		glfwPollEvents();
 		glfwSwapBuffers(gWindow);
@@ -199,28 +138,6 @@ int main() {
 	glfwTerminate();
 
 	return 0;
-}
-
-//Merge-Note: This should go to a Game or Scene class
-void renderScene(Shader& shader) {
-
-	// Set geological configurations
-	float currentTime = (float)glfwGetTime();
-
-	// render the loaded model
-	glm::mat4 model = glm::mat4(1.0f);
-	model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-	model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
-	model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));	// it's a bit too big for our scene, so scale it down
-	shader.use();
-	shader.setUniform("uModel", model);
-	shader.setUniform("uTime", currentTime);
-	shader.setUniform("uGamma", adjustGamma);
-	shader.setUniform("uHeightScale", adjustParallax);
-	if (enableNormal)
-		shader.setUniform("uEnableNormal", true);
-	shader.setUniform("uEnableEmission", true);
-	pObjCity1.get()->Draw(shader);
 }
 
 //-----------------------------------------------------------------------------

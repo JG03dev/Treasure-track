@@ -22,6 +22,8 @@ public:
 
 	void use();
 
+	void Validate();
+
 	GLuint ID() const;
 
 	bool loadShaders(const char* vsFilename, const char* fsFilename, const char* gsFilename = NULL);

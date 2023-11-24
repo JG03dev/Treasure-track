@@ -159,6 +159,24 @@ void  Shader::checkCompileErrors(GLuint shader, ShaderType type)
 }
 
 //-----------------------------------------------------------------------------
+// Validate Shader
+//-----------------------------------------------------------------------------
+void Shader::Validate()
+{
+	GLint result = 0;
+	GLchar eLog[1024] = { 0 };
+
+	glValidateProgram(mHandle);
+	glGetProgramiv(mHandle, GL_VALIDATE_STATUS, &result);
+	if (!result)
+	{
+		glGetProgramInfoLog(mHandle, sizeof(eLog), NULL, eLog);
+		printf("Error validating program: '%s'\n", eLog);
+		return;
+	}
+}
+
+//-----------------------------------------------------------------------------
 // Returns the active shader program
 //-----------------------------------------------------------------------------
 GLuint Shader::ID() const
