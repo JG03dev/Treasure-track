@@ -20,7 +20,7 @@ while (!glfwWindowShouldClose(gWindow)) {
 
 	myMusic.UpdateBufferStream();
 
-	...
+	// Aqui va el resto del codigo
 
 		static float healcooldown = 3;
 	healcooldown += deltaTime;
