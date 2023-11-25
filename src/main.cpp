@@ -289,4 +289,6 @@ void showFPS(GLFWwindow* window)
 	frameCount++;
 }
 */
-int main() {}
+int main() {
+    Game g;
+}

@@ -36,7 +36,7 @@ public:
 
 	// Constructors
 
-	Game();
+	Game() {};
 	
 	// Public Methods
 
@@ -46,7 +46,7 @@ public:
 
 	// Destructors
 
-	~Game();
+	~Game() {};
 
 private:
 	// Private Attributes
@@ -64,6 +64,7 @@ private:
 
 	// Graphics
 	Renderer m_renderer;
+	// These next 3 attributes will probably be stored in the Renderer
 	Light* m_Light;
 	glm::vec3 m_lightPos;
 	std::vector<Shader*> m_Shaders;
