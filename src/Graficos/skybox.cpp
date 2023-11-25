@@ -56,7 +56,7 @@ Skybox::Skybox(std::vector<std::string> faceLocations)
 		3, 6, 7
 	};
 
-	float skyboxVertices[] = {
+	std::vector<float> skyboxVertices = {
 		-1.0f, 1.0f, -1.0f,		0.0f, 0.0f,		0.0f, 0.0f, 0.0f,
 		-1.0f, -1.0f, -1.0f,	0.0f, 0.0f,		0.0f, 0.0f, 0.0f,
 		1.0f, 1.0f, -1.0f,		0.0f, 0.0f,		0.0f, 0.0f, 0.0f,
@@ -69,6 +69,7 @@ Skybox::Skybox(std::vector<std::string> faceLocations)
 	};
 
 	skyMesh = new Mesh();
+	
 	skyMesh->CreateMesh(skyboxVertices, skyboxIndices, 64, 36);
 }
 

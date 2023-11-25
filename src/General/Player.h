@@ -21,7 +21,7 @@ public:
 	btRaycastVehicle* vehicle;
 
 	// Constructor
-	Player(std::string const& modelPath, btDiscreteDynamicsWorld* dynamicsWorld);
+	Player(std::string const& modelPath, std::string const& modelName, btDiscreteDynamicsWorld* dynamicsWorld);
 
 	// Public Methods
 	void Draw(Shader& shader);

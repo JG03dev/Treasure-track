@@ -2,8 +2,9 @@
 
 // Constructors
 
-Object::Object(std::string const& modelPath, btDiscreteDynamicsWorld* dynamicsWorld) {
-	model = new Model(modelPath);
+Object::Object(std::string const& modelPath, std::string const& modelName, btDiscreteDynamicsWorld* dynamicsWorld) {
+	model = new Model();
+	model->LoadModel(modelPath, modelName);
 
 	this->CreateRigidBody();
 
@@ -13,7 +14,7 @@ Object::Object(std::string const& modelPath, btDiscreteDynamicsWorld* dynamicsWo
 // Public Methods
 
 void Object::Draw(Shader& shader) {
-	model->Draw(shader);
+	//model->Draw(shader);
 }
 
 // Private Methods
@@ -21,32 +22,47 @@ void Object::Draw(Shader& shader) {
 void Object::CreateRigidBody() {
 	btCompoundShape* objectShape = new btCompoundShape();
 
-	btTransform objectTransform;
-	objectTransform.setIdentity();
-	objectTransform.setOrigin(btVector3(0, 0, 0));
+	
 
 	for (int i = 0, numMeshes = model->meshList.size(); i < numMeshes; i++) {
 		btTriangleMesh* triangleMesh = new btTriangleMesh();
 
-		//TODO: Adaptar a nuevo mesh
+		//TODO: Calcular transform de cada mesh en funcion de su posicion inicial con vertices
 		Mesh* mesh = this->model->meshList[i];
-		for (int j = 0; j < mesh->indices.size(); j += 3) {
-			btVector3 v1(mesh->vertices[i].Position.x, mesh->vertices[i].Position.y, mesh->vertices[i].Position.z);
-			btVector3 v2(mesh->vertices[i + 1].Position.x, mesh->vertices[i + 1].Position.y, mesh->vertices[i + 1].Position.z);
-			btVector3 v3(mesh->vertices[i + 2].Position.x, mesh->vertices[i + 2].Position.y, mesh->vertices[i + 2].Position.z);
+		const std::vector<GLfloat>* vertices = mesh->GetVertices();
+		for (int j = 0; j < vertices->size(); j += 8) {
+			btVector3 v1((*vertices)[j], (*vertices)[j + 1], (*vertices)[j + 2]);
+			btVector3 v2((*vertices)[j + 3], (*vertices)[j + 4], (*vertices)[j + 5]);
+			btVector3 v3((*vertices)[j + 6], (*vertices)[j + 7], (*vertices)[j + 8]);
 
 			triangleMesh->addTriangle(v1, v2, v3);
 		}
 
 		btCollisionShape* partialShape = new btBvhTriangleMeshShape(triangleMesh, true);
-		objectShape->addChildShape(objectTransform, partialShape);
+		
+		btVector3 min, max;
+
+		partialShape->getAabb(btTransform::getIdentity(), min, max);
+		btVector3 halfExtents = (max - min) / 2;
+
+		btBoxShape* box = new btBoxShape(halfExtents);
+
+		btTransform objectTransform;
+		objectTransform.setIdentity();
+		objectTransform.setOrigin(min + halfExtents);
+
+		objectShape->addChildShape(objectTransform, box);
 	}
 
 	btScalar mass(0);
 
 	btVector3 localInertia(0, 0, 0);
 
-	btDefaultMotionState* objectMotionState = new btDefaultMotionState(objectTransform);
+	btTransform compoundTransform;
+	compoundTransform.setIdentity();
+	compoundTransform.setOrigin(btVector3(0, 0, 0));
+
+	btDefaultMotionState* objectMotionState = new btDefaultMotionState(compoundTransform);
 	btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, objectMotionState, objectShape, localInertia);
 
 	this->rb = new btRigidBody(rbInfo);

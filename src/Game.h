@@ -18,6 +18,7 @@
 
 #pragma region GRAFICOS
 
+#include "Graficos/Renderer.h"
 #include "Graficos/Skybox.h"
 #include "Graficos/Luces/Light.h"
 
@@ -29,61 +30,71 @@
 class Game
 {
 public: 
+	// Public Attributes
+
 	const char* name = "Nombre juego";
-	const GLint windowHeight = 0; //Alto
-	const GLint windowWeight = 0; //Ancho
 
+	// Constructors
 
-	Game() = default;
-	~Game() = default;
+	Game();
+	
+	// Public Methods
 
-	Game(const Game& other) = delete;
-	Game& operator==(const Game& other) = delete;
-
-	Game(GLFWwindow* w) : m_Window(w) {};
-
-
-	void Initializer();
-	void Run();
-	void processInput(GLFWwindow* window);
-	void Actualizar();
-	void Render();
-
-	int InitializeWindow();
-
-	Skybox loadSkybox();
+	void StartGame();
 
 	void AddShader(const char* s1, const char* s2);
 
-	//physics
-	void InitializePhysics();
+	// Destructors
+
+	~Game();
 
 private:
-	GLFWwindow* m_Window; 
-	Camera* m_Camera;
-	Light* m_Light;
-
-	Skybox m_skybox;
-
+	// Private Attributes
+	
+	// Window
+	GLFWwindow* m_Window;
 	const unsigned int m_SCR_WIDTH = 800;
 	const unsigned int m_SCR_HEIGHT = 600;
 
+	// Camera
+	Camera* m_Camera;
+
+	// Skybox
+	Skybox m_skybox;
+
+	// Graphics
+	Renderer m_renderer;
+	Light* m_Light;
+	glm::vec3 m_lightPos;
+	std::vector<Shader*> m_Shaders;
+
+	// Physics logic
 	float m_deltaTime;
 	float m_lastFrame;
+	btDiscreteDynamicsWorld* m_dynamicsWorld;
 
-	bool m_blinn;
-	bool m_blinnKeyPressed;
-
-	bool m_firstMouse;
-
-	float m_lastX;
-	float m_lastY;
-
-	glm::vec3 m_lightPos; 
-
-	std::vector<Shader*> m_Shaders;
+	// Objects
 	Player* m_Player;
 	std::vector<Object*> m_Objects;
 
-	btDiscreteDynamicsWorld* m_dynamicsWorld;
+	// Not used
+	bool m_blinn;
+	bool m_blinnKeyPressed;
+	bool m_firstMouse;
+	float m_lastX;
+	float m_lastY;
+
+	// Private Methods
+
+	// Initializers
+	void Initializer();
+	void InitializePhysics();
+	int InitializeWindow();
+	Skybox loadSkybox();
+
+	// Functionality
+	void Run();
+	void ProcessInput(GLFWwindow* window);
+	void Actualizar();
+	void Render();
 };

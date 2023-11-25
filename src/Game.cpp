@@ -1,19 +1,19 @@
 #include "Game.h"
 
-Skybox Game::loadSkybox()
-{
-    //Load Faces
-    std::vector<std::string> faces =
-    { "../../../Assets/skybox/right.jpg",
-        "../../../Assets/skybox/left.jpg",
-        "../../../Assets/skybox/top.jpg",
-        "../../../Assets/skybox/bottom.jpg",
-        "../../../Assets/skybox/front.jpg",
-        "../../../Assets/skybox/back.jpg"
-    };
-    //Load Skybox with shaders
-    return Skybox(faces);
+#pragma region PUBLIC_METHODS
+
+void Game::StartGame() {
+    Run();
 }
+
+void Game::AddShader(const char* s1, const char* s2)
+{
+    m_Shaders.push_back(new Shader(s1, s2));
+}
+
+#pragma endregion
+
+#pragma region PRIVATE_METHODS_INITIALIZERS
 
 void Game::Initializer()
 {
@@ -24,7 +24,7 @@ void Game::Initializer()
     m_blinnKeyPressed = false;
 
     // camera
-    m_Camera = new Camera(glm::vec3(0.0f, 0.0f, 3.0f)); 
+    m_Camera = new Camera(glm::vec3(0.0f, 0.0f, 3.0f));
     m_lastX = m_SCR_WIDTH / 2.0f;
     m_lastY = m_SCR_HEIGHT / 2.0f;
     m_firstMouse = true;
@@ -38,37 +38,6 @@ void Game::Initializer()
 
     // window
     InitializeWindow();
-}
-
-int Game::InitializeWindow()
-{
-    // glfw window creation
-    // --------------------
-    m_Window = glfwCreateWindow(m_SCR_WIDTH, m_SCR_HEIGHT, "VGI-ABP", NULL, NULL);
-    if (m_Window == NULL)
-    {
-        std::cout << "Failed to create GLFW window" << std::endl;
-        glfwTerminate();
-        return -1;
-    }
-    glfwMakeContextCurrent(m_Window);
-  /*  glfwSetFramebufferSizeCallback(m_Window, framebuffer_size_callback);
-    glfwSetCursorPosCallback(window, mouse_callback);
-    glfwSetScrollCallback(window, scroll_callback);*/
-
-    // tell GLFW to capture our mouse
-    glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
-    GLenum err = glewInit();
-
-    // configure global opengl state
-    // -----------------------------
-    glEnable(GL_DEPTH_TEST);
-}
-
-void Game::AddShader(const char* s1, const char* s2)
-{
-    m_Shaders.push_back(new Shader(s1, s2));
 }
 
 void Game::InitializePhysics()
@@ -90,16 +59,86 @@ void Game::InitializePhysics()
     //Creates the dynamics world, wich will be responsable for managing our physics objects and constraints
     this->m_dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguration);
 
-    this->m_dynamicsWorld->setGravity(gravity); 
+    this->m_dynamicsWorld->setGravity(gravity);
 }
 
+int Game::InitializeWindow()
+{
+    // glfw window creation
+    // --------------------
+    m_Window = glfwCreateWindow(m_SCR_WIDTH, m_SCR_HEIGHT, "VGI-ABP", NULL, NULL);
+    if (m_Window == NULL)
+    {
+        std::cout << "Failed to create GLFW window" << std::endl;
+        glfwTerminate();
+        return -1;
+    }
+    glfwMakeContextCurrent(m_Window);
+    /*  glfwSetFramebufferSizeCallback(m_Window, framebuffer_size_callback);
+      glfwSetCursorPosCallback(window, mouse_callback);
+      glfwSetScrollCallback(window, scroll_callback);*/
+
+      // tell GLFW to capture our mouse
+    glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+    GLenum err = glewInit();
+
+    // configure global opengl state
+    // -----------------------------
+    glEnable(GL_DEPTH_TEST);
+}
+
+Skybox Game::loadSkybox()
+{
+    //Load Faces
+    std::vector<std::string> faces =
+    { "../../../Assets/skybox/right.jpg",
+        "../../../Assets/skybox/left.jpg",
+        "../../../Assets/skybox/top.jpg",
+        "../../../Assets/skybox/bottom.jpg",
+        "../../../Assets/skybox/front.jpg",
+        "../../../Assets/skybox/back.jpg"
+    };
+    //Load Skybox with shaders
+    return Skybox(faces);
+}
+
+#pragma endregion
+
+#pragma region PRIVATE_METHODS_FUNCTIONALITY
+
+void Game::Run()
+{
+    // timing
+    m_deltaTime = 0.0f;
+    m_lastFrame = 0.0f;
+
+    while (!glfwWindowShouldClose(m_Window))
+    {
+        // per-frame time logic
+        // --------------------
+        float currentFrame = static_cast<float>(glfwGetTime());
+        m_deltaTime = currentFrame - m_lastFrame;
+        m_lastFrame = currentFrame;
+
+        // input: Manejar entrada de usuario
+        // -----
+        ProcessInput(m_Window);
+
+        //Actualizar Informacion (Mover coordenadas)
+        Actualizar();
+
+        //Renderizar
+        Render();
+    }
+}
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 // ---------------------------------------------------------------------------------------------------------
-void Game::processInput(GLFWwindow* window)
+void Game::ProcessInput(GLFWwindow* window)
 {
-	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-		glfwSetWindowShouldClose(window, true);
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+        glfwSetWindowShouldClose(window, true);
 
     //W
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
@@ -137,32 +176,6 @@ void Game::processInput(GLFWwindow* window)
         m_Player->InputMethod(GLFW_KEY_LEFT_CONTROL, false);
 }
 
-void Game::Run()
-{
-	// timing
-	float deltaTime = 0.0f;
-	float lastFrame = 0.0f;
-
-	while (!glfwWindowShouldClose(m_Window)) 
-	{
-		// per-frame time logic
-		// --------------------
-		float currentFrame = static_cast<float>(glfwGetTime());
-		deltaTime = currentFrame - lastFrame;
-		lastFrame = currentFrame;
-
-		// input: Manejar entrada de usuario
-		// -----
-		processInput(m_Window);
-
-		//Actualizar Informacion (Mover coordenadas)
-		Actualizar();
-
-		//Renderizar
-		Render();
-	}
-}
-
 void Game::Actualizar()
 {
     m_dynamicsWorld->stepSimulation(m_deltaTime, 2);
@@ -170,5 +183,7 @@ void Game::Actualizar()
 
 void Game::Render()
 {
-    
+
 }
+
+#pragma endregion

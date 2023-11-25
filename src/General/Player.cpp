@@ -2,8 +2,9 @@
 
 // Constructor
 
-Player::Player(std::string const& modelPath, btDiscreteDynamicsWorld* dynamicsWorld) {
-	model = new Model(modelPath);
+Player::Player(std::string const& modelPath, std::string const& modelName, btDiscreteDynamicsWorld* dynamicsWorld) {
+	model = new Model();
+	model->LoadModel(modelPath, modelName);
 
 	this->CreateVehicle(modelPath, dynamicsWorld); // Doesn't use a compound shape as a test to see how it works
 
@@ -13,7 +14,7 @@ Player::Player(std::string const& modelPath, btDiscreteDynamicsWorld* dynamicsWo
 // Public Methods
 
 void Player::Draw(Shader& shader) {
-	model->Draw(shader);
+	//model->Draw(shader);
 }
 
 void Player::InputMethod(int key, bool keyPressed) {
@@ -85,15 +86,16 @@ void Player::CreateVehicle(std::string const& modelPath, btDiscreteDynamicsWorld
 	chassisTransform.setIdentity();
 	chassisTransform.setOrigin(btVector3(0, 0, 0));
 
-	for (int i = 0, numModels = model->meshes.size(); i < numModels; i++) {
+	for (int i = 0, numModels = model->meshList.size(); i < numModels; i++) {
 		btTriangleMesh* triangleMesh = new btTriangleMesh();
 
-		//TODO: Adaptar a nuevo mesh
-		Mesh* mesh = &this->model->meshes.front();
-		for (int i = 0; i < mesh->indices.size(); i += 3) {
-			btVector3 v1(mesh->vertices[i].Position.x, mesh->vertices[i].Position.y, mesh->vertices[i].Position.z);
-			btVector3 v2(mesh->vertices[i + 1].Position.x, mesh->vertices[i + 1].Position.y, mesh->vertices[i + 1].Position.z);
-			btVector3 v3(mesh->vertices[i + 2].Position.x, mesh->vertices[i + 2].Position.y, mesh->vertices[i + 2].Position.z);
+		//TODO: Adaptar a nuevo mesh [DONE?]
+		Mesh* mesh = this->model->meshList[i];
+		const std::vector<GLfloat>* vertices = mesh->GetVertices();
+		for (int j = 0; j < vertices->size(); j += 8) {
+			btVector3 v1((*vertices)[j], (*vertices)[j + 1], (*vertices)[j + 2]);
+			btVector3 v2((*vertices)[j + 3], (*vertices)[j + 4], (*vertices)[j + 5]);
+			btVector3 v3((*vertices)[j + 6], (*vertices)[j + 7], (*vertices)[j + 8]);
 
 			triangleMesh->addTriangle(v1, v2, v3);
 		}

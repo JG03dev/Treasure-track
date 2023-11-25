@@ -23,31 +23,16 @@
 
 #pragma region GRAFICOS
 
-#include "Graficos/Skybox.h"
+#include "Graficos/skybox.h"
 #include "Graficos/Shader.h"
 #include "Graficos/Modelo/Model.h"
 #include "Graficos/Luces/Light.h"
 
 #pragma endregion
 
-#pragma region SOUND
-
-#include "Sound/SoundDevice.h"
-#include "Sound/MusicBuffer.h"
-#include "MainLoop/MainLoop.h"  // for looping
-
-#pragma endregion
-
-#pragma region UNKNOWN
-
-#include "Unknown/Window.h"
-
-#pragma endregion
-
 // --OTHER INCLUDES--
 
-#include <iostream>
-
+/*
 Skybox loadSkybox()
 {
     //Load Faces
@@ -131,11 +116,11 @@ int main()
 
     Shader shader("../../../Shaders/advanced_lighting.vs", "../../../Shaders/advanced_lighting.fs");
 
-  /*  Light Sol;
-    Sol.setShaderLight(Phong.ID);*/
+    // Light Sol;
+    // Sol.setShaderLight(Phong.ID);
 
     // lighting info
-   // -------------
+    // -------------
     glm::vec3 lightPos(20.0f, 0.0f, 0.0f);
 
     Skybox Sky = loadSkybox();
@@ -303,3 +288,5 @@ void showFPS(GLFWwindow* window)
 
 	frameCount++;
 }
+*/
+int main() {}

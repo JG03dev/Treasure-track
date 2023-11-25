@@ -11,6 +11,8 @@ public:
 	void RenderMesh();
 	void ClearMesh();
 
+	const std::vector<GLfloat>* GetVertices() { return &raw_vertices; }
+
 	~Mesh();
 
 private:
