@@ -36,17 +36,18 @@ public:
 
 	// Constructors
 
-	Game() {};
+	Game() :m_Window(NULL), m_Camera(NULL), m_skybox(NULL), m_Light(NULL), m_dynamicsWorld(NULL), m_Player(NULL) { m_Camera = new Camera(glm::vec3(0.0f, 0.0f, 3.0f)); InitializeWindow(); };
 	
 	// Public Methods
 
 	void StartGame();
 
-	void AddShader(const char* s1, const char* s2);
+	GLFWwindow* GetWindow() { return m_Window; }
+	Camera* GetCamera() { return m_Camera; }
 
 	// Destructors
 
-	~Game() {};
+	~Game();
 
 private:
 	// Private Attributes
@@ -58,16 +59,17 @@ private:
 
 	// Camera
 	Camera* m_Camera;
+	const float c_near = 0.1f;
+	const float c_far = 500.0f;
 
 	// Skybox
-	Skybox m_skybox;
+	Skybox* m_skybox;
 
 	// Graphics
-	Renderer m_renderer;
+	Renderer* m_renderer;
 	// These next 3 attributes will probably be stored in the Renderer
 	Light* m_Light;
 	glm::vec3 m_lightPos;
-	std::vector<Shader*> m_Shaders;
 
 	// Physics logic
 	float m_deltaTime;
@@ -78,24 +80,20 @@ private:
 	Player* m_Player;
 	std::vector<Object*> m_Objects;
 
-	// Not used
-	bool m_blinn;
-	bool m_blinnKeyPressed;
-	bool m_firstMouse;
-	float m_lastX;
-	float m_lastY;
-
 	// Private Methods
 
 	// Initializers
-	void Initializer();
 	void InitializePhysics();
+	void InitializeGraphics();
 	int InitializeWindow();
-	Skybox loadSkybox();
 
 	// Functionality
 	void Run();
 	void ProcessInput(GLFWwindow* window);
-	void Actualizar();
+	void Actualizar(float deltaTime);
 	void Render();
+	void scrollCallback(GLFWwindow* window, double xoffset, double yoffset);
+	void mouseCallback(GLFWwindow* window, double xpos, double ypos);
+
+
 };

@@ -18,6 +18,8 @@ public:
 	void RenderModel(Shader& s);
 	void ClearModel();
 
+	std::string GetName() { return m_name; }
+
 	~Model();
 
 	std::vector<Mesh*> meshList;

@@ -2,13 +2,18 @@
 
 // Constructor
 
-Player::Player(std::string const& modelPath, std::string const& modelName, btDiscreteDynamicsWorld* dynamicsWorld) {
-	model = new Model();
+Player::Player(std::string const& modelPath, std::string const& modelName, btDiscreteDynamicsWorld* dynamicsWorld, GLfloat sIntensity, GLfloat shine) {
+	model = new Model(sIntensity, shine);
 	model->LoadModel(modelPath, modelName);
 
 	this->CreateVehicle(modelPath, dynamicsWorld); // Doesn't use a compound shape as a test to see how it works
 
 	dynamicsWorld->addVehicle(this->vehicle);
+}
+
+// Destructor
+Player::~Player() {
+	delete model;
 }
 
 // Public Methods
@@ -80,33 +85,30 @@ void Player::InputMethod(int key, bool keyPressed) {
 void Player::CreateVehicle(std::string const& modelPath, btDiscreteDynamicsWorld* dynamicsWorld) {
 	// --------- Mesh Load to Get the chassis half extents for the box shape
 
-	btCompoundShape* tempShape = new btCompoundShape();
+	btCompoundShape tempShape;
 
 	btTransform chassisTransform;
 	chassisTransform.setIdentity();
-	chassisTransform.setOrigin(btVector3(0, 0, 0));
+	chassisTransform.setOrigin(btVector3(0, -2.8, 0));
 
 	for (int i = 0, numModels = model->meshList.size(); i < numModels; i++) {
-		btTriangleMesh* triangleMesh = new btTriangleMesh();
+		btConvexHullShape convexShape;
 
 		//TODO: Adaptar a nuevo mesh [DONE?]
 		Mesh* mesh = this->model->meshList[i];
 		const std::vector<GLfloat>* vertices = mesh->GetVertices();
 		for (int j = 0; j < vertices->size(); j += 8) {
 			btVector3 v1((*vertices)[j], (*vertices)[j + 1], (*vertices)[j + 2]);
-			btVector3 v2((*vertices)[j + 3], (*vertices)[j + 4], (*vertices)[j + 5]);
-			btVector3 v3((*vertices)[j + 6], (*vertices)[j + 7], (*vertices)[j + 8]);
 
-			triangleMesh->addTriangle(v1, v2, v3);
+			convexShape.addPoint(v1);
 		}
 
-		btConvexShape* convexShape = new btConvexTriangleMeshShape(triangleMesh);
-		tempShape->addChildShape(chassisTransform, convexShape);
+		tempShape.addChildShape(chassisTransform, &convexShape);
 	}
 
 	btVector3 min, max;
 
-	tempShape->getAabb(btTransform::getIdentity(), min, max);
+	tempShape.getAabb(btTransform::getIdentity(), min, max);
 	btVector3 halfExtents = (max - min) / 2;
 
 	// --------- Chassis RigidBody
@@ -122,6 +124,7 @@ void Player::CreateVehicle(std::string const& modelPath, btDiscreteDynamicsWorld
 	btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, chassisMotionState, chassisShape, localInertia);
 
 	btRigidBody* chassisRigidBody = new btRigidBody(rbInfo);
+	chassisRigidBody->setActivationState(DISABLE_DEACTIVATION);
 
 	dynamicsWorld->addRigidBody(chassisRigidBody);
 
@@ -178,5 +181,5 @@ void Player::CreateVehicle(std::string const& modelPath, btDiscreteDynamicsWorld
 		wheel.m_wheelsDampingRelaxation = btScalar(0.5) * 2 * btSqrt(wheel.m_suspensionStiffness);//1;
 	}
 
-	this->vehicle->setCoordinateSystem(0, 1, 2); // To adjust the coordinate system to the OpenGL coordinate system
+	//this->vehicle->setCoordinateSystem(0, 1, 2); // To adjust the coordinate system to the OpenGL coordinate system
 }

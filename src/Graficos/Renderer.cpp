@@ -5,6 +5,20 @@
 #include "Renderer.h"
 
 
+Renderer::Renderer(	const char* shaderObjvert, const char* shderObjfrag, const char* shderObjgeom, 
+					const char* shaderSkyvert, const char* shaderSkyfrag, const char* shaderSkygeom,
+					const char* shaderDirShavert, const char* shaderDirShafrag, const char* shaderDirShageom,
+					const char* shaderOmniShavert, const char* shaderOmniShafrag, const char* shaderOmniShageom,
+					Skybox* s, GLsizei viewPortWidth, GLsizei viewPortHeight)
+	:
+	skybox(s), mainLight(NULL), pointLightCount(0), spotLightCount(0), vwidth(viewPortWidth), vheight(viewPortHeight)
+{
+	sObject = new Shader(shaderObjvert, shderObjfrag, shderObjgeom);
+	sSkybox = new Shader(shaderSkyvert, shaderSkyfrag, shaderSkygeom);
+	sDirShadow = new Shader(shaderDirShavert, shaderDirShafrag, shaderDirShageom);
+	sOmniShadow = new Shader(shaderOmniShavert, shaderOmniShafrag, shaderOmniShageom);
+}
+
 void Renderer::AddLight(DirectionalLight* l)
 {
 	mainLight = l;
@@ -217,4 +231,7 @@ void Renderer::RenderScene()
 
 Renderer::~Renderer()
 {
+	delete sObject, sSkybox, sOmniShadow, sDirShadow;
+	if (mainLight != NULL)
+		delete mainLight;
 }

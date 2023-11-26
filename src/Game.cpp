@@ -3,42 +3,24 @@
 #pragma region PUBLIC_METHODS
 
 void Game::StartGame() {
+
+    InitializePhysics();
+    InitializeGraphics();
+
     Run();
 }
-
-void Game::AddShader(const char* s1, const char* s2)
+Game::~Game()
 {
-    m_Shaders.push_back(new Shader(s1, s2));
-}
+    delete m_Player, m_Camera, m_skybox, m_dynamicsWorld;
+    for (int i = 0; i < m_Objects.size(); i++)
+        delete m_Objects[i];
 
+    delete m_renderer;
+    
+}
 #pragma endregion
 
 #pragma region PRIVATE_METHODS_INITIALIZERS
-
-void Game::Initializer()
-{
-    m_skybox = loadSkybox();
-
-    // settings
-    m_blinn = true;
-    m_blinnKeyPressed = false;
-
-    // camera
-    m_Camera = new Camera(glm::vec3(0.0f, 0.0f, 3.0f));
-    m_lastX = m_SCR_WIDTH / 2.0f;
-    m_lastY = m_SCR_HEIGHT / 2.0f;
-    m_firstMouse = true;
-
-    //timer
-    m_deltaTime = 0.0f;
-    m_lastFrame = 0.0f;
-
-    // lighting info
-    m_lightPos = glm::vec3(20.0f, 0.0f, 0.0f);
-
-    // window
-    InitializeWindow();
-}
 
 void Game::InitializePhysics()
 {
@@ -62,6 +44,57 @@ void Game::InitializePhysics()
     this->m_dynamicsWorld->setGravity(gravity);
 }
 
+void Game::InitializeGraphics()
+{
+    // Init renderer
+    std::vector<std::string> faces = {
+        "../../../Assets/skybox/right.jpg",			// right
+        "../../../Assets/skybox/left.jpg",			// left
+        "../../../Assets/skybox/top.jpg",			// top
+        "../../../Assets/skybox/bottom.jpg",		// bottom
+        "../../../Assets/skybox/front.jpg",			// front
+        "../../../Assets/skybox/back.jpg"			// back
+    };
+    m_skybox = new Skybox(faces);
+
+
+
+	m_renderer = new Renderer(  "../../../Shaders/shader.vert", "../../../Shaders/shader.frag", NULL,
+                            "../../../Shaders/skybox.vert", "../../../Shaders/skybox.frag", NULL,
+                            "../../../Shaders/directional_shadow_map.vert", "../../../Shaders/directional_shadow_map.frag", NULL,
+		                    "../../../Shaders/omni_shadow_map.vert", "../../../Shaders/omni_shadow_map.frag", "../../../Shaders/omni_shadow_map.geom",
+                            m_skybox, m_SCR_WIDTH, m_SCR_HEIGHT);
+
+    // Inicializacion de luces
+    DirectionalLight* mainLight = new DirectionalLight(2048, 2048, /*Shadow dimensions*/
+        1.0f, 1.0f, 1.0f, /*RGB colour*/
+        0.9f, 0.5f,	/*Intensity (ambient, diffuse)*/
+        -10.0f, -12.0f, 18.5f /*Direction of the light*/
+    );
+    m_renderer->AddLight(mainLight);
+    
+    //Iniciamos objetos
+    m_Player = new Player("../../../Assets/cotxe/cotxe.obj", "cotxe", m_dynamicsWorld, 4.0f, 256);
+
+    m_Objects.push_back(new Object("../../../Assets/town/town.obj", "town", m_dynamicsWorld, 4.0f, 256));
+
+	{
+		glm::mat4 model(1.0f);
+		m_Player->vehicle->getChassisWorldTransform().getOpenGLMatrix(glm::value_ptr(model));
+		m_renderer->AddModel(m_Player->model->GetName(), m_Player->model, model);
+	}
+
+	for (Object* o : m_Objects) {
+		glm::mat4 model(1.0f);
+		o->rb->getWorldTransform().getOpenGLMatrix(glm::value_ptr(model));
+        m_renderer->AddModel(m_Objects[0]->model->GetName(), m_Objects[0]->model, model);
+	}
+
+    // Inicializar camara
+
+    //m_Camera->setTarget(m_Player);
+}
+
 int Game::InitializeWindow()
 {
     // glfw window creation
@@ -73,34 +106,11 @@ int Game::InitializeWindow()
         glfwTerminate();
         return -1;
     }
+
     glfwMakeContextCurrent(m_Window);
-    /*  glfwSetFramebufferSizeCallback(m_Window, framebuffer_size_callback);
-      glfwSetCursorPosCallback(window, mouse_callback);
-      glfwSetScrollCallback(window, scroll_callback);*/
 
-      // tell GLFW to capture our mouse
-    glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-    GLenum err = glewInit();
-
-    // configure global opengl state
-    // -----------------------------
-    glEnable(GL_DEPTH_TEST);
-}
-
-Skybox Game::loadSkybox()
-{
-    //Load Faces
-    std::vector<std::string> faces =
-    { "../../../Assets/skybox/right.jpg",
-        "../../../Assets/skybox/left.jpg",
-        "../../../Assets/skybox/top.jpg",
-        "../../../Assets/skybox/bottom.jpg",
-        "../../../Assets/skybox/front.jpg",
-        "../../../Assets/skybox/back.jpg"
-    };
-    //Load Skybox with shaders
-    return Skybox(faces);
+    return 0;
 }
 
 #pragma endregion
@@ -110,26 +120,28 @@ Skybox Game::loadSkybox()
 void Game::Run()
 {
     // timing
-    m_deltaTime = 0.0f;
-    m_lastFrame = 0.0f;
+    float deltaTime = 0.0f;
+    float lastFrame = 0.0f;
 
     while (!glfwWindowShouldClose(m_Window))
     {
         // per-frame time logic
         // --------------------
         float currentFrame = static_cast<float>(glfwGetTime());
-        m_deltaTime = currentFrame - m_lastFrame;
-        m_lastFrame = currentFrame;
+        deltaTime = currentFrame - lastFrame;
+        lastFrame = currentFrame;
 
         // input: Manejar entrada de usuario
         // -----
         ProcessInput(m_Window);
 
         //Actualizar Informacion (Mover coordenadas)
-        Actualizar();
+        Actualizar(deltaTime);
 
         //Renderizar
         Render();
+
+        glfwSwapBuffers(m_Window);
     }
 }
 
@@ -137,6 +149,7 @@ void Game::Run()
 // ---------------------------------------------------------------------------------------------------------
 void Game::ProcessInput(GLFWwindow* window)
 {
+    glfwPollEvents();
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
 
@@ -176,14 +189,25 @@ void Game::ProcessInput(GLFWwindow* window)
         m_Player->InputMethod(GLFW_KEY_LEFT_CONTROL, false);
 }
 
-void Game::Actualizar()
+void Game::Actualizar(float deltaTime)
 {
-    m_dynamicsWorld->stepSimulation(m_deltaTime, 2);
+    m_dynamicsWorld->stepSimulation(deltaTime, 2);
 }
 
 void Game::Render()
 {
+    {
+		glm::mat4 model(1.0f);
+		m_Player->vehicle->getChassisWorldTransform().getOpenGLMatrix(glm::value_ptr(model));
+        std::cout << "Player position:" << m_Player->vehicle->getChassisWorldTransform().getOrigin().getY() << std::endl;
+		m_renderer->setModelMatrix(m_Player->model->GetName(), model);
+    }
 
+    // Update camera
+    //m_Camera->followPlayer();
+
+    glm::mat4 projection = glm::perspective(glm::radians(m_Camera->FOV), (float)m_SCR_WIDTH / (float)m_SCR_HEIGHT, c_near, c_far);
+
+    m_renderer->RenderEverything(m_Camera->getViewMatrix(), projection, *m_Camera);
 }
-
 #pragma endregion

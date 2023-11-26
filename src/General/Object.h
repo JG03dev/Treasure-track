@@ -21,7 +21,7 @@ public:
 	btRigidBody* rb;
 
 	// Constructor
-	Object(std::string const& modelPath, std::string const& modelName, btDiscreteDynamicsWorld* dynamicsWorld);
+	Object(std::string const& modelPath, std::string const& modelName, btDiscreteDynamicsWorld* dynamicsWorld, GLfloat sIntensity, GLfloat shine);
 
 	// Public Methods
 	void Draw(Shader& shader);

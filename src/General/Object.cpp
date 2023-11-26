@@ -2,8 +2,8 @@
 
 // Constructors
 
-Object::Object(std::string const& modelPath, std::string const& modelName, btDiscreteDynamicsWorld* dynamicsWorld) {
-	model = new Model();
+Object::Object(std::string const& modelPath, std::string const& modelName, btDiscreteDynamicsWorld* dynamicsWorld, GLfloat sIntensity, GLfloat shine) {
+	model = new Model(sIntensity, shine);
 	model->LoadModel(modelPath, modelName);
 
 	this->CreateRigidBody();
@@ -22,27 +22,23 @@ void Object::Draw(Shader& shader) {
 void Object::CreateRigidBody() {
 	btCompoundShape* objectShape = new btCompoundShape();
 
-	
-
 	for (int i = 0, numMeshes = model->meshList.size(); i < numMeshes; i++) {
-		btTriangleMesh* triangleMesh = new btTriangleMesh();
+		btConvexHullShape convexShape;
 
 		//TODO: Calcular transform de cada mesh en funcion de su posicion inicial con vertices
 		Mesh* mesh = this->model->meshList[i];
 		const std::vector<GLfloat>* vertices = mesh->GetVertices();
 		for (int j = 0; j < vertices->size(); j += 8) {
-			btVector3 v1((*vertices)[j], (*vertices)[j + 1], (*vertices)[j + 2]);
-			btVector3 v2((*vertices)[j + 3], (*vertices)[j + 4], (*vertices)[j + 5]);
-			btVector3 v3((*vertices)[j + 6], (*vertices)[j + 7], (*vertices)[j + 8]);
+            btVector3 v1((*vertices)[j], (*vertices)[j + 1], (*vertices)[j + 2]);
 
-			triangleMesh->addTriangle(v1, v2, v3);
+            convexShape.addPoint(v1);
 		}
-
-		btCollisionShape* partialShape = new btBvhTriangleMeshShape(triangleMesh, true);
-		
 		btVector3 min, max;
-
-		partialShape->getAabb(btTransform::getIdentity(), min, max);
+		
+		btTransform t;
+		t.setIdentity();
+		t.setOrigin(btVector3(0, 0, 0));
+        convexShape.getAabb(t, min, max);
 		btVector3 halfExtents = (max - min) / 2;
 
 		btBoxShape* box = new btBoxShape(halfExtents);

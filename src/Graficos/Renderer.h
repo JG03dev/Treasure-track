@@ -37,6 +37,12 @@ public:
 	Renderer(Shader* sObject, Shader *sSky, Shader*sDirSha, Shader *sOmniSha, Skybox* s, GLsizei viewPortWidth, GLsizei viewPortHeight) : 
 		skybox(s), sObject(sObject), sSkybox(sSky), sDirShadow(sDirSha), sOmniShadow(sOmniSha),
 		mainLight(NULL), pointLightCount(0), spotLightCount(0), vwidth(viewPortWidth), vheight(viewPortHeight) {}
+	
+	Renderer(const char* shaderObjvert, const char* shderObjfrag, const char* shderObjgeom,
+		const char* shaderSkyvert, const char* shaderSkyfrag, const char* shaderSkygeom,
+		const char* shaderDirShavert, const char* shaderDirShafrag, const char* shaderDirShageom,
+		const char* shaderOmniShavert, const char* shaderOmniShafrag, const char* shaderOmniShageom,
+		Skybox* s, GLsizei viewPortWidth, GLsizei viewPortHeight);
 
 	// Data modifiers 
 	
