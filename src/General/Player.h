@@ -28,7 +28,7 @@ public:
 
 	// Public Methods
 	void Draw(Shader& shader);
-	void InputMethod(int key, bool keyPressed);
+	void InputMethod(int key, int keyPressed);
 
 private:
 	// Private Attributes
@@ -36,7 +36,7 @@ private:
 	struct VehicleParams {
 		// Construction Params
 		btScalar m_mass = 1200;
-		btScalar m_suspensionRestLength = 0.7;
+		btScalar m_suspensionRestLength = 0.5;
 		btScalar m_wheelWidth = 0.4;
 		btScalar m_wheelRadius = 0.5;
 		btScalar m_connectionHeight = 1.2;	//The height where the wheels are connected to the chassis
@@ -48,9 +48,13 @@ private:
 	} vehicleParams;
 
 	struct WheelParams {
-		btScalar m_suspensionStiffness = 50;
-		btScalar m_frictionSlip = 1.2;	//Larger friction slips will result in better handling
-		btScalar m_rollInfluence = 1;
+		btScalar m_suspensionStiffness = 5.88; // 5.88;
+		btScalar m_suspensionCompression = 0.83; //0.83;
+		btScalar m_suspensionDamping = 0.88; //0.88;
+		btScalar m_maxSuspensionTravelCm = 500.;
+		btScalar m_frictionSlip = 10.5;//10.5;	//Larger friction slips will result in better handling
+		btScalar m_maxSuspensionForce = 6000;//6000.;
+		//btScalar m_rollInfluence = 1;
 	} wheelParams;
 
 	// Private Methods

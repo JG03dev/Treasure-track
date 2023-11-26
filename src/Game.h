@@ -37,6 +37,10 @@ public:
 	// Constructors
 
 	Game() :m_Window(NULL), m_Camera(NULL), m_skybox(NULL), m_Light(NULL), m_dynamicsWorld(NULL), m_Player(NULL) { m_Camera = new Camera(glm::vec3(0.0f, 0.0f, 3.0f)); InitializeWindow(); };
+
+	// Destructors
+
+	~Game();
 	
 	// Public Methods
 
@@ -45,10 +49,8 @@ public:
 	GLFWwindow* GetWindow() { return m_Window; }
 	Camera* GetCamera() { return m_Camera; }
 
-	// Destructors
-
-	~Game();
-
+	void ProcessInput(GLFWwindow* window, int key, int action);
+	
 private:
 	// Private Attributes
 	
@@ -89,7 +91,7 @@ private:
 
 	// Functionality
 	void Run();
-	void ProcessInput(GLFWwindow* window);
+	
 	void Actualizar(float deltaTime);
 	void Render();
 };

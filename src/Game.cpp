@@ -133,7 +133,7 @@ void Game::Run()
 
         // input: Manejar entrada de usuario
         // -----
-        ProcessInput(m_Window);
+        glfwPollEvents();
 
         //Actualizar Informacion (Mover coordenadas)
         Actualizar(deltaTime);
@@ -147,46 +147,48 @@ void Game::Run()
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 // ---------------------------------------------------------------------------------------------------------
-void Game::ProcessInput(GLFWwindow* window)
+void Game::ProcessInput(GLFWwindow* window, int key, int action)
 {
-    glfwPollEvents();
+    
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
 
-    //W
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        m_Player->InputMethod(GLFW_KEY_W, true);
+    m_Player->InputMethod(key, action);
 
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_RELEASE)
-        m_Player->InputMethod(GLFW_KEY_W, false);
-
-    //S
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        m_Player->InputMethod(GLFW_KEY_S, true);
-
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_RELEASE)
-        m_Player->InputMethod(GLFW_KEY_S, false);
-
-    //A
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        m_Player->InputMethod(GLFW_KEY_A, true);
-
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_RELEASE)
-        m_Player->InputMethod(GLFW_KEY_A, false);
-
-    //D
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        m_Player->InputMethod(GLFW_KEY_D, true);
-
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_RELEASE)
-        m_Player->InputMethod(GLFW_KEY_D, false);
-
-    //Ctrl
-    if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
-        m_Player->InputMethod(GLFW_KEY_LEFT_CONTROL, true);
-
-    if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_RELEASE)
-        m_Player->InputMethod(GLFW_KEY_LEFT_CONTROL, false);
+    // //W
+    // if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+    //     m_Player->InputMethod(GLFW_KEY_W, true);
+    // 
+    // if (glfwGetKey(window, GLFW_KEY_W) == GLFW_RELEASE)
+    //     m_Player->InputMethod(GLFW_KEY_W, false);
+    // 
+    // //S
+    // if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+    //     m_Player->InputMethod(GLFW_KEY_S, true);
+    // 
+    // if (glfwGetKey(window, GLFW_KEY_S) == GLFW_RELEASE)
+    //     m_Player->InputMethod(GLFW_KEY_S, false);
+    // 
+    // //A
+    // if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+    //     m_Player->InputMethod(GLFW_KEY_A, true);
+    // 
+    // if (glfwGetKey(window, GLFW_KEY_A) == GLFW_RELEASE)
+    //     m_Player->InputMethod(GLFW_KEY_A, false);
+    // 
+    // //D
+    // if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+    //     m_Player->InputMethod(GLFW_KEY_D, true);
+    // 
+    // if (glfwGetKey(window, GLFW_KEY_D) == GLFW_RELEASE)
+    //     m_Player->InputMethod(GLFW_KEY_D, false);
+    // 
+    // //Ctrl
+    // if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
+    //     m_Player->InputMethod(GLFW_KEY_LEFT_CONTROL, true);
+    // 
+    // if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_RELEASE)
+    //     m_Player->InputMethod(GLFW_KEY_LEFT_CONTROL, false);
 }
 
 void Game::Actualizar(float deltaTime)
