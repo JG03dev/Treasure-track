@@ -91,7 +91,7 @@ void Game::InitializeGraphics()
 	}
 
     // Inicializar camara
-
+    //m_Camera = new Camera(glm::vec3(0.0f, 0.0f, 3.0f));
     //m_Camera->setTarget(m_Player);
 }
 

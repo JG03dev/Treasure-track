@@ -92,8 +92,4 @@ private:
 	void ProcessInput(GLFWwindow* window);
 	void Actualizar(float deltaTime);
 	void Render();
-	void scrollCallback(GLFWwindow* window, double xoffset, double yoffset);
-	void mouseCallback(GLFWwindow* window, double xpos, double ypos);
-
-
 };
