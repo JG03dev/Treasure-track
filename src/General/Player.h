@@ -44,7 +44,7 @@ private:
 		// On The Road params
 		btScalar m_fEngineForce = 5000;
 		btScalar m_bEngineForce = 3000;
-		btScalar m_steeringValue = 0.3;
+		btScalar m_steeringValue = 0.1;
 	} vehicleParams;
 
 	struct WheelParams {

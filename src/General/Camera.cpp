@@ -92,9 +92,16 @@ void Camera::followPlayer()
 	t = this->player->vehicle->getChassisWorldTransform();
 
 	btVector3 forward = this->player->vehicle->getForwardVector();
-	btVector3 pos = t.getOrigin() - forward * 8;
+	//std::cout << "Car Forward: " << forward.x() << ", " << forward.y() << ", " << forward.z() << std::endl;
+	btVector3 pos = t.getOrigin() - forward * 4; // Tercera Persona
+	//btVector3 pos = t.getOrigin(); // Primera Persona Externa
+	
+	front = glm::vec3(forward.x(), forward.y(), forward.z());
 
-	position = glm::vec3(float(pos.getX()), float(pos.getY()) + 2, float(pos.getZ()));
+	position = glm::vec3(float(pos.getX()), float(pos.getY()+0.5), float(pos.getZ()));
+
+	// btVector3 pos = t.getOrigin() - forward * 0.3; // Primera Persona Interna
+	// position = glm::vec3(float(pos.getX()), float(pos.getY()+0.15), float(pos.getZ()));
 }
 
 // Update front vector of the camera

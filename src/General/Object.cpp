@@ -42,7 +42,7 @@ void Object::CreateRigidBody() {
 		btVector3 halfExtents = (max - min) / 2;
 
 		btBoxShape* box = new btBoxShape(halfExtents);
-
+		box->setMargin(0.01f);
 		btTransform objectTransform;
 		objectTransform.setIdentity();
 		objectTransform.setOrigin(min + halfExtents);

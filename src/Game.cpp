@@ -92,7 +92,7 @@ void Game::InitializeGraphics()
 
     // Inicializar camara
     //m_Camera = new Camera(glm::vec3(0.0f, 0.0f, 3.0f));
-    //m_Camera->setTarget(m_Player);
+    m_Camera->setTarget(m_Player);
 }
 
 int Game::InitializeWindow()
@@ -201,12 +201,12 @@ void Game::Render()
     {
 		glm::mat4 model(1.0f);
 		m_Player->vehicle->getChassisWorldTransform().getOpenGLMatrix(glm::value_ptr(model));
-        std::cout << "Player position:" << m_Player->vehicle->getChassisWorldTransform().getOrigin().getY() << std::endl;
+        //std::cout << "Player position:" << m_Player->vehicle->getChassisWorldTransform().getOrigin().getY() << std::endl;
 		m_renderer->setModelMatrix(m_Player->model->GetName(), model);
     }
 
     // Update camera
-    //m_Camera->followPlayer();
+    m_Camera->followPlayer();
 
     glm::mat4 projection = glm::perspective(glm::radians(m_Camera->FOV), (float)m_SCR_WIDTH / (float)m_SCR_HEIGHT, c_near, c_far);
 

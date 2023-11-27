@@ -56,8 +56,8 @@ private:
 	
 	// Window
 	GLFWwindow* m_Window;
-	const unsigned int m_SCR_WIDTH = 800;
-	const unsigned int m_SCR_HEIGHT = 600;
+	const unsigned int m_SCR_WIDTH = 1280;
+	const unsigned int m_SCR_HEIGHT = 720;
 
 	// Camera
 	Camera* m_Camera;

@@ -49,8 +49,8 @@ void Player::InputMethod(int key, int keyPressed) {
 			this->vehicle->setSteeringValue(-this->vehicleParams.m_steeringValue, 1);
 			break;
 		case GLFW_KEY_LEFT_CONTROL:
-			this->vehicle->setBrake(100, 2);
-			this->vehicle->setBrake(100, 3);
+			this->vehicle->setBrake(150, 2);
+			this->vehicle->setBrake(150, 3);
 			break;
 		default:
 			break;
@@ -122,6 +122,7 @@ void Player::CreateVehicle(std::string const& modelPath, btDiscreteDynamicsWorld
 	// --------- Chassis RigidBody
 
 	btCollisionShape* chassisShape = new btBoxShape(halfExtents);
+	chassisShape->setMargin(0.01f);
 
 	btScalar mass(this->vehicleParams.m_mass);
 
@@ -151,7 +152,7 @@ void Player::CreateVehicle(std::string const& modelPath, btDiscreteDynamicsWorld
 	//Creates a new instance of the raycast vehicle
 	this->vehicle = new btRaycastVehicle(tuning, chassisRigidBody, vehicleRayCaster);
 
-	this->vehicle->setCoordinateSystem(0, 1, 2); // To adjust the coordinate system to the OpenGL coordinate system
+	this->vehicle->setCoordinateSystem(2, 1, 0); // To adjust the coordinate system to the OpenGL coordinate system
 
 	// --------- Add Wheels
 
