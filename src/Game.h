@@ -93,9 +93,6 @@ private:
 	Player* m_Player;
 	std::vector<Object*> m_Objects;
 
-	// Sounds
-	MySoundEffects sound;
-
 	// Private Methods
 
 	// Initializers

@@ -122,6 +122,7 @@ void Game::Run()
     // timing
     float deltaTime = 0.0f;
     float lastFrame = 0.0f;
+    MySoundEffects sound;
 
     while (!glfwWindowShouldClose(m_Window))
     {
