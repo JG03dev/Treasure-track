@@ -76,7 +76,7 @@ add_executable(VGI-ABP
         src/Music/SoundEffectsLibrary.cpp
         src/Music/SoundEffectsLibrary.h
         src/Music/SoundEffectsPlayer.cpp
-        src/Music/SoundEffectsPlayer.h)
+        src/Music/SoundEffectsPlayer.h "src/Music/MySoundEffects.h" "src/Music/MySoundEffects.cpp")
 
 # target_link_libraries(VGI-ABP PRIVATE glfw "${ASSIMP_INCLUDE_DIRS}/assimp" "${BULLET_LIBRARIES}" GLEW::glew OpenAL::OpenAL)
 target_link_libraries(VGI-ABP PRIVATE OpenAL::OpenAL)

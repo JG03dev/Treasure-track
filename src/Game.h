@@ -24,6 +24,17 @@
 
 #pragma endregion
 
+#pragma region SONIDOS
+
+#include "Music/SoundDevice.h"
+#include "Music/MusicBuffer.h"
+#include "Music/SoundEffectsLibrary.h"
+#include "Music/SoundEffectsPlayer.h"
+#include "Music/MySoundEffects.h"
+
+#pragma endregion
+
+
 // --OTHER INCLUDES--
 
 
@@ -81,6 +92,9 @@ private:
 	// Objects
 	Player* m_Player;
 	std::vector<Object*> m_Objects;
+
+	// Sounds
+	MySoundEffects sound;
 
 	// Private Methods
 

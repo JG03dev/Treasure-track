@@ -131,6 +131,8 @@ void Game::Run()
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
 
+        sound.PlaySound(deltaTime);
+
         // input: Manejar entrada de usuario
         // -----
         glfwPollEvents();
@@ -154,41 +156,6 @@ void Game::ProcessInput(GLFWwindow* window, int key, int action)
         glfwSetWindowShouldClose(window, true);
 
     m_Player->InputMethod(key, action);
-
-    // //W
-    // if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-    //     m_Player->InputMethod(GLFW_KEY_W, true);
-    // 
-    // if (glfwGetKey(window, GLFW_KEY_W) == GLFW_RELEASE)
-    //     m_Player->InputMethod(GLFW_KEY_W, false);
-    // 
-    // //S
-    // if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-    //     m_Player->InputMethod(GLFW_KEY_S, true);
-    // 
-    // if (glfwGetKey(window, GLFW_KEY_S) == GLFW_RELEASE)
-    //     m_Player->InputMethod(GLFW_KEY_S, false);
-    // 
-    // //A
-    // if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-    //     m_Player->InputMethod(GLFW_KEY_A, true);
-    // 
-    // if (glfwGetKey(window, GLFW_KEY_A) == GLFW_RELEASE)
-    //     m_Player->InputMethod(GLFW_KEY_A, false);
-    // 
-    // //D
-    // if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-    //     m_Player->InputMethod(GLFW_KEY_D, true);
-    // 
-    // if (glfwGetKey(window, GLFW_KEY_D) == GLFW_RELEASE)
-    //     m_Player->InputMethod(GLFW_KEY_D, false);
-    // 
-    // //Ctrl
-    // if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
-    //     m_Player->InputMethod(GLFW_KEY_LEFT_CONTROL, true);
-    // 
-    // if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_RELEASE)
-    //     m_Player->InputMethod(GLFW_KEY_LEFT_CONTROL, false);
 }
 
 void Game::Actualizar(float deltaTime)

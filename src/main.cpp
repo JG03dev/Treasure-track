@@ -30,6 +30,12 @@
 
 #pragma endregion
 
+#pragma region SONIDOS
+
+#pragma endregion
+
+
+
 // --OTHER INCLUDES--
 
 Game* g = nullptr;
@@ -104,9 +110,11 @@ int main() {
     glfwSetCursorPosCallback(g->GetWindow(), mouseCallback);
     glfwSetScrollCallback(g->GetWindow(), scrollCallback);
     glfwSetFramebufferSizeCallback(g->GetWindow(), glfw_onFramebufferSize);
+    SoundDevice::Init();
 
     // Hide the cursor and capture it
     glfwSetInputMode(g->GetWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
 
 
     GLenum err = glewInit();

@@ -1,5 +1,3 @@
-//Inicializacion sonido y musica
-SoundDevice::Init();
 static SoundEffectsPlayer effectsPlayer1;
 static SoundEffectsPlayer effectsPlayer2;
 static SoundEffectsPlayer effectsPlayer3;

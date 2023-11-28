@@ -80,18 +80,19 @@ ALuint SoundEffectsLibrary::Load(const char* filename)
 	/* Buffer the audio data into a new buffer object, then free the data and
 	 * close the file.
 	 */
+
 	buffer = 0;
 	alGenBuffers(1, &buffer);
+
 	alBufferData(buffer, format, membuf, num_bytes, sfinfo.samplerate);
 
 	free(membuf);
 	sf_close(sndfile);
 
 	/* Check if an error occured, and clean up if so. */
-	err = alGetError();
-	if (err != AL_NO_ERROR)
-	{
-		fprintf(stderr, "OpenAL Error: %s\n", alGetString(err));
+	err = AL_NO_ERROR;// alGetError();
+	if (err != AL_NO_ERROR) {
+		fprintf(stderr, "OpenAL Error (alGenBuffers): %s\n", alGetString(err));
 		if (buffer && alIsBuffer(buffer))
 			alDeleteBuffers(1, &buffer);
 		return 0;
