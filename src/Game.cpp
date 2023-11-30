@@ -74,18 +74,22 @@ void Game::InitializeGraphics()
     m_renderer->AddLight(mainLight);
     
     //Iniciamos objetos
-    m_Player = new Player("../../../Assets/cotxe/cotxe.obj", "cotxe", m_dynamicsWorld, 4.0f, 256);
+    m_Player = new Player("../../../Assets/Coche1/cotxe.obj", "Coche1", m_dynamicsWorld, 4.0f, 256);
 
-    m_Objects.push_back(new Object("../../../Assets/town/town.obj", "town", m_dynamicsWorld, 4.0f, 256));
+    //m_Objects.push_back(new Object("../../../Assets/Mapa/townBlender.obj", "Mapa", m_dynamicsWorld, 4.0f, 256));
+    m_Objects.push_back(new Object("../../../Assets/town/town.obj", "town", m_dynamicsWorld, 0.3f, 4));
+    //m_Objects.push_back(new Object("../../../Assets/free__la_tour_eiffel/scene.gltf", "free__la_tour_eiffel", m_dynamicsWorld, 0.3f, 4));
 
-	{
-		glm::mat4 model(1.0f);
-		m_Player->vehicle->getChassisWorldTransform().getOpenGLMatrix(glm::value_ptr(model));
-		m_renderer->AddModel(m_Player->model->GetName(), m_Player->model, model);
-	}
+	
+	glm::mat4 model(1.0f);
+	m_Player->vehicle->getChassisWorldTransform().getOpenGLMatrix(glm::value_ptr(model));
+	m_renderer->AddModel(m_Player->model->GetName(), m_Player->model, model);
+	
 
 	for (Object* o : m_Objects) {
-		glm::mat4 model(1.0f);
+        glm::mat4 model(1.0f);
+        if (o->model->GetName() == "Mapa")
+            model = glm::translate(model, glm::vec3(0.0f, -1000.0f, 0.0f));
 		o->rb->getWorldTransform().getOpenGLMatrix(glm::value_ptr(model));
         m_renderer->AddModel(m_Objects[0]->model->GetName(), m_Objects[0]->model, model);
 	}

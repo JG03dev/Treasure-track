@@ -1,0 +1,11 @@
+Model Information:
+* title:	American Road
+* source:	https://sketchfab.com/3d-models/american-road-179a1e6a0a154031a60f300fc73d9dd8
+* author:	jimbogies (https://sketchfab.com/jimbogies)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "American Road" (https://sketchfab.com/3d-models/american-road-179a1e6a0a154031a60f300fc73d9dd8) by jimbogies (https://sketchfab.com/jimbogies) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

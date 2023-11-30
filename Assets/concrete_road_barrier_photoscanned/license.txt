@@ -1,0 +1,11 @@
+Model Information:
+* title:	concrete road barrier photoscanned
+* source:	https://sketchfab.com/3d-models/concrete-road-barrier-photoscanned-a09622c043724a1b92e7920b22edb6bf
+* author:	widthRider (https://sketchfab.com/widthRider)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "concrete road barrier photoscanned" (https://sketchfab.com/3d-models/concrete-road-barrier-photoscanned-a09622c043724a1b92e7920b22edb6bf) by widthRider (https://sketchfab.com/widthRider) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

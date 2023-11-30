@@ -67,7 +67,10 @@ void Model::LoadMesh(aiMesh * mesh, const aiScene * scene)
 		else {
 			vertices.insert(vertices.end(), { 0.0f, 0.0f });
 		}
-		vertices.insert(vertices.end(), { -mesh->mNormals[i].x, -mesh->mNormals[i].y, -mesh->mNormals[i].z });
+		if (mesh->mNormals != NULL)
+			vertices.insert(vertices.end(), { -mesh->mNormals[i].x, -mesh->mNormals[i].y, -mesh->mNormals[i].z });
+		else
+			vertices.insert(vertices.end(), { 0, 0, 0 });
 	}
 
 	for (size_t i = 0; i < mesh->mNumFaces; i++)
