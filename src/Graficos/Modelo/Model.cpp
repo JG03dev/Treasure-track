@@ -23,16 +23,21 @@ void Model::RenderModel(Shader& s)
 
 void Model::LoadModel(const std::string & fileName, std::string name)
 {
+	modelPath = fileName;
+	m_name = name;
+	this->Load();
+}
+
+void Model::Load()
+{
 	Assimp::Importer importer;
-	const aiScene *scene = importer.ReadFile(fileName, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenSmoothNormals | aiProcess_JoinIdenticalVertices);
+	const aiScene* scene = importer.ReadFile(modelPath, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenSmoothNormals | aiProcess_JoinIdenticalVertices);
 
 	if (!scene)
 	{
-		printf("Model (%s) failed to load: %s", fileName, importer.GetErrorString());
+		printf("Model (%s) failed to load: %s", modelPath, importer.GetErrorString());
 		return;
 	}
-
-	m_name = name;
 
 	LoadNode(scene->mRootNode, scene);
 
