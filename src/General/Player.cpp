@@ -2,11 +2,21 @@
 
 // Constructor
 
+// TODO: I would delete this constructor since it would lead to memory leaks
 Player::Player(std::string const& modelPath, std::string const& modelName, btDiscreteDynamicsWorld* dynamicsWorld, GLfloat sIntensity, GLfloat shine) {
 	model = new Model(sIntensity, shine);
 	model->LoadModel(modelPath, modelName);
 
-	this->CreateVehicle(modelPath, dynamicsWorld); // Doesn't use a compound shape as a test to see how it works
+	this->CreateVehicle(dynamicsWorld); // Doesn't use a compound shape as a test to see how it works
+
+	dynamicsWorld->addVehicle(this->vehicle);
+}
+
+Player::Player(Model* m, btDiscreteDynamicsWorld* dynamicsWorld)
+{
+	model = m; // Model points to the same model shared
+
+	this->CreateVehicle(dynamicsWorld); // Doesn't use a compound shape as a test to see how it works
 
 	dynamicsWorld->addVehicle(this->vehicle);
 }
@@ -90,7 +100,7 @@ void Player::InputMethod(int key, int keyPressed) {
 
 // Private Methods
 
-void Player::CreateVehicle(std::string const& modelPath, btDiscreteDynamicsWorld* dynamicsWorld) {
+void Player::CreateVehicle(btDiscreteDynamicsWorld* dynamicsWorld) {
 	// --------- Mesh Load to Get the chassis half extents for the box shape
 
 	btCompoundShape tempShape;
