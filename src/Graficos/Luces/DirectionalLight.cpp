@@ -8,7 +8,7 @@ DirectionalLight::DirectionalLight() : Light()
 DirectionalLight::DirectionalLight(GLuint shadowWidth, GLuint shadowHeight, 
 									GLfloat red, GLfloat green, GLfloat blue,
 									GLfloat aIntensity, GLfloat dIntensity,
-									GLfloat xDir, GLfloat yDir, GLfloat zDir) : Light(shadowWidth, shadowHeight, red, green, blue, aIntensity, dIntensity)
+									GLfloat xDir, GLfloat yDir, GLfloat zDir, bool isOn = true) : Light(shadowWidth, shadowHeight, red, green, blue, aIntensity, dIntensity, isOn)
 {
 	direction = glm::vec3(xDir, yDir, zDir);
 
@@ -17,6 +17,8 @@ DirectionalLight::DirectionalLight(GLuint shadowWidth, GLuint shadowHeight,
 
 void DirectionalLight::UseLight(Shader& s)
 {
+	if (!active)
+		return;
 	s.setUniform("directionalLight.base.colour", colour.x, colour.y, colour.z);
 	s.setUniform("directionalLight.base.ambientIntensity", ambientIntensity);
 

@@ -10,9 +10,11 @@ public:
 	Light();
 	Light(GLuint shadowWidth, GLuint shadowHeight, 
 			GLfloat red, GLfloat green, GLfloat blue,
-			GLfloat aIntensity, GLfloat dIntensity);
+			GLfloat aIntensity, GLfloat dIntensity, bool isOn);
 
 	ShadowMap* getShadowMap() { return shadowMap; }
+
+	void Toggle() { active = !active; }
 
 	~Light();
 
@@ -24,5 +26,7 @@ protected:
 	glm::mat4 lightProj;
 
 	ShadowMap* shadowMap;
+
+	bool active;
 };
 

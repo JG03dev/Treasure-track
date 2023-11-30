@@ -132,5 +132,7 @@ int main() {
     g->StartGame();
 
     delete g;
+
+    return 0;
 }
 

@@ -22,6 +22,8 @@ public:
 
 	// Constructor
 	Object(std::string const& modelPath, std::string const& modelName, btDiscreteDynamicsWorld* dynamicsWorld, GLfloat sIntensity, GLfloat shine);
+	Object(Model* m, btDiscreteDynamicsWorld* dynamicsWorld);
+
 
 	// Public Methods
 	void Draw(Shader& shader);

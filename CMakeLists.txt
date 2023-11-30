@@ -26,6 +26,7 @@ add_executable(VGI-ABP
 # Ficheros de funcionalidades extra
         src/Encabezados/stdafx.h
         src/Encabezados/stb_image.h
+        src/Encabezados/json.hpp
         
 # Fiechros de funcionalidades del juego
         src/General/Camera.h

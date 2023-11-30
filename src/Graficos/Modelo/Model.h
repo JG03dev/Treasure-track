@@ -13,8 +13,11 @@ public:
 
 	Model(Material& m) : materialModel(m) {};
 	Model(GLfloat sIntensity, GLfloat shine) : materialModel(sIntensity, shine) {}
+	Model(GLfloat sIntensity, GLfloat shine, std::string path, std::string name) :
+		materialModel(sIntensity, shine), modelPath(path), m_name(name) {}
 
 	void LoadModel(const std::string& fileName, std::string name);
+	void Load(); // Loads if name and fileName are already set
 	void RenderModel(Shader& s);
 	void ClearModel();
 
@@ -33,7 +36,8 @@ private:
 	
 	std::vector<Texture*> textureList;
 	std::vector<unsigned int> meshToTex;
-	std::string m_name;
+	std::string m_name; // Used to refer to textures in case obj is in another folder
+	std::string modelPath;
 
 	//TODO: Manage to do this as a constant
 	const char* PLAIN_PATH = "../../../Assets/plain.png"; //Path for default imag

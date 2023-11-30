@@ -22,6 +22,7 @@ public:
 
 	// Constructor
 	Player(std::string const& modelPath, std::string const& modelName, btDiscreteDynamicsWorld* dynamicsWorld, GLfloat sIntensity, GLfloat shine);
+	Player(Model* m, btDiscreteDynamicsWorld* dynamicsWorld);
 
 	// Destructor
 	~Player();
@@ -59,5 +60,5 @@ private:
 
 	// Private Methods
 
-	void CreateVehicle(std::string const& modelPath, btDiscreteDynamicsWorld* dynamicsWorld);
+	void CreateVehicle(btDiscreteDynamicsWorld* dynamicsWorld);
 };

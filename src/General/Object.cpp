@@ -1,10 +1,19 @@
 #include "Object.h"
 
 // Constructors
-
+// TODO: I would delete this constructor since it would lead to memory leaks
 Object::Object(std::string const& modelPath, std::string const& modelName, btDiscreteDynamicsWorld* dynamicsWorld, GLfloat sIntensity, GLfloat shine) {
 	model = new Model(sIntensity, shine);
 	model->LoadModel(modelPath, modelName);
+
+	this->CreateRigidBody();
+
+	dynamicsWorld->addRigidBody(this->rb);
+}
+
+Object::Object(Model* m, btDiscreteDynamicsWorld* dynamicsWorld)
+{
+	model = m; // Model points to the same model shared
 
 	this->CreateRigidBody();
 

@@ -19,6 +19,80 @@ Renderer::Renderer(	const char* shaderObjvert, const char* shderObjfrag, const c
 	sOmniShadow = new Shader(shaderOmniShavert, shaderOmniShafrag, shaderOmniShageom);
 }
 
+Renderer::Renderer(const char* Parser)
+{
+	std::ifstream configFile(Parser);
+	nlohmann::json config;
+	configFile >> config;
+
+	// Parse shaders
+	for (const auto& shader : config["shaders"])
+	{
+		std::string vert = shader["vert"], frag = shader["frag"], geom = shader["geom"], id = shader["id"];
+		shaList[id] = Shader(vert.c_str(), frag.c_str(), geom.c_str());
+	}
+	// Accessing models
+	for (const auto& model : config["models"]) {
+		std::string id = model["id"];
+		std::string modelPath = model["path"];
+		std::string modelName = model["name"];
+		GLint sIntens = model["intensity"], shine = model["shine"];
+
+		glm::mat4 transformationMatrix(1.0f);
+		//TODO: make a function where it parses and applies the geometric transforms
+
+		AddModel(id, new Model(sIntens, shine, modelPath, modelName), transformationMatrix);
+	}
+
+	// Accessing lights (first one will be treated as directionals)
+	for (const auto& DL : config["lights"]["directionalLights"]) {
+		GLuint sWidth = DL["shadow"][0], sHeight = DL["shadow"][1]; // Shadow
+		GLfloat cR = DL["color"][0], cG = DL["color"][1], cB = DL["color"][2], // Color
+			intensity = DL["intensity"], diffuse = DL["diffuse"], // Intensity and Diffuse
+			dX = DL["direction"][0], dY = DL["direction"][1], dZ = DL["direction"][2]; // Direction
+		bool isOn = DL["initialState"]; // initalState
+		lightList.push_back(new DirectionalLight(sWidth, sHeight, cR, cG, cB, intensity, diffuse, dX, dY, dZ, isOn));
+	}
+	for (const auto& PL : config["lights"]["pointLights"]) {
+		GLuint sWidth = PL["shadow"][0], sHeight = PL["shadow"][1]; // Shadow
+		GLfloat lnear = PL["near"], lfar = PL["far"], // near and far
+			cR = PL["color"][0], cG = PL["color"][1], cB = PL["color"][2], // Color
+			intensity = PL["intensity"], diffuse = PL["diffuse"], // Intensity and Diffuse
+			pX = PL["position"][0], pY = PL["position"][1], pZ = PL["position"][2], // Position
+			con = PL["CLE"][0], lin = PL["CLE"][1], exp = PL["CLE"][2]; // Constant linear exponent
+		bool isOn = PL["initialState"]; // initalState
+		lightList.push_back(new PointLight(sWidth, sHeight, lnear, lfar, cR, cG, cB, intensity, diffuse, pX, pY, pZ, con, lin, exp, isOn));
+	}
+	for (const auto& SL : config["lights"]["spotLights"]) {
+		GLuint sWidth = SL["shadow"][0], sHeight = SL["shadow"][1]; // Shadow
+		GLfloat lnear = SL["near"], lfar = SL["far"], // near and far
+			cR = SL["color"][0], cG = SL["color"][1], cB = SL["color"][2], // Color
+			intensity = SL["intensity"], diffuse = SL["diffuse"], // Intensity and Diffuse
+			pX = SL["position"][0], pY = SL["position"][1], pZ = SL["position"][2], // Position
+			dX = SL["direction"][0], dY = SL["direction"][1], dZ = SL["direction"][2], // Direction
+			con = SL["CLE"][0], lin = SL["CLE"][1], exp = SL["CLE"][2], // Constant linear exponent
+			edge = SL["edge"];
+		bool isOn = SL["initialState"]; // initalState
+		lightList.push_back(new SpotLight(sWidth, sHeight, lnear, lfar, cR, cG, cB, intensity, diffuse, pX, pY, pZ, dX, dY, dZ, con, lin, exp, edge, isOn));
+	}
+
+	// Accessing skyboxes
+	for (const auto& skybox : config["skyboxes"]) {
+		// Mapping should match with the skybox
+		std::vector<std::string> faces = {
+		skybox["faces"][0],			// right
+		skybox["faces"][1],			// left
+		skybox["faces"][2],			// top
+		skybox["faces"][3],			// bottom
+		skybox["faces"][4],			// front
+		skybox["faces"][5]			// back
+		};
+		skyList.push_back(Skybox(faces));
+	}
+	// First skybox is current by default
+	currentSky = 0;
+}
+
 void Renderer::AddLight(DirectionalLight* l)
 {
 	mainLight = l;
@@ -231,7 +305,8 @@ void Renderer::RenderScene()
 
 Renderer::~Renderer()
 {
-	delete sObject, sSkybox, sOmniShadow, sDirShadow;
-	if (mainLight != NULL)
-		delete mainLight;
+	for (int i = 0; i < lightList.size(); i++)
+	{
+		delete lightList[i];
+	}
 }

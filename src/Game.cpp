@@ -46,6 +46,9 @@ void Game::InitializePhysics()
 
 void Game::InitializeGraphics()
 {
+
+    //r = new Renderer(config.json)
+
     // Init renderer
     std::vector<std::string> faces = {
         "../../../Assets/skybox/right.jpg",			// right
@@ -69,16 +72,14 @@ void Game::InitializeGraphics()
     DirectionalLight* mainLight = new DirectionalLight(2048, 2048, /*Shadow dimensions*/
         1.0f, 1.0f, 1.0f, /*RGB colour*/
         0.9f, 0.5f,	/*Intensity (ambient, diffuse)*/
-        -10.0f, -12.0f, 18.5f /*Direction of the light*/
+        -10.0f, -12.0f, 18.5f, /*Direction of the light*/
+        true
     );
     m_renderer->AddLight(mainLight);
     
     //Iniciamos objetos
     m_Player = new Player("../../../Assets/Coche1/cotxe.obj", "Coche1", m_dynamicsWorld, 4.0f, 256);
-
-    //m_Objects.push_back(new Object("../../../Assets/Mapa/townBlender.obj", "Mapa", m_dynamicsWorld, 4.0f, 256));
-    m_Objects.push_back(new Object("../../../Assets/town/town.obj", "town", m_dynamicsWorld, 0.3f, 4));
-    //m_Objects.push_back(new Object("../../../Assets/free__la_tour_eiffel/scene.gltf", "free__la_tour_eiffel", m_dynamicsWorld, 0.3f, 4));
+    m_Objects.push_back(new Object("../../../Assets/town/town.obj", "town", m_dynamicsWorld, 0.0f, 0));
 
 	
 	glm::mat4 model(1.0f);

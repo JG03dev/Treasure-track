@@ -15,7 +15,7 @@ PointLight::PointLight(GLuint shadowWidth, GLuint shadowHeight,
 						GLfloat red, GLfloat green, GLfloat blue,
 						GLfloat aIntensity, GLfloat dIntensity, 
 						GLfloat xPos, GLfloat yPos, GLfloat zPos, 
-						GLfloat con, GLfloat lin, GLfloat exp) : Light(shadowWidth, shadowHeight, red, green, blue, aIntensity, dIntensity)
+						GLfloat con, GLfloat lin, GLfloat exp, bool isOn=true) : Light(shadowWidth, shadowHeight, red, green, blue, aIntensity, dIntensity, isOn)
 {
 	position = glm::vec3(xPos, yPos, zPos);
 	constant = con;
@@ -33,6 +33,8 @@ PointLight::PointLight(GLuint shadowWidth, GLuint shadowHeight,
 
 void PointLight::UseLight(Shader& s, int nLight)
 {
+	if (!active)
+		return;
 	char locBuff[100] = { '\0' };
 
 	snprintf(locBuff, sizeof(locBuff), "pointLights[%d].base.colour", nLight);
