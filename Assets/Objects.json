@@ -51,6 +51,8 @@
     "spotLights": [ //TODO: Add car lights
       /*{
         "shadow": [ 2048, 2048 ], // w, h
+        "near": 0.01.
+        "far": 100.0,
         "color": [ 1.0, 1.0, 1.0 ], // R, G, B
         "intensity": 0.8,
         "diffuse": 0.5,
@@ -64,9 +66,25 @@
     ]
   },
   "skyboxes": [ // The first skybox will be the active by default
-    {
-      "path": "path/to/skybox1",
-      "name": "Skybox1"
+    { // Day
+      "faces": [
+        "../../../Assets/skybox/right.jpg", // right
+        "../../../Assets/skybox/left.jpg", // left
+        "../../../Assets/skybox/top.jpg", // top
+        "../../../Assets/skybox/bottom.jpg", // bottom
+        "../../../Assets/skybox/front.jpg", // front
+        "../../../Assets/skybox/back.jpg" // back
+      ]
+    },
+    { // Afternoon
+      "faces": [
+        "../../../Assets/skyboxTarde/right.tga", // right
+        "../../../Assets/skyboxTarde/left.tga", // left
+        "../../../Assets/skyboxTarde/top.tga", // top
+        "../../../Assets/skyboxTarde/bottom.tga", // bottom
+        "../../../Assets/skyboxTarde/front.tga", // front
+        "../../../Assets/skyboxTarde/back.tga" // back
+      ]
     }
     // ... other skyboxes
   ]

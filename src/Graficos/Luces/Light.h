@@ -10,7 +10,7 @@ public:
 	Light();
 	Light(GLuint shadowWidth, GLuint shadowHeight, 
 			GLfloat red, GLfloat green, GLfloat blue,
-			GLfloat aIntensity, GLfloat dIntensity, bool isOn=true);
+			GLfloat aIntensity, GLfloat dIntensity, bool isOn);
 
 	ShadowMap* getShadowMap() { return shadowMap; }
 

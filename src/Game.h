@@ -75,6 +75,9 @@ private:
 	const float c_near = 0.1f;
 	const float c_far = 500.0f;
 
+
+	///// THIS SHOULD BE ALL HANDLED BY THE RENDERER
+
 	// Skybox
 	Skybox* m_skybox;
 
@@ -83,6 +86,8 @@ private:
 	// These next 3 attributes will probably be stored in the Renderer
 	Light* m_Light;
 	glm::vec3 m_lightPos;
+
+	/////
 
 	// Physics logic
 	float m_deltaTime;

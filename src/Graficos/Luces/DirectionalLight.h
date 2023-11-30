@@ -9,7 +9,7 @@ public:
 	DirectionalLight(GLuint shadowWidth, GLuint shadowHeight,
 		GLfloat red, GLfloat green, GLfloat blue,
 		GLfloat aIntensity, GLfloat dIntensity,
-		GLfloat xDir, GLfloat yDir, GLfloat zDir, bool isOn=true);
+		GLfloat xDir, GLfloat yDir, GLfloat zDir, bool isOn);
 
 	void UseLight(Shader& s);
 

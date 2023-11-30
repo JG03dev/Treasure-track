@@ -15,7 +15,7 @@ public:
 		GLfloat xPos, GLfloat yPos, GLfloat zPos,
 		GLfloat xDir, GLfloat yDir, GLfloat zDir,
 		GLfloat con, GLfloat lin, GLfloat exp,
-		GLfloat edg, bool isOn = true);
+		GLfloat edg, bool isOn);
 
 	void UseLight(Shader& s, int nLight);
 

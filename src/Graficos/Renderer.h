@@ -5,6 +5,7 @@
 */
 
 #include "../Encabezados/stdafx.h"
+#include "../Encabezados/json.hpp"
 
 // Renderizacion General
 #include "Shader.h"
@@ -44,6 +45,8 @@ public:
 		const char* shaderOmniShavert, const char* shaderOmniShafrag, const char* shaderOmniShageom,
 		Skybox* s, GLsizei viewPortWidth, GLsizei viewPortHeight);
 
+	Renderer(const char* Parser);
+
 	// Data modifiers 
 	
 	// TODO: Improve data modifiers
@@ -73,15 +76,21 @@ public:
 
 private:
 	// Objectos de renderizacion general
+	std::vector<Skybox> skyList;
+	int currentSky;
 	Skybox* skybox;
 
 	// SOLUCIO TEMPORAL a cargar tots els models amb les seves transformacions mapejats
 	std::map<std::string, std::pair<Model*, glm::mat4>> Models;
 
 	// Shaders
+	std::map<std::string, Shader> shaList;
+
 	Shader* sObject, *sSkybox, *sDirShadow, *sOmniShadow;
 
 	// Lights (SOLUCIO TEMPORAL)
+	std::vector<Light*> lightList; // 0 will always be the sun
+
 	DirectionalLight* mainLight;
 	std::vector<PointLight*> pointLights;
 	std::vector<SpotLight*> spotLights;
