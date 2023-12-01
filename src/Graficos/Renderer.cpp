@@ -3,20 +3,25 @@
 //-----------------------------------------------------------------------------
 
 #include "Renderer.h"
-#include <filesystem>
+using json = nlohmann::json;
 
 Renderer::Renderer(const char* Parser, GLsizei viewPortWidth, GLsizei viewPortHeight) : vwidth(viewPortWidth), vheight(viewPortHeight)
 {
-	std::ifstream configFile;
-	configFile.open(Parser, std::ios::in);
-	nlohmann::json config;
-	configFile >> config;
-	configFile.close();
+	std::ifstream configFile(Parser);
+	json config;
+	try
+	{
+		config = json::parse(configFile);
+	}
+	catch (json::parse_error& ex)
+	{
+		std::cerr << "JSON Parse error: " << ex.what() << "parse error at byte " << ex.byte << std::endl;
+	}
 
 	// Parse shaders
 	for (const auto& shader : config["shaders"])
 	{
-		std::string vert = shader["vert"], frag = shader["frag"], geom = shader["geom"], id = shader["id"];
+		std::string vert = shader["paths"]["vert"], frag = shader["paths"]["frag"], geom = shader["paths"]["geom"], id = shader["id"];
 		shaList[id] = Shader(vert.c_str(), frag.c_str(), geom.c_str());
 	}
 	// Accessing models
