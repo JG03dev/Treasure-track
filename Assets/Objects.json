@@ -1,27 +1,65 @@
 {
   "shaders": [
     {
-      "id": "asdf",
+      "id": "objects",
       "paths": {
-        "frag": "path/to/frag.frag",
-        "vert": "path/to/vert.vert",
-        "geom": "path/to/geom.geom"
+        "vert": "../../../Shaders/shader.vert",
+        "frag": "../../../Shaders/shader.frag",
+        "geom": ""
       }
-      // ... other shaders
+    },
+    {
+      "id": "skybox",
+      "paths": {
+        "vert": "../../../Shaders/skybox.vert",
+        "frag": "../../../Shaders/skybox.frag",
+        "geom": ""
+      }
+    },
+    {
+      "id": "directionalShadow",
+      "paths": {
+        "vert": "../../../Shaders/directional_shadow_map.vert",
+        "frag": "../../../Shaders/directional_shadow_map.frag",
+        "geom": ""
+      }
+    },
+    {
+      "id": "omniDirectionalShadow",
+      "paths": {
+        "vert": "../../../Shaders/omni_shadow_map.vert",
+        "frag": "../../../Shaders/omni_shadow_map.frag",
+        "geom": "../../../Shaders/omni_shadow_map.geom"
+      }
     }
   ],
   "models": [
     {
-      "id": "model1",
-      "path": "path/to/model1.obj",
-      "name": "model1",
-      "intensity": 1.0,
-      "shine": 1.0,
+      "id": "Player",
+      "path": "../../../Assets/Coche1/cotxe.obj",
+      "name": "Coche1",
+      "intensity": 4.0,
+      "shine": 256,
       // For each TG we have "type" (t: translate, r: rotate, s: scale) and "param" an array of parameters for that geometric transform such as "vector"
       // Remember: THE ORDER MATTERS
       "TG": []
-    }
-    // ... other models
+    },
+    {
+      "id": "Town",
+      "path": "../../../Assets/town/town.obj",
+      "name": "town",
+      "intensity": 0.3,
+      "shine": 4,
+      "TG": []
+    }//,
+    //{
+    //  "id": "Tree",
+    //  "path": "../../../Assets/Arbol/Arbol.obj",
+    //  "name": "Arbol",
+    //  "intensity": 0.3,
+    //  "shine": 4,
+    //  "TG": []
+    //}
   ],
   "lights": {
     "directionalLights": [
