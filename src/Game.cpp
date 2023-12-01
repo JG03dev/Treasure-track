@@ -46,55 +46,35 @@ void Game::InitializePhysics()
 
 void Game::InitializeGraphics()
 {
-
-    //r = new Renderer(config.json)
-
     // Init renderer
-    std::vector<std::string> faces = {
-        "../../../Assets/skybox/right.jpg",			// right
-        "../../../Assets/skybox/left.jpg",			// left
-        "../../../Assets/skybox/top.jpg",			// top
-        "../../../Assets/skybox/bottom.jpg",		// bottom
-        "../../../Assets/skybox/front.jpg",			// front
-        "../../../Assets/skybox/back.jpg"			// back
-    };
-    m_skybox = new Skybox(faces);
-
-
-
-	m_renderer = new Renderer(  "../../../Shaders/shader.vert", "../../../Shaders/shader.frag", NULL,
-                            "../../../Shaders/skybox.vert", "../../../Shaders/skybox.frag", NULL,
-                            "../../../Shaders/directional_shadow_map.vert", "../../../Shaders/directional_shadow_map.frag", NULL,
-		                    "../../../Shaders/omni_shadow_map.vert", "../../../Shaders/omni_shadow_map.frag", "../../../Shaders/omni_shadow_map.geom",
-                            m_skybox, m_SCR_WIDTH, m_SCR_HEIGHT);
-
-    // Inicializacion de luces
-    DirectionalLight* mainLight = new DirectionalLight(2048, 2048, /*Shadow dimensions*/
-        1.0f, 1.0f, 1.0f, /*RGB colour*/
-        0.9f, 0.5f,	/*Intensity (ambient, diffuse)*/
-        -10.0f, -12.0f, 18.5f, /*Direction of the light*/
-        true
-    );
-    m_renderer->AddLight(mainLight);
-    
+    m_renderer = new Renderer("../../../Assets/Objects.json", m_SCR_WIDTH, m_SCR_HEIGHT);
     //Iniciamos objetos
-    m_Player = new Player("../../../Assets/Coche1/cotxe.obj", "Coche1", m_dynamicsWorld, 4.0f, 256);
-    m_Objects.push_back(new Object("../../../Assets/town/town.obj", "town", m_dynamicsWorld, 0.0f, 0));
+    
+    Model* p = m_renderer->getModel("Player").first;    
 
-	
-	glm::mat4 model(1.0f);
-	m_Player->vehicle->getChassisWorldTransform().getOpenGLMatrix(glm::value_ptr(model));
-	m_renderer->AddModel(m_Player->model->GetName(), m_Player->model, model);
-	
-
-	for (Object* o : m_Objects) {
+    //Load objects
+    //TODO: find some way to init ChassisWorldTransform based on object TG (stored at Obj.second.second)
+    for (auto& Obj : m_renderer->getModelList())
+    {
         glm::mat4 model(1.0f);
-        if (o->model->GetName() == "Mapa")
-            model = glm::translate(model, glm::vec3(0.0f, -1000.0f, 0.0f));
-		o->rb->getWorldTransform().getOpenGLMatrix(glm::value_ptr(model));
-        m_renderer->AddModel(m_Objects[0]->model->GetName(), m_Objects[0]->model, model);
-	}
-
+        if (Obj.first == "Player")
+        {
+            m_Player = new Player(p, m_dynamicsWorld);
+            // This could be at the constructor
+            m_Player->vehicle->getChassisWorldTransform().getOpenGLMatrix(glm::value_ptr(model));
+            m_renderer->setModelMatrix(Obj.first, model);
+        }
+        else 
+        {
+            m_Objects.push_back(new Object(Obj.second.first, m_dynamicsWorld));
+            m_Objects.back()->rb->getWorldTransform().getOpenGLMatrix(glm::value_ptr(model));
+            m_renderer->setModelMatrix(Obj.first, model);
+        }
+    }
+    if (!m_Player)
+    {
+        //Handle error when no player is parsed
+    }
     // Inicializar camara
     //m_Camera = new Camera(glm::vec3(0.0f, 0.0f, 3.0f));
     m_Camera->setTarget(m_Player);

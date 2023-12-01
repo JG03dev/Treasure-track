@@ -45,7 +45,7 @@ public:
 		const char* shaderOmniShavert, const char* shaderOmniShafrag, const char* shaderOmniShageom,
 		Skybox* s, GLsizei viewPortWidth, GLsizei viewPortHeight);
 
-	Renderer(const char* Parser);
+	Renderer(const char* Parser, GLsizei viewPortWidth, GLsizei viewPortHeight);
 
 	// Data modifiers 
 	
@@ -57,7 +57,9 @@ public:
 
 	void AddModel(std::string id, Model* m, glm::mat4 modelmat);
 	void setModelMatrix(std::string id, glm::mat4 modelmat);
-	glm::mat4 getModelMatrix(std::string id);
+	std::pair<Model*, glm::mat4> getModel(std::string id);
+	std::map<std::string, std::pair<Model*, glm::mat4>> getModelList() { return Models; }
+	
 
 	// Renders
 
@@ -90,11 +92,12 @@ private:
 
 	// Lights (SOLUCIO TEMPORAL)
 	std::vector<Light*> lightList; // 0 will always be the sun
+	int currentDirLight;
 
 	DirectionalLight* mainLight;
 	std::vector<PointLight*> pointLights;
 	std::vector<SpotLight*> spotLights;
-	GLuint pointLightCount, spotLightCount;
+	GLuint dirLightCount, pointLightCount, spotLightCount;
 
 	//Viewport (a discutir)
 	GLsizei vwidth, vheight;

@@ -19,8 +19,9 @@ Renderer::Renderer(	const char* shaderObjvert, const char* shderObjfrag, const c
 	sOmniShadow = new Shader(shaderOmniShavert, shaderOmniShafrag, shaderOmniShageom);
 }
 
-Renderer::Renderer(const char* Parser)
+Renderer::Renderer(const char* Parser, GLsizei viewPortWidth, GLsizei viewPortHeight) : vwidth(viewPortWidth), vheight(viewPortHeight)
 {
+
 	std::ifstream configFile(Parser);
 	nlohmann::json config;
 	configFile >> config;
@@ -45,14 +46,16 @@ Renderer::Renderer(const char* Parser)
 	}
 
 	// Accessing lights (first one will be treated as directionals)
+	dirLightCount = config["lights"]["directionalLights"].size();
 	for (const auto& DL : config["lights"]["directionalLights"]) {
 		GLuint sWidth = DL["shadow"][0], sHeight = DL["shadow"][1]; // Shadow
 		GLfloat cR = DL["color"][0], cG = DL["color"][1], cB = DL["color"][2], // Color
 			intensity = DL["intensity"], diffuse = DL["diffuse"], // Intensity and Diffuse
 			dX = DL["direction"][0], dY = DL["direction"][1], dZ = DL["direction"][2]; // Direction
-		bool isOn = DL["initialState"]; // initalState
+		bool isOn = false; // initalState
 		lightList.push_back(new DirectionalLight(sWidth, sHeight, cR, cG, cB, intensity, diffuse, dX, dY, dZ, isOn));
-	}
+	} currentDirLight = 0; lightList[0]->Toggle();
+	pointLightCount = config["lights"]["pointLights"].size();
 	for (const auto& PL : config["lights"]["pointLights"]) {
 		GLuint sWidth = PL["shadow"][0], sHeight = PL["shadow"][1]; // Shadow
 		GLfloat lnear = PL["near"], lfar = PL["far"], // near and far
@@ -63,6 +66,7 @@ Renderer::Renderer(const char* Parser)
 		bool isOn = PL["initialState"]; // initalState
 		lightList.push_back(new PointLight(sWidth, sHeight, lnear, lfar, cR, cG, cB, intensity, diffuse, pX, pY, pZ, con, lin, exp, isOn));
 	}
+	spotLightCount = config["lights"]["spotLights"].size();
 	for (const auto& SL : config["lights"]["spotLights"]) {
 		GLuint sWidth = SL["shadow"][0], sHeight = SL["shadow"][1]; // Shadow
 		GLfloat lnear = SL["near"], lfar = SL["far"], // near and far
@@ -132,7 +136,7 @@ void Renderer::setModelMatrix(std::string id, glm::mat4 modelmat)
 	}
 }
 
-glm::mat4 Renderer::getModelMatrix(std::string id)
+std::pair <Model*, glm::mat4> Renderer::getModel(std::string id)
 {
 
 	std::map<std::string, std::pair<Model*, glm::mat4>>::iterator it = Models.find(id);
@@ -140,9 +144,9 @@ glm::mat4 Renderer::getModelMatrix(std::string id)
 	if (it != Models.end())
 	{
 		// Find it and add it to the map
-		return Models[id].second;
+		return Models[id];
 	}
-	return glm::mat4(1.0f);
+	return std::pair<Model*, glm::mat4>(nullptr, glm::mat4(1.0f));
 }
 
 void Renderer::RenderEverything(glm::mat4 viewMatrix, glm::mat4 projectionMatrix, Camera c)
