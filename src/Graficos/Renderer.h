@@ -29,27 +29,11 @@ class Renderer
 {
 public:
 	// Constructors
-
-	// TODO: Improve constructors
-
-	Renderer() : skybox(NULL), sObject(NULL), sSkybox(NULL), sDirShadow(NULL), sOmniShadow(NULL),
-		mainLight(NULL), pointLightCount(0), spotLightCount(0), vwidth(1366), vheight(768) {}
-
-	Renderer(Shader* sObject, Shader *sSky, Shader*sDirSha, Shader *sOmniSha, Skybox* s, GLsizei viewPortWidth, GLsizei viewPortHeight) : 
-		skybox(s), sObject(sObject), sSkybox(sSky), sDirShadow(sDirSha), sOmniShadow(sOmniSha),
-		mainLight(NULL), pointLightCount(0), spotLightCount(0), vwidth(viewPortWidth), vheight(viewPortHeight) {}
-	
-	Renderer(const char* shaderObjvert, const char* shderObjfrag, const char* shderObjgeom,
-		const char* shaderSkyvert, const char* shaderSkyfrag, const char* shaderSkygeom,
-		const char* shaderDirShavert, const char* shaderDirShafrag, const char* shaderDirShageom,
-		const char* shaderOmniShavert, const char* shaderOmniShafrag, const char* shaderOmniShageom,
-		Skybox* s, GLsizei viewPortWidth, GLsizei viewPortHeight);
+	Renderer() {}
 
 	Renderer(const char* Parser, GLsizei viewPortWidth, GLsizei viewPortHeight);
 
 	// Data modifiers 
-	
-	// TODO: Improve data modifiers
 
 	void AddLight(DirectionalLight* l);
 	void AddLight(PointLight* l);
@@ -59,14 +43,19 @@ public:
 	void setModelMatrix(std::string id, glm::mat4 modelmat);
 	std::pair<Model*, glm::mat4> getModel(std::string id);
 	std::map<std::string, std::pair<Model*, glm::mat4>> getModelList() { return Models; }
-	
+
+	void setCurrentSky(int cs) { currentSky = cs; }
+	void cycleSky() { currentSky = currentSky == skyList.size() - 1 ? 0 : currentSky + 1; }
+
+	void setCurrentDirLight(int cdl) { currentDirLight = cdl; }
+	void cycleDirLight() { currentDirLight = currentDirLight == dirLights.size() - 1 ? 0 : currentDirLight + 1; }
 
 	// Renders
 
-	void RenderEverything(glm::mat4 viewMatrix, glm::mat4 projectionMatrix, Camera c);
+	void RenderEverything(Camera c, glm::mat4 projectionMatrix);
 	void RenderShadowDirLight(DirectionalLight* light);
 	void RenderShadowOmniLights(PointLight* light);
-	void RenderObjects(glm::mat4 viewMatrix, glm::mat4 projectionMatrix, Camera c);
+	void RenderObjects(Camera c, glm::mat4 projectionMatrix);
 	void RenderScene();
 
 	// Funciones auxiliares
@@ -77,28 +66,22 @@ public:
 	~Renderer();
 
 private:
-	// Objectos de renderizacion general
+	// Skyboxes
 	std::vector<Skybox> skyList;
 	int currentSky;
-	Skybox* skybox;
 
-	// SOLUCIO TEMPORAL a cargar tots els models amb les seves transformacions mapejats
+	// Modelos
 	std::map<std::string, std::pair<Model*, glm::mat4>> Models;
 
 	// Shaders
 	std::map<std::string, Shader> shaList;
 
-	Shader* sObject, *sSkybox, *sDirShadow, *sOmniShadow;
-
-	// Lights (SOLUCIO TEMPORAL)
-	std::vector<Light*> lightList; // 0 will always be the sun
+	// Lights
+	std::vector<DirectionalLight*> dirLights; // 0 will be default (sun)
 	int currentDirLight;
-
-	DirectionalLight* mainLight;
 	std::vector<PointLight*> pointLights;
 	std::vector<SpotLight*> spotLights;
-	GLuint dirLightCount, pointLightCount, spotLightCount;
 
-	//Viewport (a discutir)
+	//Viewport
 	GLsizei vwidth, vheight;
 };

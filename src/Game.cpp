@@ -50,12 +50,14 @@ void Game::InitializeGraphics()
     m_renderer = new Renderer("../../../Assets/Objects.json", m_SCR_WIDTH, m_SCR_HEIGHT);
     //Iniciamos objetos
     
-    Model* p = m_renderer->getModel("Player").first;    
+    Model* p = m_renderer->getModel("Player").first;
 
     //Load objects
     //TODO: find some way to init ChassisWorldTransform based on object TG (stored at Obj.second.second)
+    //TODO: Aquesta part pot ser bastant lenta, es pot mirar de renderitzar una pantalla de carga abans que aixo.
     for (auto& Obj : m_renderer->getModelList())
     {
+        Obj.second.first->Load();
         glm::mat4 model(1.0f);
         if (Obj.first == "Player")
         {
@@ -69,7 +71,7 @@ void Game::InitializeGraphics()
             m_Objects.push_back(new Object(Obj.second.first, m_dynamicsWorld));
             m_Objects.back()->rb->getWorldTransform().getOpenGLMatrix(glm::value_ptr(model));
             m_renderer->setModelMatrix(Obj.first, model);
-        }
+        }        
     }
     if (!m_Player)
     {
@@ -163,6 +165,6 @@ void Game::Render()
 
     glm::mat4 projection = glm::perspective(glm::radians(m_Camera->FOV), (float)m_SCR_WIDTH / (float)m_SCR_HEIGHT, c_near, c_far);
 
-    m_renderer->RenderEverything(m_Camera->getViewMatrix(), projection, *m_Camera);
+    m_renderer->RenderEverything(*m_Camera, projection);
 }
 #pragma endregion

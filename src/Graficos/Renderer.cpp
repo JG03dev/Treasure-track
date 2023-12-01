@@ -3,28 +3,15 @@
 //-----------------------------------------------------------------------------
 
 #include "Renderer.h"
-
-
-Renderer::Renderer(	const char* shaderObjvert, const char* shderObjfrag, const char* shderObjgeom, 
-					const char* shaderSkyvert, const char* shaderSkyfrag, const char* shaderSkygeom,
-					const char* shaderDirShavert, const char* shaderDirShafrag, const char* shaderDirShageom,
-					const char* shaderOmniShavert, const char* shaderOmniShafrag, const char* shaderOmniShageom,
-					Skybox* s, GLsizei viewPortWidth, GLsizei viewPortHeight)
-	:
-	skybox(s), mainLight(NULL), pointLightCount(0), spotLightCount(0), vwidth(viewPortWidth), vheight(viewPortHeight)
-{
-	sObject = new Shader(shaderObjvert, shderObjfrag, shderObjgeom);
-	sSkybox = new Shader(shaderSkyvert, shaderSkyfrag, shaderSkygeom);
-	sDirShadow = new Shader(shaderDirShavert, shaderDirShafrag, shaderDirShageom);
-	sOmniShadow = new Shader(shaderOmniShavert, shaderOmniShafrag, shaderOmniShageom);
-}
+#include <filesystem>
 
 Renderer::Renderer(const char* Parser, GLsizei viewPortWidth, GLsizei viewPortHeight) : vwidth(viewPortWidth), vheight(viewPortHeight)
 {
-
-	std::ifstream configFile(Parser);
+	std::ifstream configFile;
+	configFile.open(Parser, std::ios::in);
 	nlohmann::json config;
 	configFile >> config;
+	configFile.close();
 
 	// Parse shaders
 	for (const auto& shader : config["shaders"])
@@ -45,17 +32,21 @@ Renderer::Renderer(const char* Parser, GLsizei viewPortWidth, GLsizei viewPortHe
 		AddModel(id, new Model(sIntens, shine, modelPath, modelName), transformationMatrix);
 	}
 
-	// Accessing lights (first one will be treated as directionals)
-	dirLightCount = config["lights"]["directionalLights"].size();
+	/// Accessing lights (first one will be treated as directionals)
+
+	// Directional Light
 	for (const auto& DL : config["lights"]["directionalLights"]) {
 		GLuint sWidth = DL["shadow"][0], sHeight = DL["shadow"][1]; // Shadow
 		GLfloat cR = DL["color"][0], cG = DL["color"][1], cB = DL["color"][2], // Color
 			intensity = DL["intensity"], diffuse = DL["diffuse"], // Intensity and Diffuse
 			dX = DL["direction"][0], dY = DL["direction"][1], dZ = DL["direction"][2]; // Direction
 		bool isOn = false; // initalState
-		lightList.push_back(new DirectionalLight(sWidth, sHeight, cR, cG, cB, intensity, diffuse, dX, dY, dZ, isOn));
-	} currentDirLight = 0; lightList[0]->Toggle();
-	pointLightCount = config["lights"]["pointLights"].size();
+		dirLights.push_back(new DirectionalLight(sWidth, sHeight, cR, cG, cB, intensity, diffuse, dX, dY, dZ, isOn));
+	} 
+	currentDirLight = 0; 
+	dirLights[0]->Toggle();
+
+	// Point Lights
 	for (const auto& PL : config["lights"]["pointLights"]) {
 		GLuint sWidth = PL["shadow"][0], sHeight = PL["shadow"][1]; // Shadow
 		GLfloat lnear = PL["near"], lfar = PL["far"], // near and far
@@ -64,9 +55,9 @@ Renderer::Renderer(const char* Parser, GLsizei viewPortWidth, GLsizei viewPortHe
 			pX = PL["position"][0], pY = PL["position"][1], pZ = PL["position"][2], // Position
 			con = PL["CLE"][0], lin = PL["CLE"][1], exp = PL["CLE"][2]; // Constant linear exponent
 		bool isOn = PL["initialState"]; // initalState
-		lightList.push_back(new PointLight(sWidth, sHeight, lnear, lfar, cR, cG, cB, intensity, diffuse, pX, pY, pZ, con, lin, exp, isOn));
+		pointLights.push_back(new PointLight(sWidth, sHeight, lnear, lfar, cR, cG, cB, intensity, diffuse, pX, pY, pZ, con, lin, exp, isOn));
 	}
-	spotLightCount = config["lights"]["spotLights"].size();
+
 	for (const auto& SL : config["lights"]["spotLights"]) {
 		GLuint sWidth = SL["shadow"][0], sHeight = SL["shadow"][1]; // Shadow
 		GLfloat lnear = SL["near"], lfar = SL["far"], // near and far
@@ -77,7 +68,7 @@ Renderer::Renderer(const char* Parser, GLsizei viewPortWidth, GLsizei viewPortHe
 			con = SL["CLE"][0], lin = SL["CLE"][1], exp = SL["CLE"][2], // Constant linear exponent
 			edge = SL["edge"];
 		bool isOn = SL["initialState"]; // initalState
-		lightList.push_back(new SpotLight(sWidth, sHeight, lnear, lfar, cR, cG, cB, intensity, diffuse, pX, pY, pZ, dX, dY, dZ, con, lin, exp, edge, isOn));
+		spotLights.push_back(new SpotLight(sWidth, sHeight, lnear, lfar, cR, cG, cB, intensity, diffuse, pX, pY, pZ, dX, dY, dZ, con, lin, exp, edge, isOn));
 	}
 
 	// Accessing skyboxes
@@ -99,25 +90,19 @@ Renderer::Renderer(const char* Parser, GLsizei viewPortWidth, GLsizei viewPortHe
 
 void Renderer::AddLight(DirectionalLight* l)
 {
-	mainLight = l;
+	dirLights.push_back(l);
 }
 
 void Renderer::AddLight(PointLight* l)
 {
-	if (pointLightCount < MAX_POINT_LIGHTS)
-	{
+	if (pointLights.size() < MAX_POINT_LIGHTS)
 		pointLights.push_back(l);
-		pointLightCount++;
-	}
 }
 
 void Renderer::AddLight(SpotLight* l)
 {
-	if (spotLightCount < MAX_POINT_LIGHTS)
-	{
+	if (spotLights.size() < MAX_POINT_LIGHTS)
 		spotLights.push_back(l);
-		spotLightCount++;
-	}
 }
 
 void Renderer::AddModel(std::string id, Model* m, glm::mat4 modelmat)
@@ -149,26 +134,27 @@ std::pair <Model*, glm::mat4> Renderer::getModel(std::string id)
 	return std::pair<Model*, glm::mat4>(nullptr, glm::mat4(1.0f));
 }
 
-void Renderer::RenderEverything(glm::mat4 viewMatrix, glm::mat4 projectionMatrix, Camera c)
+void Renderer::RenderEverything(Camera c, glm::mat4 projectionMatrix)
 {
 	// Render Shadows
-	RenderShadowDirLight(mainLight);
-	for (size_t i = 0; i < pointLightCount; i++)
+	RenderShadowDirLight(dirLights[currentDirLight]);
+	for (size_t i = 0; i < pointLights.size(); i++)
 	{
 		RenderShadowOmniLights(pointLights[i]);
 	}
-	for (size_t i = 0; i < spotLightCount; i++)
+	for (size_t i = 0; i < spotLights.size(); i++)
 	{
 		RenderShadowOmniLights(spotLights[i]);
 	}
 	// Render Lights
-	RenderObjects(viewMatrix, projectionMatrix, c);
+	RenderObjects(c, projectionMatrix);
 }
 
 // TODO: check the parameters passed through these functions
 
 void Renderer::RenderShadowDirLight(DirectionalLight* light)
 {
+	Shader* sDirShadow = &shaList["directionalShadow"];
 	sDirShadow->use();
 
 	glViewport(0, 0, light->getShadowMap()->GetShadowWidth(), light->getShadowMap()->GetShadowHeight());
@@ -187,6 +173,7 @@ void Renderer::RenderShadowDirLight(DirectionalLight* light)
 
 void Renderer::RenderShadowOmniLights(PointLight* light)
 {
+	Shader* sOmniShadow = &shaList["omniDirectionalShadow"];
 	sOmniShadow->use();
 
 	glViewport(0, 0, light->getShadowMap()->GetShadowWidth(), light->getShadowMap()->GetShadowHeight());
@@ -216,12 +203,11 @@ void Renderer::RenderShadowOmniLights(PointLight* light)
 
 void Renderer::SetPointLights(unsigned int textureUnit, unsigned int offset)
 {
-	if (pointLightCount > MAX_POINT_LIGHTS) pointLightCount = MAX_POINT_LIGHTS;
-
-	sObject->setUniform("pointLightCount", (int)pointLightCount);
+	Shader* sObject = &shaList["objects"];
+	sObject->setUniform("pointLightCount", (int)pointLights.size());
 
 	char locBuff[100] = { '\0' };
-	for (size_t i = 0; i < pointLightCount; i++)
+	for (size_t i = 0; i < pointLights.size(); i++)
 	{
 		pointLights[i]->UseLight(*sObject, i);
 
@@ -237,12 +223,11 @@ void Renderer::SetPointLights(unsigned int textureUnit, unsigned int offset)
 
 void Renderer::SetSpotLights(unsigned int textureUnit, unsigned int offset)
 {
-	if (spotLightCount > MAX_SPOT_LIGHTS) spotLightCount = MAX_SPOT_LIGHTS;
-
-	sObject->setUniform("spotLightCount", (int)spotLightCount);
+	Shader* sObject = &shaList["objects"];
+	sObject->setUniform("spotLightCount", (int)spotLights.size());
 	char locBuff[100] = { '\0' };
 
-	for (size_t i = 0; i < spotLightCount; i++)
+	for (size_t i = 0; i < spotLights.size(); i++)
 	{
 		spotLights[i]->UseLight(*sObject, i);
 
@@ -256,7 +241,7 @@ void Renderer::SetSpotLights(unsigned int textureUnit, unsigned int offset)
 	}
 }
 
-void Renderer::RenderObjects(glm::mat4 viewMatrix, glm::mat4 projectionMatrix, Camera c)
+void Renderer::RenderObjects(Camera c, glm::mat4 projectionMatrix)
 {
 #ifdef __APPLE__
 	glViewport(0, 0, 2 * vwidth, 2 * vheight);
@@ -266,8 +251,13 @@ void Renderer::RenderObjects(glm::mat4 viewMatrix, glm::mat4 projectionMatrix, C
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	DirectionalLight* mainLight = dirLights[currentDirLight];
+	glm::mat4 viewMatrix = c.getViewMatrix();
+	Shader* sObject = &shaList["objects"];
+
 	//Skybox
-	skybox->Draw(*sSkybox, glm::mat4(glm::mat3(viewMatrix)), projectionMatrix); //TODO: Check if we can save parameters
+	// TODO: multi skybox drawing??
+	skyList[currentSky].Draw(shaList["skybox"], glm::mat4(glm::mat3(viewMatrix)), projectionMatrix);
 
 	///Objects
 	sObject->use();
@@ -278,12 +268,12 @@ void Renderer::RenderObjects(glm::mat4 viewMatrix, glm::mat4 projectionMatrix, C
 	sObject->setUniform("eyePosition", c.position.x, c.position.y, c.position.z);
 
 	//Lights
-	mainLight->UseLight(*sObject);
+	dirLights[currentDirLight]->UseLight(*sObject);
 
-	// TODO: Averiguar que hacen los numeros majicos
+	// TODO: Averiguar que hacen los numeros magicos
 	SetPointLights(3, 0);
-	SetSpotLights(3 + pointLightCount, pointLightCount);
-
+	SetSpotLights(3 + pointLights.size(), pointLights.size());
+	
 	sObject->setUniform("uniformDirectionalLightTransform", mainLight->CalculateLightTransform());
 
 	//Light Shadow Map
@@ -298,19 +288,32 @@ void Renderer::RenderObjects(glm::mat4 viewMatrix, glm::mat4 projectionMatrix, C
 
 void Renderer::RenderScene()
 {
-	sObject->use();
+	shaList["objects"].use();
 	for(auto model : Models)
 	{
-		sObject->setUniform("model", model.second.second);
-		model.second.first->RenderModel(*sObject);
+		shaList["objects"].setUniform("model", model.second.second);
+		model.second.first->RenderModel(shaList["objects"]);
 	}
 }
 
 
 Renderer::~Renderer()
 {
-	for (int i = 0; i < lightList.size(); i++)
+	//Free all dynamically stored data
+	for (auto m : Models)
 	{
-		delete lightList[i];
+		delete m.second.first;
+	}
+	for (auto d : dirLights)
+	{
+		delete d;
+	}
+	for (auto d : pointLights)
+	{
+		delete d;
+	}
+	for (auto d : spotLights)
+	{
+		delete d;
 	}
 }
