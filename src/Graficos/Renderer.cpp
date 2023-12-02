@@ -3,7 +3,6 @@
 //-----------------------------------------------------------------------------
 
 #include "Renderer.h"
-using json = nlohmann::json;
 
 Renderer::Renderer(const char* Parser, GLsizei viewPortWidth, GLsizei viewPortHeight) : vwidth(viewPortWidth), vheight(viewPortHeight)
 {
@@ -31,10 +30,28 @@ Renderer::Renderer(const char* Parser, GLsizei viewPortWidth, GLsizei viewPortHe
 		std::string modelName = model["name"];
 		GLint sIntens = model["intensity"], shine = model["shine"];
 
-		glm::mat4 transformationMatrix(1.0f);
-		//TODO: make a function where it parses and applies the geometric transforms
+		Model* m = new Model(sIntens, shine, modelPath, modelName);
 
-		AddModel(id, new Model(sIntens, shine, modelPath, modelName), transformationMatrix);
+		//Model Instancing
+		if (model.count("instances")) // Multiple instances
+		{
+			m->setInstances(model["instances"].size());
+			for (const auto& ins : model["instances"])
+			{
+				glm::mat4 TG(1.0f);
+				std::string suffix = ins["suffix"]; //Identificador per la instancia
+				// One instance, has geometric transforms
+				if (ins.count("transform"))
+					TG = parseTransform(ins["transform"]);
+				AddModel(id+suffix, m, TG);
+			}
+			continue;
+		}
+		glm::mat4 TG(1.0f);
+		// One instance, has geometric transforms
+		if (model.count("transform"))
+			TG = parseTransform(model["transform"]);
+		AddModel(id, m, TG);
 	}
 
 	/// Accessing lights (first one will be treated as directionals)
@@ -59,7 +76,7 @@ Renderer::Renderer(const char* Parser, GLsizei viewPortWidth, GLsizei viewPortHe
 			intensity = PL["intensity"], diffuse = PL["diffuse"], // Intensity and Diffuse
 			pX = PL["position"][0], pY = PL["position"][1], pZ = PL["position"][2], // Position
 			con = PL["CLE"][0], lin = PL["CLE"][1], exp = PL["CLE"][2]; // Constant linear exponent
-		bool isOn = PL["initialState"]; // initalState
+		bool isOn = PL["initalState"]; // initalState
 		pointLights.push_back(new PointLight(sWidth, sHeight, lnear, lfar, cR, cG, cB, intensity, diffuse, pX, pY, pZ, con, lin, exp, isOn));
 	}
 
@@ -72,7 +89,7 @@ Renderer::Renderer(const char* Parser, GLsizei viewPortWidth, GLsizei viewPortHe
 			dX = SL["direction"][0], dY = SL["direction"][1], dZ = SL["direction"][2], // Direction
 			con = SL["CLE"][0], lin = SL["CLE"][1], exp = SL["CLE"][2], // Constant linear exponent
 			edge = SL["edge"];
-		bool isOn = SL["initialState"]; // initalState
+		bool isOn = SL["initalState"]; // initalState
 		spotLights.push_back(new SpotLight(sWidth, sHeight, lnear, lfar, cR, cG, cB, intensity, diffuse, pX, pY, pZ, dX, dY, dZ, con, lin, exp, edge, isOn));
 	}
 
@@ -306,13 +323,16 @@ Renderer::~Renderer()
 {
 	///Free all dynamically stored data
 	// Maps of pointers
+	int nIns = 0;
 	for (auto& m : Models)
 	{
-		if (m.second.first)
+		if (m.second.first && nIns == 0)
 		{
+			nIns = m.second.first->getNInstances();
 			delete m.second.first;
 			m.second.first = nullptr;
 		}
+		nIns--;
 	}
 	for (auto s : shaList)
 	{
@@ -348,4 +368,36 @@ Renderer::~Renderer()
 		}
 	}
 
+}
+
+glm::mat4 parseTransform(const json& transformData) {
+	if (transformData.empty())
+		return glm::mat4(1.0f);
+
+	glm::vec3 translation = {
+		transformData["translate"][0],
+		transformData["translate"][1],
+		transformData["translate"][2]
+	};
+
+	glm::vec3 rotation = {
+		transformData["rotation"][0],
+		transformData["rotation"][1],
+		transformData["rotation"][2]
+	};
+
+	glm::vec3 scale = {
+		transformData["scale"][0],
+		transformData["scale"][1],
+		transformData["scale"][2]
+	};
+
+	glm::mat4 transform = glm::mat4(1.0f);  // Identity matrix
+	transform = glm::translate(transform, translation);
+	transform = glm::rotate(transform, glm::radians(rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
+	transform = glm::rotate(transform, glm::radians(rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
+	transform = glm::rotate(transform, glm::radians(rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
+	transform = glm::scale(transform, scale);
+
+	return transform;
 }

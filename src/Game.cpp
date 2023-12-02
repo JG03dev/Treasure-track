@@ -56,7 +56,8 @@ void Game::InitializeGraphics()
     //TODO: Aquesta part pot ser bastant lenta, es pot mirar de renderitzar una pantalla de carga abans que aixo.
     for (auto& Obj : m_renderer->getModelList())
     {
-        Obj.second.first->Load();
+        if (!Obj.second.first->loaded())
+            Obj.second.first->Load();
         glm::mat4 model(1.0f);
         if (Obj.first == "Player")
         {
@@ -64,6 +65,8 @@ void Game::InitializeGraphics()
             // This could be at the constructor
             m_Player->vehicle->getChassisWorldTransform().getOpenGLMatrix(glm::value_ptr(model));
             m_renderer->setModelMatrix(Obj.first, model);
+            if (m_renderer->getNSpotLights() >= 2) //TODO: study a way to avoid magic numbers
+                m_Player->setLights(m_renderer->getSpotLight(0), m_renderer->getSpotLight(1));
         }
         else 
         {
@@ -141,6 +144,11 @@ void Game::ProcessInput(GLFWwindow* window, int key, int action)
     
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
+    if (glfwGetKey(window, GLFW_KEY_TAB) == GLFW_PRESS)
+    {
+        m_renderer->cycleDirLight();
+        m_renderer->cycleSky();
+    }
 
     m_Player->InputMethod(key, action);
 }
@@ -157,6 +165,7 @@ void Game::Render()
 		m_Player->vehicle->getChassisWorldTransform().getOpenGLMatrix(glm::value_ptr(model));
         //std::cout << "Player position:" << m_Player->vehicle->getChassisWorldTransform().getOrigin().getY() << std::endl;
         m_renderer->setModelMatrix("Player", model);
+        m_Player->updatePlayerData();
     }
 
 

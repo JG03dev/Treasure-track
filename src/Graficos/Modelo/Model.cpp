@@ -42,6 +42,7 @@ void Model::Load()
 	LoadNode(scene->mRootNode, scene);
 
 	LoadMaterials(scene);
+	isLoaded = true;
 }
 
 void Model::LoadNode(aiNode * node, const aiScene * scene)

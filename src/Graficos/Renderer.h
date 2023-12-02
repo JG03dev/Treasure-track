@@ -23,6 +23,7 @@
 //Light constants
 const int MAX_POINT_LIGHTS = 3;
 const int MAX_SPOT_LIGHTS = 3;
+using json = nlohmann::json;
 
 
 class Renderer
@@ -38,17 +39,34 @@ public:
 	void AddLight(DirectionalLight* l);
 	void AddLight(PointLight* l);
 	void AddLight(SpotLight* l);
-
 	void AddModel(std::string id, Model* m, glm::mat4 modelmat);
-	void setModelMatrix(std::string id, glm::mat4 modelmat);
+
+	//Geters
 	std::pair<Model*, glm::mat4> getModel(std::string id);
 	std::map<std::string, std::pair<Model*, glm::mat4>> getModelList() { return Models; }
+	GLuint getNDirLights() { return dirLights.size(); }
+	DirectionalLight* getDirLight(int i) { return i < dirLights.size() ? dirLights[i] : nullptr; };
+
+	GLuint getNPointLights() { return pointLights.size(); }
+	PointLight* getPointLight(int i) { return i < pointLights.size() ? pointLights[i] : nullptr; };
+
+	GLuint getNSpotLights() { return spotLights.size(); }
+	SpotLight* getSpotLight(int i) { return i < spotLights.size() ? spotLights[i] : nullptr; };
+
+
+
+	// Seters
+	void setModelMatrix(std::string id, glm::mat4 modelmat);
 
 	void setCurrentSky(int cs) { currentSky = cs; }
 	void cycleSky() { currentSky = currentSky == skyList.size() - 1 ? 0 : currentSky + 1; }
 
 	void setCurrentDirLight(int cdl) { currentDirLight = cdl; }
-	void cycleDirLight() { currentDirLight = currentDirLight == dirLights.size() - 1 ? 0 : currentDirLight + 1; }
+	void cycleDirLight() { 
+		dirLights[currentDirLight]->Toggle(); //Close old light
+		currentDirLight = (currentDirLight == dirLights.size() - 1) ? 0 : currentDirLight + 1;
+		dirLights[currentDirLight]->Toggle(); //Open new light
+	}
 
 	// Renders
 
@@ -85,3 +103,5 @@ private:
 	//Viewport
 	GLsizei vwidth, vheight;
 };
+
+glm::mat4 parseTransform(const json& transformData);
