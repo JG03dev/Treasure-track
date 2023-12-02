@@ -11,11 +11,10 @@ void Game::StartGame() {
 }
 Game::~Game()
 {
+    delete m_renderer;
     delete m_Player, m_Camera, m_skybox, m_dynamicsWorld;
     for (int i = 0; i < m_Objects.size(); i++)
         delete m_Objects[i];
-
-    delete m_renderer;
     
 }
 #pragma endregion
@@ -46,55 +45,40 @@ void Game::InitializePhysics()
 
 void Game::InitializeGraphics()
 {
-
-    //r = new Renderer(config.json)
-
     // Init renderer
-    std::vector<std::string> faces = {
-        "../../../Assets/skybox/right.jpg",			// right
-        "../../../Assets/skybox/left.jpg",			// left
-        "../../../Assets/skybox/top.jpg",			// top
-        "../../../Assets/skybox/bottom.jpg",		// bottom
-        "../../../Assets/skybox/front.jpg",			// front
-        "../../../Assets/skybox/back.jpg"			// back
-    };
-    m_skybox = new Skybox(faces);
-
-
-
-	m_renderer = new Renderer(  "../../../Shaders/shader.vert", "../../../Shaders/shader.frag", NULL,
-                            "../../../Shaders/skybox.vert", "../../../Shaders/skybox.frag", NULL,
-                            "../../../Shaders/directional_shadow_map.vert", "../../../Shaders/directional_shadow_map.frag", NULL,
-		                    "../../../Shaders/omni_shadow_map.vert", "../../../Shaders/omni_shadow_map.frag", "../../../Shaders/omni_shadow_map.geom",
-                            m_skybox, m_SCR_WIDTH, m_SCR_HEIGHT);
-
-    // Inicializacion de luces
-    DirectionalLight* mainLight = new DirectionalLight(2048, 2048, /*Shadow dimensions*/
-        1.0f, 1.0f, 1.0f, /*RGB colour*/
-        0.9f, 0.5f,	/*Intensity (ambient, diffuse)*/
-        -10.0f, -12.0f, 18.5f, /*Direction of the light*/
-        true
-    );
-    m_renderer->AddLight(mainLight);
-    
+    m_renderer = new Renderer("../../../Assets/Objects.json", m_SCR_WIDTH, m_SCR_HEIGHT);
     //Iniciamos objetos
-    m_Player = new Player("../../../Assets/Coche1/cotxe.obj", "Coche1", m_dynamicsWorld, 4.0f, 256);
-    m_Objects.push_back(new Object("../../../Assets/town/town.obj", "town", m_dynamicsWorld, 0.0f, 0));
+    
+    Model* p = m_renderer->getModel("Player").first;
 
-	
-	glm::mat4 model(1.0f);
-	m_Player->vehicle->getChassisWorldTransform().getOpenGLMatrix(glm::value_ptr(model));
-	m_renderer->AddModel(m_Player->model->GetName(), m_Player->model, model);
-	
-
-	for (Object* o : m_Objects) {
+    //Load objects
+    //TODO: find some way to init ChassisWorldTransform based on object TG (stored at Obj.second.second)
+    //TODO: Aquesta part pot ser bastant lenta, es pot mirar de renderitzar una pantalla de carga abans que aixo.
+    for (auto& Obj : m_renderer->getModelList())
+    {
+        if (!Obj.second.first->loaded())
+            Obj.second.first->Load();
         glm::mat4 model(1.0f);
-        if (o->model->GetName() == "Mapa")
-            model = glm::translate(model, glm::vec3(0.0f, -1000.0f, 0.0f));
-		o->rb->getWorldTransform().getOpenGLMatrix(glm::value_ptr(model));
-        m_renderer->AddModel(m_Objects[0]->model->GetName(), m_Objects[0]->model, model);
-	}
-
+        if (Obj.first == "Player")
+        {
+            m_Player = new Player(p, m_dynamicsWorld);
+            // This could be at the constructor
+            m_Player->vehicle->getChassisWorldTransform().getOpenGLMatrix(glm::value_ptr(model));
+            m_renderer->setModelMatrix(Obj.first, model);
+            if (m_renderer->getNSpotLights() >= 2) //TODO: study a way to avoid magic numbers
+                m_Player->setLights(m_renderer->getSpotLight(0), m_renderer->getSpotLight(1));
+        }
+        else 
+        {
+            m_Objects.push_back(new Object(Obj.second.first, m_dynamicsWorld));
+            m_Objects.back()->rb->getWorldTransform().getOpenGLMatrix(glm::value_ptr(model));
+            m_renderer->setModelMatrix(Obj.first, model);
+        }        
+    }
+    if (!m_Player)
+    {
+        //Handle error when no player is parsed
+    }
     // Inicializar camara
     //m_Camera = new Camera(glm::vec3(0.0f, 0.0f, 3.0f));
     m_Camera->setTarget(m_Player);
@@ -160,6 +144,11 @@ void Game::ProcessInput(GLFWwindow* window, int key, int action)
     
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
+    if (glfwGetKey(window, GLFW_KEY_TAB) == GLFW_PRESS)
+    {
+        m_renderer->cycleDirLight();
+        m_renderer->cycleSky();
+    }
 
     m_Player->InputMethod(key, action);
 }
@@ -175,14 +164,16 @@ void Game::Render()
 		glm::mat4 model(1.0f);
 		m_Player->vehicle->getChassisWorldTransform().getOpenGLMatrix(glm::value_ptr(model));
         //std::cout << "Player position:" << m_Player->vehicle->getChassisWorldTransform().getOrigin().getY() << std::endl;
-		m_renderer->setModelMatrix(m_Player->model->GetName(), model);
+        m_renderer->setModelMatrix("Player", model);
+        m_Player->updatePlayerData();
     }
+
 
     // Update camera
     m_Camera->followPlayer();
 
     glm::mat4 projection = glm::perspective(glm::radians(m_Camera->FOV), (float)m_SCR_WIDTH / (float)m_SCR_HEIGHT, c_near, c_far);
 
-    m_renderer->RenderEverything(m_Camera->getViewMatrix(), projection, *m_Camera);
+    m_renderer->RenderEverything(*m_Camera, projection);
 }
 #pragma endregion

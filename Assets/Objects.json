@@ -1,91 +1,145 @@
 {
   "shaders": [
     {
-      "id": "asdf",
+      "id": "objects",
       "paths": {
-        "frag": "path/to/frag.frag",
-        "vert": "path/to/vert.vert",
-        "geom": "path/to/geom.geom"
+        "vert": "../../../Shaders/shader.vert",
+        "frag": "../../../Shaders/shader.frag",
+        "geom": ""
       }
-      // ... other shaders
+    },
+    {
+      "id": "skybox",
+      "paths": {
+        "vert": "../../../Shaders/skybox.vert",
+        "frag": "../../../Shaders/skybox.frag",
+        "geom": ""
+      }
+    },
+    {
+      "id": "directionalShadow",
+      "paths": {
+        "vert": "../../../Shaders/directional_shadow_map.vert",
+        "frag": "../../../Shaders/directional_shadow_map.frag",
+        "geom": ""
+      }
+    },
+    {
+      "id": "omniDirectionalShadow",
+      "paths": {
+        "vert": "../../../Shaders/omni_shadow_map.vert",
+        "frag": "../../../Shaders/omni_shadow_map.frag",
+        "geom": "../../../Shaders/omni_shadow_map.geom"
+      }
     }
   ],
   "models": [
     {
-      "id": "model1",
-      "path": "path/to/model1.obj",
-      "name": "model1",
-      "intensity": 1.0,
-      "shine": 1.0,
-      // For each TG we have "type" (t: translate, r: rotate, s: scale) and "param" an array of parameters for that geometric transform such as "vector"
-      // Remember: THE ORDER MATTERS
-      "TG": []
+      "id": "Player",
+      "path": "../../../Assets/Coche1/cotxe.obj",
+      "name": "Coche1",
+      "intensity": 4.0,
+      "shine": 256,
+      "instances": [
+        {
+          "suffix": "",
+          "transform": {}
+        },
+        {
+          "suffix": "1",
+          "transform": {
+            "translate": [ 0.0, 10.0, 20.0 ],
+            "rotation": [ 0.0, 0.0, 0.0 ],
+            "scale": [ 0.5 , 0.5 , 0.5 ]
+          }
+        },
+        {
+          "suffix": "2",
+          "transform": {
+            "translate": [ 30.0, 10.0, 20.0 ],
+            "rotation": [ 0.0, 0.0, 0.0 ],
+            "scale": [ 0.5, 0.5, 0.5 ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "Map",
+      "path": "../../../Assets/town/town.obj",
+      "name": "town",
+      "intensity": 0.3,
+      "shine": 4
     }
-    // ... other models
   ],
   "lights": {
     "directionalLights": [
       {
-        "shadow": [ 2048, 2048 ], // w, h
-        "color": [ 1.0, 1.0, 1.0 ], // R, G, B
+        "shadow": [ 2048, 2048 ],
+        "color": [ 1.0, 1.0, 1.0 ],
         "intensity": 0.8,
         "diffuse": 0.5,
-        "direction": [ -10.0, -12.0, 18.5 ], // vector (x,y,z)
-        "initalState": true // Is On when load
+        "direction": [ -10.0, -12.0, 18.5 ]
+      },
+      {
+        "shadow": [ 2048, 2048 ],
+        "color": [ 1.0, 0.53, 0.3 ],
+        "intensity": 0.1,
+        "diffuse": 0.9,
+        "direction": [ -10.0, -12.0, 18.5 ]
       }
     ],
     "pointLights": [
-      /*{
-        "shadow": [ 2048, 2048 ], // w, h
+     
+    ],
+    "spotLights": [
+      {
+        "shadow": [ 2048, 2048 ],
         "near": 0.01,
         "far": 100.0,
-        "color": [ 1.0, 1.0, 1.0 ], // R, G, B
+        "color": [ 1.0, 1.0, 1.0 ],
         "intensity": 0.8,
         "diffuse": 0.5,
-        "position": [ 0.0, 0.0, 0.0 ], // x, y, z
-        "CLE": [ 0.3, 0.2, 0.1 ], // Constant, lineal, exponent
-        "initalState": true // Is On when load
-      }*/
-      // ... other point lights
-    ],
-    "spotLights": [ //TODO: Add car lights
-      /*{
-        "shadow": [ 2048, 2048 ], // w, h
-        "near": 0.01.
-        "far": 100.0,
-        "color": [ 1.0, 1.0, 1.0 ], // R, G, B
-        "intensity": 0.8,
-        "diffuse": 0.5,
-        "position": [ 0.0, 0.0, 0.0 ], // x, y, z
-        "direction": [ -10.0, -12.0, 18.5 ], // vector (x,y,z)
-        "CLE": [ 0.3, 0.2, 0.1 ], // Constant, lineal, exponent
+        "position": [ 0.0, 0.0, 0.0 ],
+        "direction": [ -10.0, -12.0, 18.5 ],
+        "CLE": [ 0.3, 0.2, 0.1 ],
         "edge": 20.0,
-        "initalState": true // Is On when load
-      }*/
-      // ... other spot lights
+        "initalState": true
+      },
+      {
+        "shadow": [ 2048, 2048 ],
+        "near": 0.01,
+        "far": 100.0,
+        "color": [ 1.0, 1.0, 1.0 ],
+        "intensity": 0.8,
+        "diffuse": 0.5,
+        "position": [ 0.0, 0.0, 0.0 ],
+        "direction": [ -10.0, -12.0, 18.5 ],
+        "CLE": [ 0.3, 0.2, 0.1 ],
+        "edge": 20.0,
+        "initalState": true
+      }
     ]
   },
-  "skyboxes": [ // The first skybox will be the active by default
-    { // Day
+  "skyboxes": [
+    {
       "faces": [
-        "../../../Assets/skybox/right.jpg", // right
-        "../../../Assets/skybox/left.jpg", // left
-        "../../../Assets/skybox/top.jpg", // top
-        "../../../Assets/skybox/bottom.jpg", // bottom
-        "../../../Assets/skybox/front.jpg", // front
-        "../../../Assets/skybox/back.jpg" // back
+        "../../../Assets/skybox/right.jpg",
+        "../../../Assets/skybox/left.jpg",
+        "../../../Assets/skybox/top.jpg",
+        "../../../Assets/skybox/bottom.jpg",
+        "../../../Assets/skybox/front.jpg",
+        "../../../Assets/skybox/back.jpg"
       ]
     },
-    { // Afternoon
+    {
       "faces": [
-        "../../../Assets/skyboxTarde/right.tga", // right
-        "../../../Assets/skyboxTarde/left.tga", // left
-        "../../../Assets/skyboxTarde/top.tga", // top
-        "../../../Assets/skyboxTarde/bottom.tga", // bottom
-        "../../../Assets/skyboxTarde/front.tga", // front
-        "../../../Assets/skyboxTarde/back.tga" // back
+        "../../../Assets/skyboxTarde/left.tga",
+        "../../../Assets/skyboxTarde/right.tga",
+        "../../../Assets/skyboxTarde/top.tga",
+        "../../../Assets/skyboxTarde/bottom.tga",
+        "../../../Assets/skyboxTarde/front.tga",
+        "../../../Assets/skyboxTarde/back.tga"
       ]
     }
-    // ... other skyboxes
   ]
 }

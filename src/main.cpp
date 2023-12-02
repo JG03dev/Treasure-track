@@ -89,7 +89,8 @@ void glfw_onFramebufferSize(GLFWwindow* window, int width, int height)
 }
 #pragma endregion
 
-int main() {
+int main(int argc, char **argv) {
+    std::cout << argv[0] << std::endl;
     // Intialize GLFW 
     // GLFW is configured.  Must be called before calling any GLFW functions
     if (!glfwInit()) {

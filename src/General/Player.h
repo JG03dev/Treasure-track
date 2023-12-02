@@ -2,9 +2,10 @@
 
 // --OUR INCLUDES--
 
-#pragma region MODELO
+#pragma region GRAFICOS
 
 #include "../Graficos/Modelo/Model.h"
+#include "../Graficos/Luces/SpotLight.h"
 
 #pragma endregion
 
@@ -28,11 +29,16 @@ public:
 	~Player();
 
 	// Public Methods
+	void updatePlayerData();
 	void Draw(Shader& shader);
 	void InputMethod(int key, int keyPressed);
 
+	//Seters
+	void setLights(SpotLight* delaIzq, SpotLight* delaDer) { delaIzquierda = delaIzq; delaDerecha = delaDer; }
+
 private:
 	// Private Attributes
+	SpotLight* delaIzquierda, * delaDerecha; //Luces delanteras
 
 	struct VehicleParams {
 		// Construction Params

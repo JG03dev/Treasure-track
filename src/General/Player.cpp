@@ -2,7 +2,7 @@
 
 // Constructor
 
-// TODO: I would delete this constructor since it would lead to memory leaks
+// TODO: I would delete this constructor since it can lead to memory leaks
 Player::Player(std::string const& modelPath, std::string const& modelName, btDiscreteDynamicsWorld* dynamicsWorld, GLfloat sIntensity, GLfloat shine) {
 	model = new Model(sIntensity, shine);
 	model->LoadModel(modelPath, modelName);
@@ -12,7 +12,7 @@ Player::Player(std::string const& modelPath, std::string const& modelName, btDis
 	dynamicsWorld->addVehicle(this->vehicle);
 }
 
-Player::Player(Model* m, btDiscreteDynamicsWorld* dynamicsWorld)
+Player::Player(Model* m, btDiscreteDynamicsWorld* dynamicsWorld) : delaIzquierda(NULL), delaDerecha(NULL)
 {
 	model = m; // Model points to the same model shared
 
@@ -23,10 +23,19 @@ Player::Player(Model* m, btDiscreteDynamicsWorld* dynamicsWorld)
 
 // Destructor
 Player::~Player() {
-	delete model;
 }
 
 // Public Methods
+
+void Player::updatePlayerData() //TODO: find more uses to this function
+{
+	if (delaIzquierda)
+	{//Actualizar parametros de la luz
+	}
+	if (delaDerecha)
+	{//Actualizar parametros de la luz
+	}
+}
 
 void Player::Draw(Shader& shader) {
 	//model->Draw(shader);
