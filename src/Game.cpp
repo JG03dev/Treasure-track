@@ -166,6 +166,16 @@ void Game::Render()
         //std::cout << "Player position:" << m_Player->vehicle->getChassisWorldTransform().getOrigin().getY() << std::endl;
         m_renderer->setModelMatrix("Player", model);
         m_Player->updatePlayerData();
+        glm::mat4 model(1.0f);
+        m_Player->vehicle->getChassisWorldTransform().getOpenGLMatrix(glm::value_ptr(model));
+        std::cout << "Player position: " << m_Player->vehicle->getChassisWorldTransform().getOrigin().x() << ", " << m_Player->vehicle->getChassisWorldTransform().getOrigin().y() << ", " << m_Player->vehicle->getChassisWorldTransform().getOrigin().z() << std::endl;
+        m_renderer->setModelMatrix(m_Player->modelChasis->GetName(), model);
+    }
+
+    for (int i = 0; i < 4; i++) {
+        glm::mat4 model(1.0f);
+        m_Player->vehicle->getWheelTransformWS(i).getOpenGLMatrix(glm::value_ptr(model));
+        m_renderer->setModelMatrix(m_Player->modelWheel->GetName() + std::to_string(i), model);
     }
 
 

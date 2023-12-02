@@ -6,16 +6,18 @@ Object::Object(std::string const& modelPath, std::string const& modelName, btDis
 	model = new Model(sIntensity, shine);
 	model->LoadModel(modelPath, modelName);
 
-	this->CreateRigidBody();
+	Model hitbox;
+	hitbox.LoadModel(std::string("../../../Assets/") + modelName + std::string("/") + modelName + std::string("Hitbox.obj"), modelName + std::string("Hitbox"));
+	this->CreateRigidBody(hitbox);
 
 	dynamicsWorld->addRigidBody(this->rb);
 }
 
-Object::Object(Model* m, btDiscreteDynamicsWorld* dynamicsWorld)
+Object::Object(Model* m, Model& hitbox, btDiscreteDynamicsWorld* dynamicsWorld)
 {
 	model = m; // Model points to the same model shared
 
-	this->CreateRigidBody();
+	this->CreateRigidBody(hitbox);
 
 	dynamicsWorld->addRigidBody(this->rb);
 }
@@ -28,14 +30,14 @@ void Object::Draw(Shader& shader) {
 
 // Private Methods
 
-void Object::CreateRigidBody() {
+void Object::CreateRigidBody(Model& hitbox) {
 	btCompoundShape* objectShape = new btCompoundShape();
 
-	for (int i = 0, numMeshes = model->meshList.size(); i < numMeshes; i++) {
+	for (int i = 0, numMeshes = hitbox.meshList.size(); i < numMeshes; i++) {
 		btConvexHullShape convexShape;
 
 		//TODO: Calcular transform de cada mesh en funcion de su posicion inicial con vertices
-		Mesh* mesh = this->model->meshList[i];
+		Mesh* mesh = hitbox.meshList[i];
 		const std::vector<GLfloat>* vertices = mesh->GetVertices();
 		for (int j = 0; j < vertices->size(); j += 8) {
             btVector3 v1((*vertices)[j], (*vertices)[j + 1], (*vertices)[j + 2]);
