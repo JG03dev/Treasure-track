@@ -74,7 +74,7 @@ private:
 	std::map<std::string, std::pair<Model*, glm::mat4>> Models;
 
 	// Shaders
-	std::map<std::string, Shader> shaList;
+	std::map<std::string, Shader*> shaList;
 
 	// Lights
 	std::vector<DirectionalLight*> dirLights; // 0 will be default (sun)

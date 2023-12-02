@@ -11,11 +11,10 @@ void Game::StartGame() {
 }
 Game::~Game()
 {
+    delete m_renderer;
     delete m_Player, m_Camera, m_skybox, m_dynamicsWorld;
     for (int i = 0; i < m_Objects.size(); i++)
         delete m_Objects[i];
-
-    delete m_renderer;
     
 }
 #pragma endregion
@@ -157,8 +156,9 @@ void Game::Render()
 		glm::mat4 model(1.0f);
 		m_Player->vehicle->getChassisWorldTransform().getOpenGLMatrix(glm::value_ptr(model));
         //std::cout << "Player position:" << m_Player->vehicle->getChassisWorldTransform().getOrigin().getY() << std::endl;
-		m_renderer->setModelMatrix(m_Player->model->GetName(), model);
+        m_renderer->setModelMatrix("Player", model);
     }
+
 
     // Update camera
     m_Camera->followPlayer();

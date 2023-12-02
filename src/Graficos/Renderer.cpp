@@ -22,7 +22,7 @@ Renderer::Renderer(const char* Parser, GLsizei viewPortWidth, GLsizei viewPortHe
 	for (const auto& shader : config["shaders"])
 	{
 		std::string vert = shader["paths"]["vert"], frag = shader["paths"]["frag"], geom = shader["paths"]["geom"], id = shader["id"];
-		shaList[id] = Shader(vert.c_str(), frag.c_str(), geom.c_str());
+		shaList[id] = new Shader(vert.c_str(), frag.c_str(), geom.c_str());
 	}
 	// Accessing models
 	for (const auto& model : config["models"]) {
@@ -159,7 +159,7 @@ void Renderer::RenderEverything(Camera c, glm::mat4 projectionMatrix)
 
 void Renderer::RenderShadowDirLight(DirectionalLight* light)
 {
-	Shader* sDirShadow = &shaList["directionalShadow"];
+	Shader* sDirShadow = shaList["directionalShadow"];
 	sDirShadow->use();
 
 	glViewport(0, 0, light->getShadowMap()->GetShadowWidth(), light->getShadowMap()->GetShadowHeight());
@@ -178,7 +178,7 @@ void Renderer::RenderShadowDirLight(DirectionalLight* light)
 
 void Renderer::RenderShadowOmniLights(PointLight* light)
 {
-	Shader* sOmniShadow = &shaList["omniDirectionalShadow"];
+	Shader* sOmniShadow = shaList["omniDirectionalShadow"];
 	sOmniShadow->use();
 
 	glViewport(0, 0, light->getShadowMap()->GetShadowWidth(), light->getShadowMap()->GetShadowHeight());
@@ -208,7 +208,7 @@ void Renderer::RenderShadowOmniLights(PointLight* light)
 
 void Renderer::SetPointLights(unsigned int textureUnit, unsigned int offset)
 {
-	Shader* sObject = &shaList["objects"];
+	Shader* sObject = shaList["objects"];
 	sObject->setUniform("pointLightCount", (int)pointLights.size());
 
 	char locBuff[100] = { '\0' };
@@ -228,7 +228,7 @@ void Renderer::SetPointLights(unsigned int textureUnit, unsigned int offset)
 
 void Renderer::SetSpotLights(unsigned int textureUnit, unsigned int offset)
 {
-	Shader* sObject = &shaList["objects"];
+	Shader* sObject = shaList["objects"];
 	sObject->setUniform("spotLightCount", (int)spotLights.size());
 	char locBuff[100] = { '\0' };
 
@@ -258,11 +258,11 @@ void Renderer::RenderObjects(Camera c, glm::mat4 projectionMatrix)
 
 	DirectionalLight* mainLight = dirLights[currentDirLight];
 	glm::mat4 viewMatrix = c.getViewMatrix();
-	Shader* sObject = &shaList["objects"];
+	Shader* sObject = shaList["objects"];
 
 	//Skybox
 	// TODO: multi skybox drawing??
-	skyList[currentSky].Draw(shaList["skybox"], glm::mat4(glm::mat3(viewMatrix)), projectionMatrix);
+	skyList[currentSky].Draw(*shaList["skybox"], glm::mat4(glm::mat3(viewMatrix)), projectionMatrix);
 
 	///Objects
 	sObject->use();
@@ -293,32 +293,59 @@ void Renderer::RenderObjects(Camera c, glm::mat4 projectionMatrix)
 
 void Renderer::RenderScene()
 {
-	shaList["objects"].use();
+	shaList["objects"]->use();
 	for(auto model : Models)
 	{
-		shaList["objects"].setUniform("model", model.second.second);
-		model.second.first->RenderModel(shaList["objects"]);
+		shaList["objects"]->setUniform("model", model.second.second);
+		model.second.first->RenderModel(*shaList["objects"]);
 	}
 }
 
 
 Renderer::~Renderer()
 {
-	//Free all dynamically stored data
-	for (auto m : Models)
+	///Free all dynamically stored data
+	// Maps of pointers
+	for (auto& m : Models)
 	{
-		delete m.second.first;
+		if (m.second.first)
+		{
+			delete m.second.first;
+			m.second.first = nullptr;
+		}
 	}
+	for (auto s : shaList)
+	{
+		if (s.second)
+		{
+			delete s.second;
+			s.second = nullptr;
+		}
+	}
+	// Vector of pointers
 	for (auto d : dirLights)
 	{
-		delete d;
+		if (d)
+		{
+			delete d;
+			d = nullptr;
+		}
 	}
 	for (auto d : pointLights)
 	{
-		delete d;
+		if (d)
+		{
+			delete d;
+			d = nullptr;
+		}
 	}
 	for (auto d : spotLights)
 	{
-		delete d;
+		if (d)
+		{
+			delete d;
+			d = nullptr;
+		}
 	}
+
 }

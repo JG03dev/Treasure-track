@@ -23,7 +23,6 @@ Player::Player(Model* m, btDiscreteDynamicsWorld* dynamicsWorld)
 
 // Destructor
 Player::~Player() {
-	delete model;
 }
 
 // Public Methods
