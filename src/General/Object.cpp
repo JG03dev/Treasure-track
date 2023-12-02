@@ -13,10 +13,12 @@ Object::Object(std::string const& modelPath, std::string const& modelName, btDis
 	dynamicsWorld->addRigidBody(this->rb);
 }
 
-Object::Object(Model* m, Model& hitbox, btDiscreteDynamicsWorld* dynamicsWorld)
+Object::Object(Model* m, btDiscreteDynamicsWorld* dynamicsWorld)
 {
 	model = m; // Model points to the same model shared
 
+	Model hitbox;
+	hitbox.LoadModel(std::string("../../../Assets/") + m->GetName() + std::string("/") + m->GetName() + std::string("Hitbox.obj"), m->GetName() + std::string("Hitbox"));
 	this->CreateRigidBody(hitbox);
 
 	dynamicsWorld->addRigidBody(this->rb);

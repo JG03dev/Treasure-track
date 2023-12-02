@@ -22,7 +22,7 @@ public:
 
 	// Constructor
 	Object(std::string const& modelPath, std::string const& modelName, btDiscreteDynamicsWorld* dynamicsWorld, GLfloat sIntensity, GLfloat shine);
-	Object(Model* m, Model& hitbox, btDiscreteDynamicsWorld* dynamicsWorld);
+	Object(Model* m, btDiscreteDynamicsWorld* dynamicsWorld);
 
 
 	// Public Methods

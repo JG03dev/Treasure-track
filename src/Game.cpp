@@ -68,7 +68,7 @@ void Game::InitializeGraphics()
             if (m_renderer->getNSpotLights() >= 2) //TODO: study a way to avoid magic numbers
                 m_Player->setLights(m_renderer->getSpotLight(0), m_renderer->getSpotLight(1));
         }
-        else 
+        else if(Obj.first.substr(0, 5) != "Wheel")
         {
             m_Objects.push_back(new Object(Obj.second.first, m_dynamicsWorld));
             m_Objects.back()->rb->getWorldTransform().getOpenGLMatrix(glm::value_ptr(model));
@@ -166,16 +166,12 @@ void Game::Render()
         //std::cout << "Player position:" << m_Player->vehicle->getChassisWorldTransform().getOrigin().getY() << std::endl;
         m_renderer->setModelMatrix("Player", model);
         m_Player->updatePlayerData();
-        glm::mat4 model(1.0f);
-        m_Player->vehicle->getChassisWorldTransform().getOpenGLMatrix(glm::value_ptr(model));
-        std::cout << "Player position: " << m_Player->vehicle->getChassisWorldTransform().getOrigin().x() << ", " << m_Player->vehicle->getChassisWorldTransform().getOrigin().y() << ", " << m_Player->vehicle->getChassisWorldTransform().getOrigin().z() << std::endl;
-        m_renderer->setModelMatrix(m_Player->modelChasis->GetName(), model);
     }
 
     for (int i = 0; i < 4; i++) {
         glm::mat4 model(1.0f);
         m_Player->vehicle->getWheelTransformWS(i).getOpenGLMatrix(glm::value_ptr(model));
-        m_renderer->setModelMatrix(m_Player->modelWheel->GetName() + std::to_string(i), model);
+        m_renderer->setModelMatrix("Wheel" + std::to_string(i), model);
     }
 
 

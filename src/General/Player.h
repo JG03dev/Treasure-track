@@ -69,5 +69,4 @@ private:
 	// Private Methods
 
 	void CreateVehicle(btDiscreteDynamicsWorld* dynamicsWorld, Model& hitbox);
-	void CreateVehicle(btDiscreteDynamicsWorld* dynamicsWorld);
 };
