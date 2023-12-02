@@ -115,8 +115,6 @@ int main() {
     // Hide the cursor and capture it
     glfwSetInputMode(g->GetWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-
-
     GLenum err = glewInit();
     if (err != GLEW_OK)
     {

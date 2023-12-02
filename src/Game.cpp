@@ -78,14 +78,22 @@ void Game::InitializeGraphics()
     m_renderer->AddLight(mainLight);
     
     //Iniciamos objetos
-    m_Player = new Player("../../../Assets/Coche1/cotxe.obj", "Coche1", m_dynamicsWorld, 4.0f, 256);
-    m_Objects.push_back(new Object("../../../Assets/town/town.obj", "town", m_dynamicsWorld, 0.0f, 0));
+    m_Player = new Player("../../../Assets/PruebaSinRuedas/PruebaSinRuedas.obj", "PruebaSinRuedas", m_dynamicsWorld, 4.0f, 256, true);
+    m_Player->AddWheelModel("../../../Assets/PruebaUnaRueda/PruebaUnaRueda.obj", "PruebaUnaRueda", 4.0f, 256);
+    m_Objects.push_back(new Object("../../../Assets/DefinitiveCity/DefinitiveCity.obj", "DefinitiveCity", m_dynamicsWorld, 0.0f, 0));
+    
 
+    {
+        glm::mat4 model(1.0f);
+        m_Player->vehicle->getChassisWorldTransform().getOpenGLMatrix(glm::value_ptr(model));
+        m_renderer->AddModel(m_Player->modelChasis->GetName(), m_Player->modelChasis, model);
+    }
 	
-	glm::mat4 model(1.0f);
-	m_Player->vehicle->getChassisWorldTransform().getOpenGLMatrix(glm::value_ptr(model));
-	m_renderer->AddModel(m_Player->model->GetName(), m_Player->model, model);
-	
+    for (int i = 0; i < 4; i++) {
+        glm::mat4 model(1.0f);
+        m_Player->vehicle->getWheelTransformWS(i).getOpenGLMatrix(glm::value_ptr(model));
+        m_renderer->AddModel(m_Player->modelWheel->GetName() + std::to_string(i), m_Player->modelWheel, model);
+    }
 
 	for (Object* o : m_Objects) {
         glm::mat4 model(1.0f);
@@ -172,10 +180,16 @@ void Game::Actualizar(float deltaTime)
 void Game::Render()
 {
     {
-		glm::mat4 model(1.0f);
-		m_Player->vehicle->getChassisWorldTransform().getOpenGLMatrix(glm::value_ptr(model));
-        //std::cout << "Player position:" << m_Player->vehicle->getChassisWorldTransform().getOrigin().getY() << std::endl;
-		m_renderer->setModelMatrix(m_Player->model->GetName(), model);
+        glm::mat4 model(1.0f);
+        m_Player->vehicle->getChassisWorldTransform().getOpenGLMatrix(glm::value_ptr(model));
+        std::cout << "Player position: " << m_Player->vehicle->getChassisWorldTransform().getOrigin().x() << ", " << m_Player->vehicle->getChassisWorldTransform().getOrigin().y() << ", " << m_Player->vehicle->getChassisWorldTransform().getOrigin().z() << std::endl;
+        m_renderer->setModelMatrix(m_Player->modelChasis->GetName(), model);
+    }
+
+    for (int i = 0; i < 4; i++) {
+        glm::mat4 model(1.0f);
+        m_Player->vehicle->getWheelTransformWS(i).getOpenGLMatrix(glm::value_ptr(model));
+        m_renderer->setModelMatrix(m_Player->modelWheel->GetName() + std::to_string(i), model);
     }
 
     // Update camera
