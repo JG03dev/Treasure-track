@@ -32,7 +32,7 @@ void SpotLight::UseLight(Shader& s, int nLight)
 	char locBuff[100] = { '\0' };
 
 	//PointLight attributes
-	snprintf(locBuff, sizeof(locBuff), "spotLights[%d].base.colour", nLight);
+	snprintf(locBuff, sizeof(locBuff), "spotLights[%d].base.base.colour", nLight);
 	s.setUniform(locBuff, colour.x, colour.y, colour.z);	
 
 	if (active)

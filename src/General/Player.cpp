@@ -29,11 +29,19 @@ Player::~Player() {
 
 void Player::updatePlayerData() //TODO: find more uses to this function
 {
+	glm::vec3 direction(vehicle->getForwardVector().x(), vehicle->getForwardVector().y(), vehicle->getForwardVector().z());
+	glm::vec3 position(vehicle->getChassisWorldTransform().getOrigin().x(),
+		vehicle->getChassisWorldTransform().getOrigin().y(),
+		vehicle->getChassisWorldTransform().getOrigin().z());
+	position.x += 0.2f;
 	if (delaIzquierda)
 	{//Actualizar parametros de la luz
+		delaIzquierda->SetFlash(position, direction);
 	}
+	position.x -= 0.4f;
 	if (delaDerecha)
 	{//Actualizar parametros de la luz
+		delaDerecha->SetFlash(position, direction);
 	}
 }
 

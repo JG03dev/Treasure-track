@@ -65,8 +65,8 @@
     },
     {
       "id": "Map",
-      "path": "../../../Assets/town/town.obj",
-      "name": "town",
+      "path": "../../../Assets/MapaDefinitivo/town.obj",
+      "name": "MapaDefinitivo",
       "intensity": 0.3,
       "shine": 4
     }
