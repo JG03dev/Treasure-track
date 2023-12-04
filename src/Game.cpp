@@ -110,12 +110,28 @@ int Game::InitializeWindow()
 
 #pragma region PRIVATE_METHODS_FUNCTIONALITY
 
+void Game::img_loader() {
+    int width, height;
+    int channels;
+    unsigned char* pixels = stbi_load("../../../src/s2.jpg", &width, &height, &channels, 4);
+
+    GLFWimage images[1];
+    images[0].width = width;
+    images[0].height = height;
+    images[0].pixels = pixels;
+
+    glfwSetWindowIcon(m_Window, 1, images);
+}
+
+
 void Game::Run()
 {
     // timing
     float deltaTime = 0.0f;
     float lastFrame = 0.0f;
     MySoundEffects sound;
+
+    img_loader();
 
     while (!glfwWindowShouldClose(m_Window))
     {

@@ -62,6 +62,7 @@ public:
 
 	void ProcessInput(GLFWwindow* window, int key, int action);
 	void performJumpAndSpin(float time, glm::mat4& modelMatrix);
+	void img_loader();
 	
 private:
 	// Private Attributes

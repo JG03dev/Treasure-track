@@ -47,6 +47,7 @@ public:
                 if (!wasWPressed && once) {
                     effectsPlayer1.Stop();
                     effectsPlayer1.Play(sound1);
+                    effectsPlayer3.Stop();
                     effectsPlayer3.Play(sound7);
                     wasWPressed = true;
                     healcooldown = 0;
@@ -67,6 +68,7 @@ public:
             effectsPlayer3.Stop();
             effectsPlayer3.Play(sound3);
             effectsPlayer2.Stop();
+            effectsPlayer1.Stop();
             effectsPlayer1.Play(sound5);
             wasWPressed = false;
         }
