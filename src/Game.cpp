@@ -84,6 +84,8 @@ void Game::InitializeGraphics()
     // Inicializar camara
     //m_Camera = new Camera(glm::vec3(0.0f, 0.0f, 3.0f));
     m_Camera->setTarget(m_Player);
+
+    sinTime = 0;
 }
 
 int Game::InitializeWindow()
@@ -133,6 +135,7 @@ void Game::Run()
         Actualizar(deltaTime);
 
         //Renderizar
+        sinTime += deltaTime;
         Render();
 
         glfwSwapBuffers(m_Window);
@@ -162,6 +165,8 @@ void Game::Actualizar(float deltaTime)
 
 void Game::Render()
 {
+    if (sinTime >= 2 * M_PI)
+        sinTime = 0;
     {
 		glm::mat4 model(1.0f);
 		m_Player->vehicle->getChassisWorldTransform().getOpenGLMatrix(glm::value_ptr(model));
@@ -176,6 +181,7 @@ void Game::Render()
         m_renderer->setModelMatrix("Wheel" + std::to_string(i), model);
     }
 
+    performJumpAndSpin("Test-Coin");
 
     // Update camera
     m_Camera->followPlayer();
@@ -183,5 +189,21 @@ void Game::Render()
     glm::mat4 projection = glm::perspective(glm::radians(m_Camera->FOV), (float)m_SCR_WIDTH / (float)m_SCR_HEIGHT, c_near, c_far);
 
     m_renderer->RenderEverything(*m_Camera, projection);
+}
+
+// Function to perform jump and spin animation
+void Game::performJumpAndSpin(std::string id) {
+
+    //glm::mat4 modelMatrix = m_renderer->getModel(id).second;
+    glm::mat4 modelMatrix = glm::mat4(1.0f);
+
+    // Calculate jump animation
+    float jump = sin(sinTime * 5.0f) * jumpHeight;
+    modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, jump, 0.0f));
+
+    // Calculate spin animation
+    float rotation = sinTime * spinSpeed;
+    modelMatrix = glm::rotate(modelMatrix, rotation, glm::vec3(0.0f, 1.0f, 0.0f));
+    m_renderer->setModelMatrix("Test-Coin", modelMatrix);
 }
 #pragma endregion

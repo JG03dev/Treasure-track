@@ -8,6 +8,11 @@
 #define VC_EXTRALEAN            // Excluir material rara vez utilizado de encabezados de Windows
 #endif
 
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
+
 /* ------------------------------------------------------------------------- */
 /*                                INCLUDES                                   */
 /* ------------------------------------------------------------------------- */

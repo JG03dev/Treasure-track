@@ -35,6 +35,13 @@
   ],
   "models": [
     {
+      "id": "Test-Coin",
+      "path": "../../../Assets/Arbol/Arbol.obj",
+      "name": "Arbol",
+      "intensity": 4.0,
+      "shine": 256
+    },
+    {
       "id": "Player",
       "path": "../../../Assets/PruebaSinRuedas/PruebaSinRuedas.obj",
       "name": "PruebaSinRuedas",

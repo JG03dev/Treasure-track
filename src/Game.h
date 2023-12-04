@@ -61,6 +61,7 @@ public:
 	Camera* GetCamera() { return m_Camera; }
 
 	void ProcessInput(GLFWwindow* window, int key, int action);
+	void performJumpAndSpin(float time, glm::mat4& modelMatrix);
 	
 private:
 	// Private Attributes
@@ -99,6 +100,15 @@ private:
 	std::vector<Object*> m_Objects;
 
 	// Private Methods
+
+	// Animacio moneda
+	void performJumpAndSpin(std::string id);
+	//Time
+	float sinTime;
+	// Constants for animation parameters
+	const float jumpHeight = 0.1f;
+	const float spinSpeed = 0.2f;
+
 
 	// Initializers
 	void InitializePhysics();
