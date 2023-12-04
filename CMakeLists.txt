@@ -16,7 +16,6 @@ find_package(glfw3 REQUIRED)
 find_package(SndFile REQUIRED)
 find_package(soil2 CONFIG REQUIRED)
 find_package(assimp REQUIRED)
-find_package(freetype REQUIRED)
 
 add_executable(VGI-ABP 
 # Ficheros principales
@@ -81,7 +80,7 @@ add_executable(VGI-ABP
         src/Music/SoundEffectsPlayer.h 
         src/Music/MySoundEffects.h 
         src/Music/MySoundEffects.cpp 
-        src/text_fonts_glyphs.h)
+        )
 
 # target_link_libraries(VGI-ABP PRIVATE glfw "${ASSIMP_INCLUDE_DIRS}/assimp" "${BULLET_LIBRARIES}" GLEW::glew OpenAL::OpenAL)
 target_link_libraries(VGI-ABP PRIVATE OpenAL::OpenAL)
@@ -92,4 +91,3 @@ target_link_libraries(VGI-ABP PRIVATE "${BULLET_LIBRARIES}")
 target_link_libraries(VGI-ABP PRIVATE SndFile::sndfile)
 target_link_libraries(VGI-ABP PRIVATE soil2)
 target_link_libraries(VGI-ABP PRIVATE ${ASSIMP_LIBRARIES})
-target_link_libraries(VGI-ABP PRIVATE Freetype::Freetype)
