@@ -42,6 +42,7 @@ public:
 		const char* shaderSkyvert, const char* shaderSkyfrag, const char* shaderSkygeom,
 		const char* shaderDirShavert, const char* shaderDirShafrag, const char* shaderDirShageom,
 		const char* shaderOmniShavert, const char* shaderOmniShafrag, const char* shaderOmniShageom,
+		const char* vert_shader_text, const char* frag_shader_text,
 		Skybox* s, GLsizei viewPortWidth, GLsizei viewPortHeight);
 
 	// Data modifiers 

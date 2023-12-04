@@ -14,6 +14,17 @@ void SoundDevice::Init()
 		_instance = new SoundDevice();
 }
 
+void SoundDevice::Release()
+{
+	if (_instance != nullptr)
+	{
+		delete _instance;
+		_instance = nullptr;
+	}
+	
+}
+
+
 /// <summary>
 /// Gets the listeners current locaiton.
 /// </summary>

@@ -25,6 +25,7 @@ public:
 		const float& atx, const float& aty, const float& atz,
 		const float& upx, const float& upy, const float& upz);
 	void SetGain(const float& val);
+	static void Release();
 
 private:
 	SoundDevice();

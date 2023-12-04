@@ -112,6 +112,8 @@ int main() {
     glfwSetFramebufferSizeCallback(g->GetWindow(), glfw_onFramebufferSize);
     SoundDevice::Init();
 
+
+
     // Hide the cursor and capture it
     glfwSetInputMode(g->GetWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
@@ -131,6 +133,8 @@ int main() {
 
     g->StartGame();
 
+    SoundDevice::ReleaseBuffers();
+    SoundDevice::Release();
     delete g;
 }
 
