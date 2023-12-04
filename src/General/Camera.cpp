@@ -98,7 +98,7 @@ void Camera::followPlayer()
 	
 	front = glm::vec3(forward.x(), forward.y(), forward.z());
 
-	position = glm::vec3(float(pos.getX())+1, float(pos.getY()+1.), float(pos.getZ()));
+	position = glm::vec3(float(pos.getX()), float(pos.getY()+1.), float(pos.getZ()));
 
 	// btVector3 pos = t.getOrigin() - forward * 0.3; // Primera Persona Interna
 	// position = glm::vec3(float(pos.getX()), float(pos.getY()+0.15), float(pos.getZ()));

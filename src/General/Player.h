@@ -35,6 +35,11 @@ public:
 	void InputMethod(int key, int keyPressed);
 	void AddWheelModel(std::string const& modelPath, std::string const& modelName, GLfloat sIntensity, GLfloat shine);
 
+	//Vehicle getters
+	glm::mat3x3 getCarBasis();
+	glm::vec3 getCarPos();
+	glm::vec3 getCarForward();
+
 	//Seters
 	void setLights(SpotLight* delaIzq, SpotLight* delaDer) { delaIzquierda = delaIzq; delaDerecha = delaDer; }
 

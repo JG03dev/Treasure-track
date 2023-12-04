@@ -19,19 +19,24 @@ Player::~Player() {
 
 void Player::updatePlayerData() //TODO: find more uses to this function
 {
-	glm::vec3 direction(vehicle->getForwardVector().x(), vehicle->getForwardVector().y(), vehicle->getForwardVector().z());
-	glm::vec3 position(vehicle->getChassisWorldTransform().getOrigin().x(),
-		vehicle->getChassisWorldTransform().getOrigin().y(),
-		vehicle->getChassisWorldTransform().getOrigin().z());
-	position.x += 0.2f;
+	glm::vec3 carPosition = getCarPos();
+	glm::vec3 direction = getCarForward();
+	glm::mat3x3 carBasis = getCarBasis();
+
+	// Set the position of the lights relative to the car's local coordinates
+	glm::vec3 positionLeft = carPosition + carBasis * glm::vec3(3.0f, 0.0f, 0.7f);
+	glm::vec3 positionRight = carPosition + carBasis * glm::vec3(3.0f, 0.0f, -0.7f);
+
 	if (delaIzquierda)
-	{//Actualizar parametros de la luz
-		delaIzquierda->SetFlash(position, direction);
+	{
+		// Update light parameters
+		delaIzquierda->SetFlash(positionLeft,direction);
 	}
-	position.x -= 0.4f;
+
 	if (delaDerecha)
-	{//Actualizar parametros de la luz
-		delaDerecha->SetFlash(position, direction);
+	{
+		// Update light parameters
+		delaDerecha->SetFlash(positionRight, direction);
 	}
 }
 
@@ -108,6 +113,28 @@ void Player::InputMethod(int key, int keyPressed) {
 void Player::AddWheelModel(std::string const& modelPath, std::string const& modelName, GLfloat sIntensity, GLfloat shine) {
 	modelWheel = new Model(sIntensity, shine);
 	modelWheel->LoadModel(modelPath, modelName);
+}
+
+glm::mat3x3 Player::getCarBasis()
+{
+	btTransform carTransform = vehicle->getChassisWorldTransform();
+	glm::vec3 carX(carTransform.getBasis().getColumn(0).x(), carTransform.getBasis().getColumn(0).y(), carTransform.getBasis().getColumn(0).z()); //first column is X
+	glm::vec3 carY(carTransform.getBasis().getColumn(1).x(), carTransform.getBasis().getColumn(1).y(), carTransform.getBasis().getColumn(1).z()); //second column is Y
+	glm::vec3 carZ(carTransform.getBasis().getColumn(2).x(), carTransform.getBasis().getColumn(2).y(), carTransform.getBasis().getColumn(2).z()); //last column is Z
+
+	return glm::mat3x3(carX, carY, carZ);
+}
+
+glm::vec3 Player::getCarPos()
+{
+	btTransform carTransform = vehicle->getChassisWorldTransform();
+
+	return glm::vec3(carTransform.getOrigin().x(), carTransform.getOrigin().y(), carTransform.getOrigin().z());;
+}
+
+glm::vec3 Player::getCarForward()
+{
+	return glm::vec3(vehicle->getForwardVector().x(), vehicle->getForwardVector().y(), vehicle->getForwardVector().z());
 }
 
 // Private Methods
