@@ -36,10 +36,13 @@
   "models": [
     {
       "id": "Test-Coin",
-      "path": "../../../Assets/Arbol/Arbol.obj",
-      "name": "Arbol",
+      "path": "../../../Assets/Moneda/Moneda.obj",
+      "name": "Moneda",
       "intensity": 4.0,
-      "shine": 256
+      "shine": 256,
+      "transform": {
+        "translate": [ 0.0, -3.0, 1.0 ]
+      }
     },
     {
       "id": "Player",
@@ -111,7 +114,7 @@
         "diffuse": 0.5,
         "position": [ 0.0, 0.0, 0.0 ],
         "direction": [ -10.0, -12.0, 18.5 ],
-        "CLE": [ 0.3, 0.2, 0.1 ],
+        "CLE": [ 1.0, 0.002, 0.001 ],
         "edge": 20.0,
         "initalState": true
       },
@@ -124,7 +127,7 @@
         "diffuse": 0.5,
         "position": [ 0.0, 0.0, 0.0 ],
         "direction": [ -10.0, -12.0, 18.5 ],
-        "CLE": [ 0.3, 0.2, 0.1 ],
+        "CLE": [ 1.0, 0.002, 0.001 ],
         "edge": 20.0,
         "initalState": true
       }

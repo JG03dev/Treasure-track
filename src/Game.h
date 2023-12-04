@@ -47,7 +47,7 @@ public:
 
 	// Constructors
 
-	Game() :m_Window(NULL), m_Camera(NULL), m_skybox(NULL), m_Light(NULL), m_dynamicsWorld(NULL), m_Player(NULL) { m_Camera = new Camera(glm::vec3(0.0f, 0.0f, 3.0f)); InitializeWindow(); };
+	Game() :m_Window(NULL), m_Camera(NULL), m_skybox(NULL), m_Light(NULL), m_dynamicsWorld(NULL), m_Player(NULL), m_sinTime(0) { m_Camera = new Camera(glm::vec3(0.0f, 0.0f, 3.0f)); InitializeWindow(); };
 
 	// Destructors
 
@@ -61,7 +61,6 @@ public:
 	Camera* GetCamera() { return m_Camera; }
 
 	void ProcessInput(GLFWwindow* window, int key, int action);
-	void performJumpAndSpin(float time, glm::mat4& modelMatrix);
 	void img_loader();
 	
 private:
@@ -103,12 +102,15 @@ private:
 	// Private Methods
 
 	// Animacio moneda
-	void performJumpAndSpin(std::string id);
+	void performJumpAndSpin(std::string id, float time1, float time2);
 	//Time
-	float sinTime;
+	float m_sinTime;
 	// Constants for animation parameters
-	const float jumpHeight = 0.1f;
-	const float spinSpeed = 0.2f;
+	const float jumpHeight = 0.3f;
+	const float jumpDuration = 2.0f;
+
+	const float spinSpeed = 2.0f;
+
 
 
 	// Initializers

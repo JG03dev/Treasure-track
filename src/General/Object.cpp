@@ -10,16 +10,20 @@ Object::Object(std::string const& modelPath, std::string const& modelName, btDis
 	hitbox.LoadModel(std::string("../../../Assets/") + modelName + std::string("/") + modelName + std::string("Hitbox.obj"), modelName + std::string("Hitbox"));
 	this->CreateRigidBody(hitbox);
 
+
 	dynamicsWorld->addRigidBody(this->rb);
 }
 
-Object::Object(Model* m, btDiscreteDynamicsWorld* dynamicsWorld)
+Object::Object(Model* m, btDiscreteDynamicsWorld* dynamicsWorld, glm::mat4 initOpenGLMatrix)
 {
 	model = m; // Model points to the same model shared
 
 	Model hitbox;
 	hitbox.LoadModel(std::string("../../../Assets/") + m->GetName() + std::string("/") + m->GetName() + std::string("Hitbox.obj"), m->GetName() + std::string("Hitbox"));
 	this->CreateRigidBody(hitbox);
+
+	setOpenGLMatrixToPhysics(initOpenGLMatrix);
+
 
 	dynamicsWorld->addRigidBody(this->rb);
 }
@@ -28,6 +32,34 @@ Object::Object(Model* m, btDiscreteDynamicsWorld* dynamicsWorld)
 
 void Object::Draw(Shader& shader) {
 	//model->Draw(shader);
+}
+
+void Object::setOpenGLMatrixToPhysics(const glm::mat4 openGLMatrix)
+{
+	// Create a transformation matrix from the OpenGL matrix
+	btTransform transform;
+
+	// Extract the translation, rotation, and scaling components from the OpenGL matrix
+	glm::vec3 translation, scale;
+	glm::quat rotation;
+	glm::vec4 perspective;
+	glm::vec3 skew;
+	glm::vec4 perspe;
+
+	// Decompose the OpenGL matrix into translation, rotation, and scale
+	glm::decompose(openGLMatrix, scale, rotation, translation, skew, perspe);
+
+	// Set the translation part of the transformation
+	transform.setOrigin(btVector3(translation.x, translation.y, translation.z));
+
+	// Set the rotation part of the transformation
+	transform.setRotation(btQuaternion(rotation.x, rotation.y, rotation.z, rotation.w));
+
+	// Apply the transformation to the rigid body
+	rb->setWorldTransform(transform);
+
+	// Activate the rigid body to apply the changes
+	rb->activate();
 }
 
 // Private Methods

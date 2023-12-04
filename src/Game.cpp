@@ -72,10 +72,10 @@ void Game::InitializeGraphics()
         }
         else if(Obj.first.substr(0, 5) != "Wheel")
         {
-            m_Objects.push_back(new Object(Obj.second.first, m_dynamicsWorld));
+            m_Objects.push_back(new Object(Obj.second.first, m_dynamicsWorld, Obj.second.second));
             m_Objects.back()->rb->getWorldTransform().getOpenGLMatrix(glm::value_ptr(model));
             m_renderer->setModelMatrix(Obj.first, model);
-        }        
+        }
     }
     if (!m_Player)
     {
@@ -84,8 +84,6 @@ void Game::InitializeGraphics()
     // Inicializar camara
     //m_Camera = new Camera(glm::vec3(0.0f, 0.0f, 3.0f));
     m_Camera->setTarget(m_Player);
-
-    sinTime = 0;
 }
 
 int Game::InitializeWindow()
@@ -151,7 +149,6 @@ void Game::Run()
         Actualizar(deltaTime);
 
         //Renderizar
-        sinTime += deltaTime;
         Render();
 
         glfwSwapBuffers(m_Window);
@@ -176,13 +173,22 @@ void Game::ProcessInput(GLFWwindow* window, int key, int action)
 
 void Game::Actualizar(float deltaTime)
 {
+    // Physics
     m_dynamicsWorld->stepSimulation(deltaTime, 2);
+
+    // Animations
+    if (m_sinTime >= 2.0f * glm::pi<float>())
+        m_sinTime = 0.0f;
+
+    // Perform Animations
+    performJumpAndSpin("Test-Coin", m_sinTime, m_sinTime+deltaTime);
+    
+    // Update sinTime
+    m_sinTime += deltaTime;
 }
 
 void Game::Render()
 {
-    if (sinTime >= 2 * M_PI)
-        sinTime = 0;
     {
 		glm::mat4 model(1.0f);
 		m_Player->vehicle->getChassisWorldTransform().getOpenGLMatrix(glm::value_ptr(model));
@@ -197,8 +203,6 @@ void Game::Render()
         m_renderer->setModelMatrix("Wheel" + std::to_string(i), model);
     }
 
-    performJumpAndSpin("Test-Coin");
-
     // Update camera
     m_Camera->followPlayer();
 
@@ -208,17 +212,16 @@ void Game::Render()
 }
 
 // Function to perform jump and spin animation
-void Game::performJumpAndSpin(std::string id) {
+void Game::performJumpAndSpin(std::string id, float time1, float time2) {
 
-    //glm::mat4 modelMatrix = m_renderer->getModel(id).second;
-    glm::mat4 modelMatrix = glm::mat4(1.0f);
-
+    glm::mat4 modelMatrix = m_renderer->getModel(id).second;
     // Calculate jump animation
-    float jump = sin(sinTime * 5.0f) * jumpHeight;
+    float jump = jumpHeight * (sin(jumpDuration * time2) - sin(jumpDuration * time1));
+    std::cout << jump << std::endl;
     modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, jump, 0.0f));
 
     // Calculate spin animation
-    float rotation = sinTime * spinSpeed;
+    float rotation = (time2 - time1)*spinSpeed;
     modelMatrix = glm::rotate(modelMatrix, rotation, glm::vec3(0.0f, 1.0f, 0.0f));
     m_renderer->setModelMatrix("Test-Coin", modelMatrix);
 }

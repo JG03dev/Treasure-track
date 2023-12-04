@@ -22,12 +22,13 @@ public:
 
 	// Constructor
 	Object(std::string const& modelPath, std::string const& modelName, btDiscreteDynamicsWorld* dynamicsWorld, GLfloat sIntensity, GLfloat shine);
-	Object(Model* m, btDiscreteDynamicsWorld* dynamicsWorld);
+	Object(Model* m, btDiscreteDynamicsWorld* dynamicsWorld, glm::mat4 initOpenGLMatrix);
 
 
 	// Public Methods
 	void Draw(Shader& shader);
 
+	void setOpenGLMatrixToPhysics(const glm::mat4 openGLMatrix);
 private:
 
 	// Private Methods
