@@ -61,6 +61,7 @@ public:
 	Camera* GetCamera() { return m_Camera; }
 
 	void ProcessInput(GLFWwindow* window, int key, int action);
+	void img_loader();
 	
 private:
 	// Private Attributes

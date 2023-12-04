@@ -1,43 +1,9 @@
 #include "Game.h"
-#include "text_fonts_glyphs.h"
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
-
-#include <ft2build.h> // https://freetype.org/freetype2/docs/tutorial/step1.html#section-1
-#include FT_FREETYPE_H
-
-#include <glm/glm.hpp> // Include all GLM core.	
-#include <glm/gtc/matrix_transform.hpp> // Specific extensions.
-#include <glm/gtc/type_ptr.hpp>
-
-#include <vector>
-#include <iostream>
-#include <fstream> // Used in "shader_configure.h" to read the shader text files.
-#include <map>
-#include <string>
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
 
 #pragma region PUBLIC_METHODS
-
-
-void framebuffer_size_callback(GLFWwindow* window, int width, int height);
-void processInput(GLFWwindow* window);
-void RenderText(Shader& shader, std::string text, float x, float y, float scale, glm::vec3 color);
-
-// settings
-const unsigned int SCR_WIDTH = 1280;
-const unsigned int SCR_HEIGHT = 720;
-
-/// Holds all state information relevant to a character as loaded using FreeType
-struct Character {
-    unsigned int TextureID; // ID handle of the glyph texture
-    glm::ivec2   Size;      // Size of glyph
-    glm::ivec2   Bearing;   // Offset from baseline to left/top of glyph
-    unsigned int Advance;   // Horizontal offset to advance to next glyph
-};
-
-std::map<GLchar, Character> Characters;
-unsigned int VAO, VBO;
-
 
 void Game::StartGame() {
 
@@ -143,12 +109,28 @@ int Game::InitializeWindow()
 
 #pragma region PRIVATE_METHODS_FUNCTIONALITY
 
+void Game::img_loader() {
+    int width, height;
+    int channels;
+    unsigned char* pixels = stbi_load("../../../src/s2.jpg", &width, &height, &channels, 4);
+
+    GLFWimage images[1];
+    images[0].width = width;
+    images[0].height = height;
+    images[0].pixels = pixels;
+
+    glfwSetWindowIcon(m_Window, 1, images);
+}
+
+
 void Game::Run()
 {
     // timing
     float deltaTime = 0.0f;
     float lastFrame = 0.0f;
     MySoundEffects sound;
+
+    img_loader();
 
     while (!glfwWindowShouldClose(m_Window))
     {
