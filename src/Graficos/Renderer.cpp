@@ -374,30 +374,40 @@ glm::mat4 parseTransform(const json& transformData) {
 	if (transformData.empty())
 		return glm::mat4(1.0f);
 
-	glm::vec3 translation = {
+	glm::mat4 transform = glm::mat4(1.0f);  // Identity matrix
+
+	if (transformData.count("translate"))
+	{
+		glm::vec3 translation = {
 		transformData["translate"][0],
 		transformData["translate"][1],
 		transformData["translate"][2]
-	};
+		};
 
-	glm::vec3 rotation = {
-		transformData["rotation"][0],
-		transformData["rotation"][1],
-		transformData["rotation"][2]
-	};
+		transform = glm::translate(transform, translation);
+	}
+	
+	if (transformData.count("rotate"))
+	{
+		glm::vec3 rotation = {
+			transformData["rotate"][0],
+			transformData["rotate"][1],
+			transformData["rotate"][2]
+		};
+		transform = glm::rotate(transform, glm::radians(rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
+		transform = glm::rotate(transform, glm::radians(rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
+		transform = glm::rotate(transform, glm::radians(rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
+	}
 
-	glm::vec3 scale = {
-		transformData["scale"][0],
-		transformData["scale"][1],
-		transformData["scale"][2]
-	};
 
-	glm::mat4 transform = glm::mat4(1.0f);  // Identity matrix
-	transform = glm::translate(transform, translation);
-	transform = glm::rotate(transform, glm::radians(rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
-	transform = glm::rotate(transform, glm::radians(rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
-	transform = glm::rotate(transform, glm::radians(rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
-	transform = glm::scale(transform, scale);
-
+	if (transformData.count("scale"))
+	{
+		glm::vec3 scale = {
+			transformData["scale"][0],
+			transformData["scale"][1],
+			transformData["scale"][2]
+		};
+		transform = glm::scale(transform, scale);
+	}
 	return transform;
 }
