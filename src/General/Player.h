@@ -46,7 +46,7 @@ private:
 		// Construction Params
 		btScalar m_mass = 1200;
 		btScalar m_suspensionRestLength = 0.5;
-		btScalar m_wheelWidth = 0.1;
+		btScalar m_wheelWidth = 0.15;
 		btScalar m_wheelRadius = 0.37;
 		btScalar m_connectionHeight = 1.2;	//The height where the wheels are connected to the chassis
 
