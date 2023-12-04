@@ -57,10 +57,10 @@ private:
 	} vehicleParams;
 
 	struct WheelParams {
-		btScalar m_suspensionStiffness = 5.88; // 5.88;
+		btScalar m_suspensionStiffness = 2; // 5.88;
 		btScalar m_suspensionCompression = 0.83; //0.83;
 		btScalar m_suspensionDamping = 0.88; //0.88;
-		btScalar m_maxSuspensionTravelCm = 50.;
+		btScalar m_maxSuspensionTravelCm = 5.;
 		btScalar m_frictionSlip = 10.5;//10.5;	//Larger friction slips will result in better handling
 		btScalar m_maxSuspensionForce = 6000;//6000.;
 		//btScalar m_rollInfluence = 1;
