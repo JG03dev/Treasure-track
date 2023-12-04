@@ -132,7 +132,6 @@ int main(int argc, char **argv) {
 
     g->StartGame();
 
-    SoundDevice::ReleaseBuffers();
     SoundDevice::Release();
     delete g;
 

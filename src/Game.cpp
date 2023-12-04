@@ -217,6 +217,6 @@ void Game::Render()
 
     glm::mat4 projection = glm::perspective(glm::radians(m_Camera->FOV), (float)m_SCR_WIDTH / (float)m_SCR_HEIGHT, c_near, c_far);
 
-    m_renderer->RenderEverything(m_Camera->getViewMatrix(), projection, *m_Camera);
+    m_renderer->RenderEverything(*m_Camera, projection);
 }
 #pragma endregion
