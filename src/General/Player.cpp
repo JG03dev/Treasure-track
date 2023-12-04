@@ -189,7 +189,7 @@ void Player::CreateVehicle(btDiscreteDynamicsWorld* dynamicsWorld, Model& hitbox
 	btScalar connectionHeight(this->vehicleParams.m_connectionHeight);
 
 	// All the wheel configuration assumes the vehicle is centered at the origin and a right handed coordinate system is used
-	btVector3 wheelConnectionPoint(halfExtents.x() - wheelRadius*2, 0.5, halfExtents.z() - wheelWidth*2);
+	btVector3 wheelConnectionPoint(halfExtents.x() - wheelRadius*2, 0.5, halfExtents.z() - wheelWidth);
 
 	// Adds the front wheels
 	vehicle->addWheel(wheelConnectionPoint * btVector3(1, 1, -1), wheelDirectionCS0, wheelAxleCS, suspensionRestLength, wheelRadius, tuning, true);

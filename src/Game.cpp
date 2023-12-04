@@ -1,9 +1,8 @@
 #include "Game.h"
-#include "imgui.h"
-#include "imgui_impl_glfw.h"
-#include "imgui_impl_opengl3.h"
 
 #pragma region PUBLIC_METHODS
+
+
 
 void Game::StartGame() {
 
