@@ -89,7 +89,8 @@ void glfw_onFramebufferSize(GLFWwindow* window, int width, int height)
 }
 #pragma endregion
 
-int main() {
+int main(int argc, char **argv) {
+    std::cout << argv[0] << std::endl;
     // Intialize GLFW 
     // GLFW is configured.  Must be called before calling any GLFW functions
     if (!glfwInit()) {
@@ -117,8 +118,6 @@ int main() {
     // Hide the cursor and capture it
     glfwSetInputMode(g->GetWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-
-
     GLenum err = glewInit();
     if (err != GLEW_OK)
     {
@@ -136,5 +135,7 @@ int main() {
     SoundDevice::ReleaseBuffers();
     SoundDevice::Release();
     delete g;
+
+    return 0;
 }
 

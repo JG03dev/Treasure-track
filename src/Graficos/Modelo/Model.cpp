@@ -23,20 +23,26 @@ void Model::RenderModel(Shader& s)
 
 void Model::LoadModel(const std::string & fileName, std::string name)
 {
+	modelPath = fileName;
+	m_name = name;
+	this->Load();
+}
+
+void Model::Load()
+{
 	Assimp::Importer importer;
-	const aiScene *scene = importer.ReadFile(fileName, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenSmoothNormals | aiProcess_JoinIdenticalVertices);
+	const aiScene* scene = importer.ReadFile(modelPath, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenSmoothNormals | aiProcess_JoinIdenticalVertices);
 
 	if (!scene)
 	{
-		printf("Model (%s) failed to load: %s", fileName, importer.GetErrorString());
+		printf("Model (%s) failed to load: %s", modelPath, importer.GetErrorString());
 		return;
 	}
-
-	m_name = name;
 
 	LoadNode(scene->mRootNode, scene);
 
 	LoadMaterials(scene);
+	isLoaded = true;
 }
 
 void Model::LoadNode(aiNode * node, const aiScene * scene)
@@ -67,7 +73,10 @@ void Model::LoadMesh(aiMesh * mesh, const aiScene * scene)
 		else {
 			vertices.insert(vertices.end(), { 0.0f, 0.0f });
 		}
-		vertices.insert(vertices.end(), { -mesh->mNormals[i].x, -mesh->mNormals[i].y, -mesh->mNormals[i].z });
+		if (mesh->mNormals != NULL)
+			vertices.insert(vertices.end(), { -mesh->mNormals[i].x, -mesh->mNormals[i].y, -mesh->mNormals[i].z });
+		else
+			vertices.insert(vertices.end(), { 0, 0, 0 });
 	}
 
 	for (size_t i = 0; i < mesh->mNumFaces; i++)

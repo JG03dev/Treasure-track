@@ -7,7 +7,6 @@ SpotLight::SpotLight() : PointLight()
 	direction = glm::vec3(0.0f, -1.0f, 0.0f);
 	edge = 0.0f;
 	procEdge = cosf(glm::radians(edge));
-	isOn = true;
 }
 
 SpotLight::SpotLight(GLuint shadowWidth, GLuint shadowHeight,
@@ -17,7 +16,7 @@ SpotLight::SpotLight(GLuint shadowWidth, GLuint shadowHeight,
 	GLfloat xPos, GLfloat yPos, GLfloat zPos, 
 	GLfloat xDir, GLfloat yDir, GLfloat zDir, 
 	GLfloat con, GLfloat lin, GLfloat exp, 
-	GLfloat edg) : PointLight(shadowWidth, shadowHeight, lnear, lfar, red, green, blue, aIntensity, dIntensity, xPos, yPos, zPos, con, lin, exp)
+	GLfloat edg, bool isOn) : PointLight(shadowWidth, shadowHeight, lnear, lfar, red, green, blue, aIntensity, dIntensity, xPos, yPos, zPos, con, lin, exp, isOn)
 {
 	direction = glm::normalize(glm::vec3(xDir, yDir, zDir));
 
@@ -27,14 +26,16 @@ SpotLight::SpotLight(GLuint shadowWidth, GLuint shadowHeight,
 
 void SpotLight::UseLight(Shader& s, int nLight)
 {
+	if (!active)
+		return;
 
 	char locBuff[100] = { '\0' };
 
 	//PointLight attributes
-	snprintf(locBuff, sizeof(locBuff), "spotLights[%d].base.colour", nLight);
+	snprintf(locBuff, sizeof(locBuff), "spotLights[%d].base.base.colour", nLight);
 	s.setUniform(locBuff, colour.x, colour.y, colour.z);	
 
-	if (isOn)
+	if (active)
 	{
 		snprintf(locBuff, sizeof(locBuff), "spotLights[%d].base.base.ambientIntensity", nLight);
 		s.setUniform(locBuff, ambientIntensity);

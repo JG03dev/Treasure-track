@@ -98,7 +98,7 @@ void Camera::followPlayer()
 	
 	front = glm::vec3(forward.x(), forward.y(), forward.z());
 
-	position = glm::vec3(float(pos.getX()), float(pos.getY()+0.5), float(pos.getZ()));
+	position = glm::vec3(float(pos.getX()), float(pos.getY()+1.), float(pos.getZ()));
 
 	// btVector3 pos = t.getOrigin() - forward * 0.3; // Primera Persona Interna
 	// position = glm::vec3(float(pos.getX()), float(pos.getY()+0.15), float(pos.getZ()));
@@ -106,11 +106,11 @@ void Camera::followPlayer()
 
 // Update front vector of the camera
 void Camera::update() {
-	glm::vec3 tmpFront;
+	/*glm::vec3 tmpFront;
 	tmpFront.x = cos(glm::radians(pitch)) * cos(glm::radians(yaw));
 	tmpFront.y = sin(glm::radians(pitch));
 	tmpFront.z = cos(glm::radians(pitch)) * sin(glm::radians(yaw));
-	front = glm::normalize(tmpFront);
+	front = glm::normalize(tmpFront);*/
 	right = glm::normalize(glm::cross(front, worldUp));
 	up = glm::normalize(glm::cross(right, front));
 }

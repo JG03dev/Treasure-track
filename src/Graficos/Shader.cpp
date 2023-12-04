@@ -33,7 +33,7 @@ Shader :: ~Shader()
 bool Shader::loadShaders(const char* vsFilename, const char* fsFilename, const char* gsFilename)
 {
 	GLuint vs, fs, gs;
-	
+
 	vs = glCreateShader(GL_VERTEX_SHADER);
 	std::string vsString = fileToString(vsFilename);
 	const GLchar* vsCode = vsString.c_str();
@@ -48,7 +48,7 @@ bool Shader::loadShaders(const char* vsFilename, const char* fsFilename, const c
 	glCompileShader(fs);
 	checkCompileErrors(fs, FRAGMENT);
 
-	if (gsFilename) {
+	if (gsFilename && std::strlen(gsFilename)) {
 		gs = glCreateShader(GL_GEOMETRY_SHADER);
 		std::string gsString = fileToString(gsFilename);
 		const GLchar* gsCode = gsString.c_str();
@@ -65,7 +65,7 @@ bool Shader::loadShaders(const char* vsFilename, const char* fsFilename, const c
 
 	glAttachShader(mHandle, vs);
 	glAttachShader(mHandle, fs);
-	if (gsFilename) {
+	if (gsFilename && std::strlen(gsFilename)) {
 		glAttachShader(mHandle, gs);
 	}
 	glLinkProgram(mHandle);
@@ -73,7 +73,7 @@ bool Shader::loadShaders(const char* vsFilename, const char* fsFilename, const c
 
 	glDeleteShader(vs);
 	glDeleteShader(fs);
-	if (gsFilename) {
+	if (gsFilename && std::strlen(gsFilename)) {
 		glDeleteShader(gs);
 	}
 

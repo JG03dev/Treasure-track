@@ -1,0 +1,149 @@
+{
+  "shaders": [
+    {
+      "id": "objects",
+      "paths": {
+        "vert": "../../../Shaders/shader.vert",
+        "frag": "../../../Shaders/shader.frag",
+        "geom": ""
+      }
+    },
+    {
+      "id": "skybox",
+      "paths": {
+        "vert": "../../../Shaders/skybox.vert",
+        "frag": "../../../Shaders/skybox.frag",
+        "geom": ""
+      }
+    },
+    {
+      "id": "directionalShadow",
+      "paths": {
+        "vert": "../../../Shaders/directional_shadow_map.vert",
+        "frag": "../../../Shaders/directional_shadow_map.frag",
+        "geom": ""
+      }
+    },
+    {
+      "id": "omniDirectionalShadow",
+      "paths": {
+        "vert": "../../../Shaders/omni_shadow_map.vert",
+        "frag": "../../../Shaders/omni_shadow_map.frag",
+        "geom": "../../../Shaders/omni_shadow_map.geom"
+      }
+    }
+  ],
+  "models": [
+    {
+      "id": "Player",
+      "path": "../../../Assets/PruebaSinRuedas/PruebaSinRuedas.obj",
+      "name": "PruebaSinRuedas",
+      "intensity": 4.0,
+      "shine": 256
+    },
+    {
+      "id": "Map",
+      "path": "../../../Assets/DefinitiveCity/DefinitiveCity.obj",
+      "name": "DefinitiveCity",
+      "intensity": 0.3,
+      "shine": 4
+    },
+    {
+      "id": "Wheel",
+      "path": "../../../Assets/PruebaUnaRueda/PruebaUnaRueda.obj",
+      "name": "PruebaUnaRueda",
+      "intensity": 4.0,
+      "shine": 256,
+      "instances": [
+        {
+          "suffix": "0",
+          "transform": {}
+        },
+        {
+          "suffix": "1",
+          "transform": {}
+        },
+        {
+          "suffix": "2",
+          "transform": {}
+        },
+        {
+          "suffix": "3",
+          "transform": {}
+        }
+      ]
+    }
+
+  ],
+  "lights": {
+    "directionalLights": [
+      {
+        "shadow": [ 2048, 2048 ],
+        "color": [ 1.0, 1.0, 1.0 ],
+        "intensity": 0.8,
+        "diffuse": 0.5,
+        "direction": [ -10.0, -12.0, 18.5 ]
+      },
+      {
+        "shadow": [ 2048, 2048 ],
+        "color": [ 1.0, 0.53, 0.3 ],
+        "intensity": 0.1,
+        "diffuse": 0.9,
+        "direction": [ -10.0, -12.0, 18.5 ]
+      }
+    ],
+    "pointLights": [
+     
+    ],
+    "spotLights": [
+      {
+        "shadow": [ 2048, 2048 ],
+        "near": 0.01,
+        "far": 100.0,
+        "color": [ 1.0, 1.0, 1.0 ],
+        "intensity": 0.8,
+        "diffuse": 0.5,
+        "position": [ 0.0, 0.0, 0.0 ],
+        "direction": [ -10.0, -12.0, 18.5 ],
+        "CLE": [ 0.3, 0.2, 0.1 ],
+        "edge": 20.0,
+        "initalState": true
+      },
+      {
+        "shadow": [ 2048, 2048 ],
+        "near": 0.01,
+        "far": 100.0,
+        "color": [ 1.0, 1.0, 1.0 ],
+        "intensity": 0.8,
+        "diffuse": 0.5,
+        "position": [ 0.0, 0.0, 0.0 ],
+        "direction": [ -10.0, -12.0, 18.5 ],
+        "CLE": [ 0.3, 0.2, 0.1 ],
+        "edge": 20.0,
+        "initalState": true
+      }
+    ]
+  },
+  "skyboxes": [
+    {
+      "faces": [
+        "../../../Assets/skybox/right.jpg",
+        "../../../Assets/skybox/left.jpg",
+        "../../../Assets/skybox/top.jpg",
+        "../../../Assets/skybox/bottom.jpg",
+        "../../../Assets/skybox/front.jpg",
+        "../../../Assets/skybox/back.jpg"
+      ]
+    },
+    {
+      "faces": [
+        "../../../Assets/skyboxTarde/left.tga",
+        "../../../Assets/skyboxTarde/right.tga",
+        "../../../Assets/skyboxTarde/top.tga",
+        "../../../Assets/skyboxTarde/bottom.tga",
+        "../../../Assets/skyboxTarde/front.tga",
+        "../../../Assets/skyboxTarde/back.tga"
+      ]
+    }
+  ]
+}

@@ -1,22 +1,39 @@
 #include "Player.h"
 
 // Constructor
+Player::Player(Model* m, btDiscreteDynamicsWorld* dynamicsWorld) : modelWheel(NULL), delaIzquierda(NULL), delaDerecha(NULL)
+{
+	modelChasis = m; // Model points to the same model shared
 
-Player::Player(std::string const& modelPath, std::string const& modelName, btDiscreteDynamicsWorld* dynamicsWorld, GLfloat sIntensity, GLfloat shine) {
-	model = new Model(sIntensity, shine);
-	model->LoadModel(modelPath, modelName);
-
-	this->CreateVehicle(modelPath, dynamicsWorld); // Doesn't use a compound shape as a test to see how it works
-
+	Model hitbox;
+	hitbox.LoadModel(std::string("../../../Assets/") + m->GetName() + std::string("/") + m->GetName() + std::string("Hitbox.obj"), m->GetName() + std::string("Hitbox"));
+	this->CreateVehicle(dynamicsWorld, hitbox);
 	dynamicsWorld->addVehicle(this->vehicle);
 }
 
 // Destructor
 Player::~Player() {
-	delete model;
 }
 
 // Public Methods
+
+void Player::updatePlayerData() //TODO: find more uses to this function
+{
+	glm::vec3 direction(vehicle->getForwardVector().x(), vehicle->getForwardVector().y(), vehicle->getForwardVector().z());
+	glm::vec3 position(vehicle->getChassisWorldTransform().getOrigin().x(),
+		vehicle->getChassisWorldTransform().getOrigin().y(),
+		vehicle->getChassisWorldTransform().getOrigin().z());
+	position.x += 0.2f;
+	if (delaIzquierda)
+	{//Actualizar parametros de la luz
+		delaIzquierda->SetFlash(position, direction);
+	}
+	position.x -= 0.4f;
+	if (delaDerecha)
+	{//Actualizar parametros de la luz
+		delaDerecha->SetFlash(position, direction);
+	}
+}
 
 void Player::Draw(Shader& shader) {
 	//model->Draw(shader);
@@ -88,49 +105,50 @@ void Player::InputMethod(int key, int keyPressed) {
 	}
 }
 
+void Player::AddWheelModel(std::string const& modelPath, std::string const& modelName, GLfloat sIntensity, GLfloat shine) {
+	modelWheel = new Model(sIntensity, shine);
+	modelWheel->LoadModel(modelPath, modelName);
+}
+
 // Private Methods
 
-void Player::CreateVehicle(std::string const& modelPath, btDiscreteDynamicsWorld* dynamicsWorld) {
+void Player::CreateVehicle(btDiscreteDynamicsWorld* dynamicsWorld, Model& hitbox) {
 	// --------- Mesh Load to Get the chassis half extents for the box shape
-
-	btCompoundShape tempShape;
+	btCompoundShape* temp = new btCompoundShape();
 
 	btTransform chassisTransform;
 	chassisTransform.setIdentity();
-	chassisTransform.setOrigin(btVector3(0, -2.8, 0));
+	chassisTransform.setOrigin(btVector3(0, 0.3, 0));
 
-	for (int i = 0, numModels = model->meshList.size(); i < numModels; i++) {
-		btConvexHullShape convexShape;
+	btConvexHullShape convexShape;
 
-		//TODO: Adaptar a nuevo mesh [DONE?]
-		Mesh* mesh = this->model->meshList[i];
-		const std::vector<GLfloat>* vertices = mesh->GetVertices();
-		for (int j = 0; j < vertices->size(); j += 8) {
-			btVector3 v1((*vertices)[j], (*vertices)[j + 1], (*vertices)[j + 2]);
+	//TODO: Adaptar a nuevo mesh [DONE?]
+	Mesh* mesh = hitbox.meshList[0];
+	const std::vector<GLfloat>* vertices = mesh->GetVertices();
+	for (int j = 0; j < vertices->size(); j += 8) {
+		btVector3 v1((*vertices)[j], (*vertices)[j + 1], (*vertices)[j + 2]);
 
-			convexShape.addPoint(v1);
-		}
-
-		tempShape.addChildShape(chassisTransform, &convexShape);
+		convexShape.addPoint(v1);
 	}
 
 	btVector3 min, max;
 
-	tempShape.getAabb(btTransform::getIdentity(), min, max);
+	convexShape.getAabb(chassisTransform, min, max);
 	btVector3 halfExtents = (max - min) / 2;
-
+	
 	// --------- Chassis RigidBody
 
 	btCollisionShape* chassisShape = new btBoxShape(halfExtents);
-	chassisShape->setMargin(0.01f);
+	temp->addChildShape(chassisTransform, chassisShape);
 
 	btScalar mass(this->vehicleParams.m_mass);
 
 	btVector3 localInertia(0, 0, 0);
 	chassisShape->calculateLocalInertia(mass, localInertia);
+	chassisTransform.setOrigin(btVector3(0, 0, 0));
 
 	btDefaultMotionState* chassisMotionState = new btDefaultMotionState(chassisTransform);
-	btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, chassisMotionState, chassisShape, localInertia);
+	btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, chassisMotionState, temp, localInertia);
 
 	btRigidBody* chassisRigidBody = new btRigidBody(rbInfo);
 	chassisRigidBody->setActivationState(DISABLE_DEACTIVATION);
@@ -171,7 +189,7 @@ void Player::CreateVehicle(std::string const& modelPath, btDiscreteDynamicsWorld
 	btScalar connectionHeight(this->vehicleParams.m_connectionHeight);
 
 	// All the wheel configuration assumes the vehicle is centered at the origin and a right handed coordinate system is used
-	btVector3 wheelConnectionPoint(halfExtents.x() - wheelRadius, connectionHeight, halfExtents.z() - wheelWidth);
+	btVector3 wheelConnectionPoint(halfExtents.x() - wheelRadius*2, 0.5, halfExtents.z() - wheelWidth*2);
 
 	// Adds the front wheels
 	vehicle->addWheel(wheelConnectionPoint * btVector3(1, 1, -1), wheelDirectionCS0, wheelAxleCS, suspensionRestLength, wheelRadius, tuning, true);
@@ -185,10 +203,10 @@ void Player::CreateVehicle(std::string const& modelPath, btDiscreteDynamicsWorld
 
 	// Configures each wheel of our vehicle, setting its friction, damping compression, etc.
 	// For more details on what each parameter does, refer to the docs
-	for (int i = 0; i < vehicle->getNumWheels(); i++)
-	{
-		btWheelInfo& wheel = vehicle->getWheelInfo(i);
-		wheel.m_wheelsDampingCompression = btScalar(0.3) * 2 * btSqrt(wheel.m_suspensionStiffness);//btScalar(0.8);
-		wheel.m_wheelsDampingRelaxation = btScalar(0.5) * 2 * btSqrt(wheel.m_suspensionStiffness);//1;
-	}
+	//for (int i = 0; i < vehicle->getNumWheels(); i++)
+	//{
+	//	btWheelInfo& wheel = vehicle->getWheelInfo(i);
+	//	wheel.m_wheelsDampingCompression = btScalar(0.3) * 2 * btSqrt(wheel.m_suspensionStiffness);//btScalar(0.8);
+	//	wheel.m_wheelsDampingRelaxation = btScalar(0.5) * 2 * btSqrt(wheel.m_suspensionStiffness);//1;
+	//}
 }
