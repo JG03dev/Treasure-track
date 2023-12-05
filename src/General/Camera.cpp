@@ -93,12 +93,13 @@ void Camera::followPlayer()
 
 	btVector3 forward = this->player->vehicle->getForwardVector();
 	//std::cout << "Car Forward: " << forward.x() << ", " << forward.y() << ", " << forward.z() << std::endl;
-	btVector3 pos = t.getOrigin() - forward * 4; // Tercera Persona
+	btVector3 pos = t.getOrigin();// -forward * 4; // Tercera Persona
 	//btVector3 pos = t.getOrigin(); // Primera Persona Externa
 	
-	front = glm::vec3(forward.x(), forward.y(), forward.z());
-
-	position = glm::vec3(float(pos.getX())+1, float(pos.getY()+1.), float(pos.getZ()));
+	front = glm::vec3(0, -1, 0);
+	up = glm::vec3(forward.getX(), forward.getY(), forward.getZ());
+	right = glm::normalize(glm::cross(front, up));
+	position = glm::vec3(float(pos.getX()), float(pos.getY() + 75), float(pos.getZ()));
 
 	// btVector3 pos = t.getOrigin() - forward * 0.3; // Primera Persona Interna
 	// position = glm::vec3(float(pos.getX()), float(pos.getY()+0.15), float(pos.getZ()));
