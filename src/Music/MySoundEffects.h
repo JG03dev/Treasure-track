@@ -25,6 +25,14 @@ public:
         sound5 = SE_LOAD("../../../music/sounds/motor_encendido.wav");
         sound6 = SE_LOAD("../../../music/sounds/nitro.wav");
         sound7 = SE_LOAD("../../../music/sounds/pre-aceleracion.wav");
+        sound8 = SE_LOAD("../../../music/sounds/MairoCoinSound.wav");
+    }
+
+    void PlayCoinSound() {
+        if (effectsPlayer5.isPlaying())
+            effectsPlayer5.Stop();
+
+        effectsPlayer5.Play(sound8);
     }
 
     void PlaySound(float deltaTime) {
@@ -87,8 +95,9 @@ private:
     SoundEffectsPlayer effectsPlayer2;
     SoundEffectsPlayer effectsPlayer3;
     SoundEffectsPlayer effectsPlayer4;
+    SoundEffectsPlayer effectsPlayer5;
 
-    uint32_t sound1, sound2, sound3, sound4, sound5, sound6, sound7;
+    uint32_t sound1, sound2, sound3, sound4, sound5, sound6, sound7, sound8;
 
     bool wasWPressed;
     bool once;

@@ -132,7 +132,6 @@ void Game::Run()
     float deltaTime = 0.0f;
     float lastFrame = 0.0f;
     MySoundEffects sound;
-
     
 
     while (!glfwWindowShouldClose(m_Window))
@@ -150,7 +149,7 @@ void Game::Run()
         glfwPollEvents();
 
         //Actualizar Informacion (Mover coordenadas)
-        Actualizar(deltaTime);
+        Actualizar(deltaTime, sound);
 
         //Renderizar
         Render();
@@ -175,7 +174,7 @@ void Game::ProcessInput(GLFWwindow* window, int key, int action)
     m_Player->InputMethod(key, action);
 }
 
-void Game::Actualizar(float deltaTime)
+void Game::Actualizar(float deltaTime, MySoundEffects& sound)
 {
     // Physics
     m_dynamicsWorld->stepSimulation(deltaTime, 2);
@@ -189,6 +188,9 @@ void Game::Actualizar(float deltaTime)
             if (obj == m_Player->vehicle->getRigidBody()) {
                 std::cout << "COLISION!" << std::endl;
                 // El jugador ha recogido la moneda, así que la eliminamos
+                sound.PlayCoinSound();
+                m_coinsCollected++;
+                std::cout << "Monedas recogidas: " << m_coinsCollected << std::endl;
                 m_dynamicsWorld->removeCollisionObject((*coin)->getGhostObject());
                 m_renderer->RemoveModel((*coin)->m_id);
                 coin = m_Coins.erase(coin);

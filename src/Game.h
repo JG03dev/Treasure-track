@@ -48,7 +48,7 @@ public:
 
 	// Constructors
 
-	Game() :m_Window(NULL), m_Camera(NULL), m_skybox(NULL), m_Light(NULL), m_dynamicsWorld(NULL), m_Player(NULL), m_sinTime(0) { m_Camera = new Camera(glm::vec3(0.0f, 0.0f, 3.0f)); InitializeWindow(); };
+	Game() :m_Window(NULL), m_Camera(NULL), m_skybox(NULL), m_Light(NULL), m_dynamicsWorld(NULL), m_Player(NULL), m_sinTime(0), m_coinsCollected(0) { m_Camera = new Camera(glm::vec3(0.0f, 0.0f, 3.0f)); InitializeWindow(); };
 
 	// Destructors
 
@@ -113,6 +113,8 @@ private:
 
 	const float spinSpeed = 2.0f;
 
+	// Contador Monedas
+	int m_coinsCollected;
 
 
 	// Initializers
@@ -123,6 +125,6 @@ private:
 	// Functionality
 	void Run();
 	
-	void Actualizar(float deltaTime);
+	void Actualizar(float deltaTime, MySoundEffects& sound);
 	void Render();
 };
