@@ -81,7 +81,7 @@ add_executable(VGI-ABP
         src/Music/MySoundEffects.h 
         src/Music/MySoundEffects.cpp 
         src/Music/MySoundEffects.cpp
-        )
+         "src/General/Coin.h" "src/General/Coin.cpp")
 
 # target_link_libraries(VGI-ABP PRIVATE glfw "${ASSIMP_INCLUDE_DIRS}/assimp" "${BULLET_LIBRARIES}" GLEW::glew OpenAL::OpenAL)
 target_link_libraries(VGI-ABP PRIVATE OpenAL::OpenAL)

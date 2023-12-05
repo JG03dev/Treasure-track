@@ -13,6 +13,7 @@
 #include "General/Camera.h"
 #include "General/Object.h"
 #include "General/Player.h"
+#include "General/Coin.h"
 
 #pragma endregion
 
@@ -98,6 +99,7 @@ private:
 	// Objects
 	Player* m_Player;
 	std::vector<Object*> m_Objects;
+	std::vector<Coin*> m_Coins;
 
 	// Private Methods
 
@@ -106,7 +108,7 @@ private:
 	//Time
 	float m_sinTime;
 	// Constants for animation parameters
-	const float jumpHeight = 0.3f;
+	const float jumpHeight = 0.12f;
 	const float jumpDuration = 2.0f;
 
 	const float spinSpeed = 2.0f;

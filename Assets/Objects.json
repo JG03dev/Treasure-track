@@ -35,14 +35,29 @@
   ],
   "models": [
     {
-      "id": "Test-Coin",
+      "id": "Coin",
       "path": "../../../Assets/Moneda/Moneda.obj",
       "name": "Moneda",
       "intensity": 4.0,
       "shine": 256,
-      "transform": {
-        "translate": [ 0.0, -3.0, 1.0 ]
-      }
+      "instances": [
+        {
+          "suffix": "0",
+          "transform": { "translate": [ 0.0, -3.6, 1.0 ] }
+        },
+        {
+          "suffix": "1",
+          "transform": { "translate": [ 0.0, -3.6, 2.0 ] }
+        },
+        {
+          "suffix": "2",
+          "transform": { "translate": [ 0.0, -3.6, 3.0 ] }
+        },
+        {
+          "suffix": "3",
+          "transform": { "translate": [ 0.0, -3.6, 4.0 ] }
+        }
+      ]
     },
     {
       "id": "Player",
