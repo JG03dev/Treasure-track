@@ -103,6 +103,8 @@ private:
 
 	// Animacio moneda
 	void performJumpAndSpin(std::string id, float time1, float time2);
+	int coin_count = 0;
+	bool coger_moneda = true;
 	//Time
 	float m_sinTime;
 	// Constants for animation parameters
@@ -110,8 +112,28 @@ private:
 	const float jumpDuration = 2.0f;
 
 	const float spinSpeed = 2.0f;
-
-
+	const std::vector<glm::vec3> positions = {
+		glm::vec3(0.0f, 3.0f, 0.0f),
+		glm::vec3(0.0f, 1.0f, 0.0f),
+		glm::vec3(0.0f, 0.0f, 1.0f),
+		glm::vec3(-1.0f, 0.0f, 0.0f),
+		glm::vec3(0.0f, -1.0f, 0.0f),
+		glm::vec3(0.0f, 0.0f, -1.0f),
+		glm::vec3(1.0f, 1.0f, 0.0f),
+		glm::vec3(-1.0f, -1.0f, 0.0f),
+		glm::vec3(1.0f, -1.0f, 0.0f),
+		glm::vec3(-1.0f, 1.0f, 0.0f),
+		glm::vec3(0.0f, 1.0f, 1.0f),
+		glm::vec3(0.0f, -1.0f, -1.0f),
+		glm::vec3(1.0f, 0.0f, 1.0f),
+		glm::vec3(-1.0f, 0.0f, -1.0f),
+		glm::vec3(1.0f, -1.0f, 1.0f),
+		glm::vec3(-1.0f, 1.0f, -1.0f),
+		glm::vec3(0.0f, 1.0f, -1.0f),
+		glm::vec3(0.0f, -1.0f, 1.0f),
+		glm::vec3(1.0f, 0.0f, -1.0f),
+		glm::vec3(-1.0f, 0.0f, 1.0f)
+	};
 
 	// Initializers
 	void InitializePhysics();

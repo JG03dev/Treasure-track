@@ -181,7 +181,7 @@ void Game::Actualizar(float deltaTime)
         m_sinTime = 0.0f;
 
     // Perform Animations
-    performJumpAndSpin("Test-Coin", m_sinTime, m_sinTime+deltaTime);
+    performJumpAndSpin("Coin", m_sinTime, m_sinTime+deltaTime);
     
     // Update sinTime
     m_sinTime += deltaTime;
@@ -215,14 +215,24 @@ void Game::Render()
 void Game::performJumpAndSpin(std::string id, float time1, float time2) {
 
     glm::mat4 modelMatrix = m_renderer->getModel(id).second;
+
+    // Set the position from the positions vector
+
+    if (coger_moneda)
+    {
+        modelMatrix = glm::translate(modelMatrix, positions[coin_count]);
+        coger_moneda = false;
+        coin_count++;
+    }
+
     // Calculate jump animation
     float jump = jumpHeight * (sin(jumpDuration * time2) - sin(jumpDuration * time1));
-    std::cout << jump << std::endl;
     modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, jump, 0.0f));
 
     // Calculate spin animation
     float rotation = (time2 - time1)*spinSpeed;
     modelMatrix = glm::rotate(modelMatrix, rotation, glm::vec3(0.0f, 1.0f, 0.0f));
-    m_renderer->setModelMatrix("Test-Coin", modelMatrix);
+
+    m_renderer->setModelMatrix(id, modelMatrix);
 }
 #pragma endregion
