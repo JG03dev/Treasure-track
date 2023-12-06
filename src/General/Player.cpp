@@ -51,16 +51,12 @@ void Player::InputMethod(int key, int keyPressed) {
 		switch (key)
 		{
 		case GLFW_KEY_W:
-			this->vehicle->setBrake(0, 0);
-			this->vehicle->setBrake(0, 1);
-			this->vehicle->applyEngineForce(this->vehicleParams.m_fEngineForce, 2);
-			this->vehicle->applyEngineForce(this->vehicleParams.m_fEngineForce, 3);
+			this->vehicle->applyEngineForce(this->vehicleParams.m_fEngineForce, 1);
+			this->vehicle->applyEngineForce(this->vehicleParams.m_fEngineForce, 0);
 			break;
 		case GLFW_KEY_S:
-			this->vehicle->applyEngineForce(-this->vehicleParams.m_bEngineForce, 0);
-			this->vehicle->applyEngineForce(-this->vehicleParams.m_bEngineForce, 1);
-			this->vehicle->setBrake(0, 2);
-			this->vehicle->setBrake(0, 3);
+			this->vehicle->applyEngineForce(-this->vehicleParams.m_bEngineForce, 2);
+			this->vehicle->applyEngineForce(-this->vehicleParams.m_bEngineForce, 3);
 			break;
 		case GLFW_KEY_A:
 			this->vehicle->setSteeringValue(this->vehicleParams.m_steeringValue, 0);
@@ -70,9 +66,11 @@ void Player::InputMethod(int key, int keyPressed) {
 			this->vehicle->setSteeringValue(-this->vehicleParams.m_steeringValue, 0);
 			this->vehicle->setSteeringValue(-this->vehicleParams.m_steeringValue, 1);
 			break;
-		case GLFW_KEY_LEFT_CONTROL:
-			this->vehicle->setBrake(150, 2);
-			this->vehicle->setBrake(150, 3);
+		case GLFW_KEY_LEFT_SHIFT:
+			this->vehicle->setBrake(600, 0);
+			this->vehicle->setBrake(600, 1);
+			this->vehicle->setBrake(600, 2);
+			this->vehicle->setBrake(600, 3);
 			break;
 		case GLFW_KEY_SPACE:
 			this->vehicle->applyEngineForce(this->vehicleParams.m_fEngineForce * 5, 2);
@@ -102,22 +100,21 @@ void Player::InputMethod(int key, int keyPressed) {
 		switch (key)
 		{
 		case GLFW_KEY_W:
-		case GLFW_KEY_S:
 			this->vehicle->applyEngineForce(0, 0);
 			this->vehicle->applyEngineForce(0, 1);
+			break;
+		case GLFW_KEY_S:
 			this->vehicle->applyEngineForce(0, 2);
 			this->vehicle->applyEngineForce(0, 3);
-
-			//Default braking force, always added otherwise there is no friction on the wheels
-			this->vehicle->setBrake(50, 2);
-			this->vehicle->setBrake(50, 3);
 			break;
 		case GLFW_KEY_A:
 		case GLFW_KEY_D:
 			this->vehicle->setSteeringValue(0, 0);
 			this->vehicle->setSteeringValue(0, 1);
 			break;
-		case GLFW_KEY_LEFT_CONTROL:
+		case GLFW_KEY_LEFT_SHIFT:
+			this->vehicle->setBrake(0, 0);
+			this->vehicle->setBrake(0, 1);
 			this->vehicle->setBrake(0, 2);
 			this->vehicle->setBrake(0, 3);
 			break;
