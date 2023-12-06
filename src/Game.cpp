@@ -7,6 +7,7 @@
 void Game::StartGame() {
     img_loader();
     InitializePhysics();
+    DisplayLoadingScreen();
     InitializeGraphics();
     Run();
 }
@@ -94,7 +95,7 @@ int Game::InitializeWindow()
 {
     // glfw window creation
     // --------------------
-    m_Window = glfwCreateWindow(m_SCR_WIDTH, m_SCR_HEIGHT, "VGI-ABP", NULL, NULL);
+    m_Window = glfwCreateWindow(m_SCR_WIDTH, m_SCR_HEIGHT, "City Driver Simulator", NULL, NULL);
     if (m_Window == NULL)
     {
         std::cout << "Failed to create GLFW window" << std::endl;
@@ -123,6 +124,85 @@ void Game::img_loader() {
     images[0].pixels = pixels;
 
     glfwSetWindowIcon(m_Window, 1, images);
+}
+
+GLuint LoadTexture(const char* filepath)
+{
+    int width, height, nrChannels;
+    unsigned char* data = stbi_load(filepath, &width, &height, &nrChannels, 0);
+    if (data)
+    {
+        GLuint textureID;
+        glGenTextures(1, &textureID);
+        glBindTexture(GL_TEXTURE_2D, textureID);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+        glGenerateMipmap(GL_TEXTURE_2D);
+        stbi_image_free(data);
+        return textureID;
+    }
+    else
+    {
+        std::cout << "Failed to load texture" << std::endl;
+        return 0;
+    }
+}
+
+void Game::DisplayLoadingScreen()
+{
+    // Load your jpg image here
+    GLuint textureID = LoadTexture("../../../Assets/Imagenes/LoadingScreenFoto.png");
+
+    // Create a quad for the image to be displayed on
+    float vertices[] = {
+        // positions          // texture coords
+         1.0f,  1.0f, 0.0f,   1.0f, 1.0f, // top right
+         1.0f, -1.0f, 0.0f,   1.0f, 0.0f, // bottom right
+        -1.0f, -1.0f, 0.0f,   0.0f, 0.0f, // bottom left
+        -1.0f,  1.0f, 0.0f,   0.0f, 1.0f  // top left 
+    };
+
+    unsigned int indices[] = {
+        0, 1, 3, // first triangle
+        1, 2, 3  // second triangle
+    };
+
+    // Create Vertex Buffer Object (VBO), Vertex Array Object (VAO), and Element Buffer Object (EBO)
+    GLuint VBO, VAO, EBO;
+    glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &VBO);
+    glGenBuffers(1, &EBO);
+
+    glBindVertexArray(VAO);
+
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+    // position attribute
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+    // texture attribute
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+
+    // Render the image
+    glBindTexture(GL_TEXTURE_2D, textureID);
+
+    // Assuming you have an instance of the Shader class called 'shader'
+    Shader shader;
+    glUseProgram(shader.getProgramID());
+
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+    // Cleanup
+    glDeleteVertexArrays(1, &VAO);
+    glDeleteBuffers(1, &VBO);
+    glDeleteBuffers(1, &EBO);
+
+    // Swap the buffers
+    glfwSwapBuffers(m_Window);
 }
 
 

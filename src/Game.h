@@ -69,8 +69,8 @@ private:
 	
 	// Window
 	GLFWwindow* m_Window;
-	const unsigned int m_SCR_WIDTH = 1280;
-	const unsigned int m_SCR_HEIGHT = 720;
+	const unsigned int m_SCR_WIDTH = 1920;
+	const unsigned int m_SCR_HEIGHT = 1080;
 
 	// Camera
 	Camera* m_Camera;
@@ -121,6 +121,9 @@ private:
 	void InitializePhysics();
 	void InitializeGraphics();
 	int InitializeWindow();
+
+	// LoadingScreen
+	void DisplayLoadingScreen();
 
 	// Functionality
 	void Run();

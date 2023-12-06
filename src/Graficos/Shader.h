@@ -97,6 +97,10 @@ public:
 
 	~Shader();
 
+    GLuint getProgramID() const {
+        return _ID;
+    }
+
 	enum ShaderType
 	{
 		VERTEX,
