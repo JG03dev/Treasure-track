@@ -5,10 +5,9 @@
 
 
 void Game::StartGame() {
-
+    img_loader();
     InitializePhysics();
     InitializeGraphics();
-
     Run();
 }
 Game::~Game()
@@ -61,7 +60,7 @@ void Game::InitializeGraphics()
         if (!Obj.second.first->loaded())
             Obj.second.first->Load();
         glm::mat4 model(1.0f);
-        if (Obj.first == "Player")
+        if (Obj.first == "Player") // CREAR OBJETO COCHE
         {
             m_Player = new Player(p, m_dynamicsWorld);
             // This could be at the constructor
@@ -70,7 +69,12 @@ void Game::InitializeGraphics()
             if (m_renderer->getNSpotLights() >= 2) //TODO: study a way to avoid magic numbers
                 m_Player->setLights(m_renderer->getSpotLight(0), m_renderer->getSpotLight(1));
         }
-        else if(Obj.first.substr(0, 5) != "Wheel")
+        else if (Obj.first.substr(0, 4) == "Coin") { // CREAR OBJETO MONEDA
+            m_Coins.push_back(new Coin(Obj.second.first, m_dynamicsWorld, Obj.second.second, Obj.first));
+            m_Coins.back()->getGhostObject()->getWorldTransform().getOpenGLMatrix(glm::value_ptr(model));
+            m_renderer->setModelMatrix(Obj.first, model);
+        }
+        else if(Obj.first.substr(0, 5) != "Wheel") // CREAR RESTO DE OBJETOS MENOS RUEDAS
         {
             m_Objects.push_back(new Object(Obj.second.first, m_dynamicsWorld, Obj.second.second));
             m_Objects.back()->rb->getWorldTransform().getOpenGLMatrix(glm::value_ptr(model));
@@ -111,7 +115,7 @@ int Game::InitializeWindow()
 void Game::img_loader() {
     int width, height;
     int channels;
-    unsigned char* pixels = stbi_load("../../../src/s2.jpg", &width, &height, &channels, 4);
+    unsigned char* pixels = stbi_load("../../../Assets/Imagenes/LogoJuego.jpg", &width, &height, &channels, 4);
 
     GLFWimage images[1];
     images[0].width = width;
@@ -128,8 +132,7 @@ void Game::Run()
     float deltaTime = 0.0f;
     float lastFrame = 0.0f;
     MySoundEffects sound;
-
-    img_loader();
+    
 
     while (!glfwWindowShouldClose(m_Window))
     {
@@ -146,7 +149,7 @@ void Game::Run()
         glfwPollEvents();
 
         //Actualizar Informacion (Mover coordenadas)
-        Actualizar(deltaTime);
+        Actualizar(deltaTime, sound);
 
         //Renderizar
         Render();
@@ -171,20 +174,45 @@ void Game::ProcessInput(GLFWwindow* window, int key, int action)
     m_Player->InputMethod(key, action);
 }
 
-void Game::Actualizar(float deltaTime)
+void Game::Actualizar(float deltaTime, MySoundEffects& sound)
 {
     // Physics
     m_dynamicsWorld->stepSimulation(deltaTime, 2);
+
+    // Loop for the ghost coin!
+    for (auto coin = m_Coins.begin(); coin != m_Coins.end();) {
+        bool coinCollected = false;
+        for (int i = 0; i < (*coin)->getGhostObject()->getNumOverlappingObjects(); i++) {
+            btCollisionObject* obj = (*coin)->getGhostObject()->getOverlappingObject(i);
+            // Comprueba si el objeto que se superpone es el que te interesa (por ejemplo, el jugador)
+            if (obj == m_Player->vehicle->getRigidBody()) {
+                std::cout << "COLISION!" << std::endl;
+                // El jugador ha recogido la moneda, así que la eliminamos
+                sound.PlayCoinSound();
+                m_coinsCollected++;
+                std::cout << "Monedas recogidas: " << m_coinsCollected << std::endl;
+                m_dynamicsWorld->removeCollisionObject((*coin)->getGhostObject());
+                m_renderer->RemoveModel((*coin)->m_id);
+                coin = m_Coins.erase(coin);
+                coinCollected = true;
+                break;
+            }
+        }
+        if (!coinCollected) {
+            ++coin;  // Solo incrementamos el iterador si no hemos recogido la moneda
+        }
+    }
 
     // Animations
     if (m_sinTime >= 2.0f * glm::pi<float>())
         m_sinTime = 0.0f;
 
-    // Perform Animations
-    performJumpAndSpin("Coin", m_sinTime, m_sinTime+deltaTime);
-    
+	// Perform Animations
+    for (auto coin : m_Coins) {
+		performJumpAndSpin(coin->m_id, m_sinTime, m_sinTime + deltaTime);    
+    }
     // Update sinTime
-    m_sinTime += deltaTime;
+	m_sinTime += deltaTime;
 }
 
 void Game::Render()
@@ -192,6 +220,7 @@ void Game::Render()
     {
 		glm::mat4 model(1.0f);
 		m_Player->vehicle->getChassisWorldTransform().getOpenGLMatrix(glm::value_ptr(model));
+        // model = glm::scale(model, glm::vec3(1.5, 1.5, 1.5)); CAMBIAR TAMAÑO COCHE
         //std::cout << "Player position:" << m_Player->vehicle->getChassisWorldTransform().getOrigin().getY() << std::endl;
         m_renderer->setModelMatrix("Player", model);
         m_Player->updatePlayerData();
@@ -200,6 +229,7 @@ void Game::Render()
     for (int i = 0; i < 4; i++) {
         glm::mat4 model(1.0f);
         m_Player->vehicle->getWheelTransformWS(i).getOpenGLMatrix(glm::value_ptr(model));
+        // model = glm::scale(model, glm::vec3(1.5, 1.5, 1.5)); CAMBIAR TAMAÑO COCHE
         m_renderer->setModelMatrix("Wheel" + std::to_string(i), model);
     }
 
@@ -215,24 +245,14 @@ void Game::Render()
 void Game::performJumpAndSpin(std::string id, float time1, float time2) {
 
     glm::mat4 modelMatrix = m_renderer->getModel(id).second;
-
-    // Set the position from the positions vector
-
-    if (coger_moneda)
-    {
-        modelMatrix = glm::translate(modelMatrix, positions[coin_count]);
-        coger_moneda = false;
-        coin_count++;
-    }
-
     // Calculate jump animation
     float jump = jumpHeight * (sin(jumpDuration * time2) - sin(jumpDuration * time1));
+    // std::cout << jump << std::endl;
     modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, jump, 0.0f));
 
     // Calculate spin animation
     float rotation = (time2 - time1)*spinSpeed;
     modelMatrix = glm::rotate(modelMatrix, rotation, glm::vec3(0.0f, 1.0f, 0.0f));
-
     m_renderer->setModelMatrix(id, modelMatrix);
 }
 #pragma endregion

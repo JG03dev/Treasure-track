@@ -13,6 +13,7 @@
 #include "General/Camera.h"
 #include "General/Object.h"
 #include "General/Player.h"
+#include "General/Coin.h"
 
 #pragma endregion
 
@@ -47,7 +48,7 @@ public:
 
 	// Constructors
 
-	Game() :m_Window(NULL), m_Camera(NULL), m_skybox(NULL), m_Light(NULL), m_dynamicsWorld(NULL), m_Player(NULL), m_sinTime(0) { m_Camera = new Camera(glm::vec3(0.0f, 0.0f, 3.0f)); InitializeWindow(); };
+	Game() :m_Window(NULL), m_Camera(NULL), m_skybox(NULL), m_Light(NULL), m_dynamicsWorld(NULL), m_Player(NULL), m_sinTime(0), m_coinsCollected(0) { m_Camera = new Camera(glm::vec3(0.0f, 0.0f, 3.0f)); InitializeWindow(); };
 
 	// Destructors
 
@@ -98,42 +99,22 @@ private:
 	// Objects
 	Player* m_Player;
 	std::vector<Object*> m_Objects;
+	std::vector<Coin*> m_Coins;
 
 	// Private Methods
 
 	// Animacio moneda
 	void performJumpAndSpin(std::string id, float time1, float time2);
-	int coin_count = 0;
-	bool coger_moneda = true;
 	//Time
 	float m_sinTime;
 	// Constants for animation parameters
-	const float jumpHeight = 0.3f;
+	const float jumpHeight = 0.12f;
 	const float jumpDuration = 2.0f;
 
 	const float spinSpeed = 2.0f;
-	const std::vector<glm::vec3> positions = {
-		glm::vec3(0.0f, 3.0f, 0.0f),
-		glm::vec3(0.0f, 1.0f, 0.0f),
-		glm::vec3(0.0f, 0.0f, 1.0f),
-		glm::vec3(-1.0f, 0.0f, 0.0f),
-		glm::vec3(0.0f, -1.0f, 0.0f),
-		glm::vec3(0.0f, 0.0f, -1.0f),
-		glm::vec3(1.0f, 1.0f, 0.0f),
-		glm::vec3(-1.0f, -1.0f, 0.0f),
-		glm::vec3(1.0f, -1.0f, 0.0f),
-		glm::vec3(-1.0f, 1.0f, 0.0f),
-		glm::vec3(0.0f, 1.0f, 1.0f),
-		glm::vec3(0.0f, -1.0f, -1.0f),
-		glm::vec3(1.0f, 0.0f, 1.0f),
-		glm::vec3(-1.0f, 0.0f, -1.0f),
-		glm::vec3(1.0f, -1.0f, 1.0f),
-		glm::vec3(-1.0f, 1.0f, -1.0f),
-		glm::vec3(0.0f, 1.0f, -1.0f),
-		glm::vec3(0.0f, -1.0f, 1.0f),
-		glm::vec3(1.0f, 0.0f, -1.0f),
-		glm::vec3(-1.0f, 0.0f, 1.0f)
-	};
+
+	// Contador Monedas
+	int m_coinsCollected = 0;
 
 	// Initializers
 	void InitializePhysics();
@@ -143,6 +124,6 @@ private:
 	// Functionality
 	void Run();
 	
-	void Actualizar(float deltaTime);
+	void Actualizar(float deltaTime, MySoundEffects& sound);
 	void Render();
 };

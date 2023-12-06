@@ -74,6 +74,24 @@ void Player::InputMethod(int key, int keyPressed) {
 			this->vehicle->setBrake(150, 2);
 			this->vehicle->setBrake(150, 3);
 			break;
+		case GLFW_KEY_SPACE:
+			this->vehicle->applyEngineForce(this->vehicleParams.m_fEngineForce * 5, 2);
+			this->vehicle->applyEngineForce(this->vehicleParams.m_fEngineForce * 5, 3);
+			break;
+		case GLFW_KEY_R:
+		{
+			for (int i = 0; i < 4; i++) {
+				this->vehicle->applyEngineForce(0, i);
+				this->vehicle->setSteeringValue(0, i);
+			}
+			btTransform t;
+			t.setOrigin(btVector3(0, -3.2, 0));
+			t.setRotation(btQuaternion(0, 0, 0));
+			this->vehicle->getRigidBody()->setWorldTransform(t);
+			this->vehicle->getRigidBody()->setLinearVelocity(btVector3(0, 0, 0));
+			this->vehicle->getRigidBody()->setAngularVelocity(btVector3(0, 0, 0));
+			break;
+		}
 		default:
 			break;
 		}
@@ -172,7 +190,7 @@ void Player::CreateVehicle(btDiscreteDynamicsWorld* dynamicsWorld, Model& hitbox
 
 	btVector3 localInertia(0, 0, 0);
 	chassisShape->calculateLocalInertia(mass, localInertia);
-	chassisTransform.setOrigin(btVector3(0, 0, 0));
+	chassisTransform.setOrigin(btVector3(0, -3.2, 0));
 
 	btDefaultMotionState* chassisMotionState = new btDefaultMotionState(chassisTransform);
 	btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, chassisMotionState, temp, localInertia);
@@ -216,7 +234,7 @@ void Player::CreateVehicle(btDiscreteDynamicsWorld* dynamicsWorld, Model& hitbox
 	btScalar connectionHeight(this->vehicleParams.m_connectionHeight);
 
 	// All the wheel configuration assumes the vehicle is centered at the origin and a right handed coordinate system is used
-	btVector3 wheelConnectionPoint(halfExtents.x() - wheelRadius*2, 0.5, halfExtents.z() - wheelWidth);
+	btVector3 wheelConnectionPoint(halfExtents.x() - wheelRadius*2, 0.6, halfExtents.z() - wheelWidth);
 
 	// Adds the front wheels
 	vehicle->addWheel(wheelConnectionPoint * btVector3(1, 1, -1), wheelDirectionCS0, wheelAxleCS, suspensionRestLength, wheelRadius, tuning, true);
