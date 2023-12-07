@@ -1,5 +1,6 @@
 #include "Game.h"
 
+
 #pragma region PUBLIC_METHODS
 
 
@@ -121,6 +122,10 @@ void Game::img_loader() {
     glfwSetWindowIcon(m_Window, 1, images);
 }
 
+void Timer(float deltaTime, ImFont* myFont,  static float timer) {
+    
+}
+
 
 void Game::Run()
 {
@@ -131,6 +136,17 @@ void Game::Run()
 
     img_loader();
 
+    //HABRIA QUE PONERLO EN UNA FUNCION A PARTE...
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO();
+    io.Fonts->AddFontFromFileTTF("../../../src/Graficos/NFS.ttf", 15.0f);  // Cambia el nombre del archivo y el tamaño según tus necesidades
+    ImFont* myFont = io.Fonts->Fonts[0];
+
+    // Inicialización de ImGui para GLFW y OpenGL
+    ImGui_ImplGlfw_InitForOpenGL(m_Window, true);
+    ImGui_ImplOpenGL3_Init("#version 330");
+    static float timer = 0.0f;
+
     while (!glfwWindowShouldClose(m_Window))
     {
         // per-frame time logic
@@ -140,6 +156,7 @@ void Game::Run()
         lastFrame = currentFrame;
 
         sound.PlaySound(deltaTime);
+        sound.PlayMusic(deltaTime);
 
         // input: Manejar entrada de usuario
         // -----
@@ -150,6 +167,38 @@ void Game::Run()
 
         //Renderizar
         Render();
+
+        //PONER TODO ESTO DE AQUÍ ABAJO EN UNA FUNCION A PARTE HACE QUE EL TEMPORIZADOR NO VAYA, PQ??
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+        ImGui::PushFont(myFont);
+        ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_Always);
+        ImGui::SetNextWindowSize(ImVec2(250, 50), ImGuiCond_Always);
+
+        //Desactivar las decoraciones de la ventana
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+        ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
+
+        //Quitar el fondo transparente
+        ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
+
+        ImGui::Begin("Temporizador", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoCollapse);
+        ImGui::SetWindowFontScale(2.0f);
+        ImGui::TextColored(ImVec4(1.0f, 1.0f, 1.0f, 1.0f), "Tiempo: %.2f", timer);
+
+        // Incrementar el temporizador
+        timer += deltaTime;
+
+        ImGui::End();
+        ImGui::PopStyleVar(3);
+        ImGui::PopStyleColor();
+        ImGui::PopFont();
+
+        // Renderizar la interfaz de usuario de ImGui
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
         glfwSwapBuffers(m_Window);
     }

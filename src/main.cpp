@@ -30,7 +30,7 @@
 
 #pragma endregion
 
-#pragma region SONIDOS
+#pragma region TEXTO
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
@@ -199,7 +199,7 @@ int main(int argc, char **argv) {
     // Depth test
     glEnable(GL_DEPTH_TEST);
 
-    menu();
+    //menu();
     g->StartGame();
 
     SoundDevice::Release();
