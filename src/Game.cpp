@@ -1,8 +1,40 @@
 #include "Game.h"
 
 #pragma region PUBLIC_METHODS
+Game::~Game()
+{
+    delete m_renderer;
+    delete m_Player, m_Camera, m_dynamicsWorld;
+    for (int i = 0; i < m_Objects.size(); i++)
+        delete m_Objects[i];
+    
+}
+int Game::Start()
+{
+    StartGame();
+    return 0;
 
+    // This code will not execute for now
+    m_ui = new UIHandler(m_Window);
+    bool OpenMenu = true;
 
+    // Main menu loop
+    while (OpenMenu)
+    {
+        //glfwPollEvents(); menu controls??
+        UIEvents e = m_ui->DrawAndPollEvents(Main_Menu);
+        switch (e) 
+        {
+        case Start_Game:
+            break;
+        }
+    }
+
+    return 0;
+}
+#pragma endregion
+
+#pragma region PRIVATE_METHODS_INITIALIZERS
 
 void Game::StartGame() {
 
@@ -11,17 +43,6 @@ void Game::StartGame() {
 
     Run();
 }
-Game::~Game()
-{
-    delete m_renderer;
-    delete m_Player, m_Camera, m_skybox, m_dynamicsWorld;
-    for (int i = 0; i < m_Objects.size(); i++)
-        delete m_Objects[i];
-    
-}
-#pragma endregion
-
-#pragma region PRIVATE_METHODS_INITIALIZERS
 
 void Game::InitializePhysics()
 {

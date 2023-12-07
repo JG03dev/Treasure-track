@@ -16,17 +16,10 @@
 
 #include "Game.h"
 #include "General/Camera.h"
-#include "General/Object.h"
-#include "General/Player.h"
 
 #pragma endregion
 
 #pragma region GRAFICOS
-
-#include "Graficos/skybox.h"
-#include "Graficos/Shader.h"
-#include "Graficos/Modelo/Model.h"
-#include "Graficos/Luces/Light.h"
 
 #pragma endregion
 
@@ -104,12 +97,14 @@ void img_loader() {
 
 int main(int argc, char **argv) {
     std::cout << argv[0] << std::endl;
+    int state = 0;
+
     // Intialize GLFW 
     // GLFW is configured.  Must be called before calling any GLFW functions
     if (!glfwInit()) {
         // An error occured
         std::cerr << "GLFW initialization failed" << std::endl;
-        return false;
+        return 1;
     }
 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -142,7 +137,8 @@ int main(int argc, char **argv) {
     // Depth test
     glEnable(GL_DEPTH_TEST);
 
-    g->StartGame();
+    if (g->Start() != 0)
+        std::cout << "Game crashed" << std::endl;
 
     SoundDevice::Release();
     delete g;

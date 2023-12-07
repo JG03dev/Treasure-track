@@ -37,6 +37,10 @@ add_executable(GameExecutable
         src/General/Player.cpp
         src/General/Player.h
 
+# Ficheros UI
+        src/Graficos/UIHandler.h
+        src/Graficos/UIHandler.cpp
+
 # Parte Graficos
         src/Graficos/Renderer.h 
         src/Graficos/Renderer.cpp

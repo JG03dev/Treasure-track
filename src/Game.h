@@ -18,9 +18,13 @@
 
 #pragma region GRAFICOS
 
+// 3D
 #include "Graficos/Renderer.h"
 #include "Graficos/Skybox.h"
 #include "Graficos/Luces/Light.h"
+
+// UI
+#include "Graficos/UIHandler.h"
 
 #pragma endregion
 
@@ -37,7 +41,6 @@
 
 // --OTHER INCLUDES--
 
-
 class Game
 {
 public: 
@@ -47,15 +50,14 @@ public:
 
 	// Constructors
 
-	Game() :m_Window(NULL), m_Camera(NULL), m_skybox(NULL), m_Light(NULL), m_dynamicsWorld(NULL), m_Player(NULL), m_sinTime(0) { m_Camera = new Camera(glm::vec3(0.0f, 0.0f, 3.0f)); InitializeWindow(); };
+	Game() :m_Window(NULL), m_Camera(NULL), m_dynamicsWorld(NULL), m_Player(NULL), m_sinTime(0) { m_Camera = new Camera(glm::vec3(0.0f, 0.0f, 3.0f)); InitializeWindow(); };
 
 	// Destructors
 
 	~Game();
 	
 	// Public Methods
-
-	void StartGame();
+	int Start();	
 
 	GLFWwindow* GetWindow() { return m_Window; }
 	Camera* GetCamera() { return m_Camera; }
@@ -64,7 +66,7 @@ public:
 	void img_loader();
 	
 private:
-	// Private Attributes
+	/// Private Attributes
 	
 	// Window
 	GLFWwindow* m_Window;
@@ -76,19 +78,11 @@ private:
 	const float c_near = 0.1f;
 	const float c_far = 500.0f;
 
-
-	///// THIS SHOULD BE ALL HANDLED BY THE RENDERER
-
-	// Skybox
-	Skybox* m_skybox;
-
 	// Graphics
 	Renderer* m_renderer;
-	// These next 3 attributes will probably be stored in the Renderer
-	Light* m_Light;
-	glm::vec3 m_lightPos;
 
-	/////
+	// UI
+	UIHandler* m_ui;
 
 	// Physics logic
 	float m_deltaTime;
@@ -99,9 +93,9 @@ private:
 	Player* m_Player;
 	std::vector<Object*> m_Objects;
 
-	// Private Methods
+	//// Private Methods
 
-	// Animacio moneda
+	/// Animations
 	void performJumpAndSpin(std::string id, float time1, float time2);
 	//Time
 	float m_sinTime;
@@ -114,6 +108,7 @@ private:
 
 
 	// Initializers
+	void StartGame();
 	void InitializePhysics();
 	void InitializeGraphics();
 	int InitializeWindow();
