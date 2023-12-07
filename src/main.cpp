@@ -104,6 +104,61 @@ void img_loader() {
     glfwSetWindowIcon(g->GetWindow(), 1, images);
 }
 
+int menu()
+{
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO();
+    (void)io;
+
+    // Configurar ImGui para OpenGL
+    ImGui_ImplGlfw_InitForOpenGL(g->GetWindow(), true);
+    ImGui_ImplOpenGL3_Init("#version 330");
+
+    // Textura para la imagen de fondo
+    GLuint backgroundTexture = 0;  // Identificador de textura 
+    static bool show_start_menu = true;
+
+    // Bucle principal
+    while (!glfwGetKey(g->GetWindow(), GLFW_KEY_ENTER)) {
+        glfwPollEvents();
+
+        // Iniciar el marco de ImGui
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+
+        // Renderizar la imagen de fondo usando OpenGL
+        glClearColor(1.0f, 1.0f, 1.0f, 1.0f); // Establecer el color de fondo
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        // Crear el menú de inicio
+        if (show_start_menu) {
+            ImGui::SetNextWindowPos(ImVec2(50, 50), ImGuiCond_FirstUseEver);
+            ImGui::SetNextWindowSize(ImVec2(400, 200), ImGuiCond_FirstUseEver);
+            ImGui::Begin("Ventana", &show_start_menu);
+
+            ImGui::Text("HOLA!");
+
+            ImGui::End();
+        }
+
+        // Renderizar el contenido de ImGui
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+        // Intercambiar el búfer y mostrar el resultado en la ventana
+        glfwSwapBuffers(g->GetWindow());
+    }
+
+    // Limpiar ImGui
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
+
+    return 0;
+}
+
 int main(int argc, char **argv) {
     std::cout << argv[0] << std::endl;
     // Intialize GLFW 
@@ -144,6 +199,7 @@ int main(int argc, char **argv) {
     // Depth test
     glEnable(GL_DEPTH_TEST);
 
+    menu();
     g->StartGame();
 
     SoundDevice::Release();
