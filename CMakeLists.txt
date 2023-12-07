@@ -16,8 +16,9 @@ find_package(glfw3 REQUIRED)
 find_package(SndFile REQUIRED)
 find_package(soil2 CONFIG REQUIRED)
 find_package(assimp REQUIRED)
+find_package(imgui CONFIG REQUIRED)
 
-add_executable(VGI-ABP 
+add_executable(GameExecutable 
 # Ficheros principales
         src/main.cpp
         src/Game.cpp
@@ -80,15 +81,40 @@ add_executable(VGI-ABP
         src/Music/SoundEffectsPlayer.h 
         src/Music/MySoundEffects.h 
         src/Music/MySoundEffects.cpp 
-        src/Music/MySoundEffects.cpp
-        )
+        src/Music/MySoundEffects.cpp)
+
+add_executable(MenuDemoExecutable src/main-menu.cpp
+            src/Encabezados/stdafx.h
+            src/Encabezados/stb_image.h
+
+# Ficheros para el sonido
+        src/Music/MusicBuffer.cpp
+        src/Music/MusicBuffer.h
+        src/Music/SoundDevice.cpp
+        src/Music/SoundDevice.h
+        src/Music/SoundEffectsLibrary.cpp
+        src/Music/SoundEffectsLibrary.h
+        src/Music/SoundEffectsPlayer.cpp
+        src/Music/SoundEffectsPlayer.h 
+        src/Music/MySoundEffects.h 
+        src/Music/MySoundEffects.cpp 
+        src/Music/MySoundEffects.cpp)
 
 # target_link_libraries(VGI-ABP PRIVATE glfw "${ASSIMP_INCLUDE_DIRS}/assimp" "${BULLET_LIBRARIES}" GLEW::glew OpenAL::OpenAL)
-target_link_libraries(VGI-ABP PRIVATE OpenAL::OpenAL)
-target_link_libraries(VGI-ABP PRIVATE OpenGL::GL)
-target_link_libraries(VGI-ABP PRIVATE GLEW::GLEW)
-target_link_libraries(VGI-ABP PRIVATE glfw)
-target_link_libraries(VGI-ABP PRIVATE "${BULLET_LIBRARIES}")
-target_link_libraries(VGI-ABP PRIVATE SndFile::sndfile)
-target_link_libraries(VGI-ABP PRIVATE soil2)
-target_link_libraries(VGI-ABP PRIVATE ${ASSIMP_LIBRARIES})
+target_link_libraries(GameExecutable  PRIVATE OpenAL::OpenAL)
+target_link_libraries(GameExecutable  PRIVATE OpenGL::GL)
+target_link_libraries(GameExecutable  PRIVATE GLEW::GLEW)
+target_link_libraries(GameExecutable  PRIVATE glfw)
+target_link_libraries(GameExecutable  PRIVATE "${BULLET_LIBRARIES}")
+target_link_libraries(GameExecutable  PRIVATE SndFile::sndfile)
+target_link_libraries(GameExecutable  PRIVATE soil2)
+target_link_libraries(GameExecutable  PRIVATE ${ASSIMP_LIBRARIES})
+target_link_libraries(GameExecutable  PRIVATE imgui::imgui) 
+
+target_link_libraries(MenuDemoExecutable  PRIVATE OpenAL::OpenAL)
+target_link_libraries(MenuDemoExecutable PRIVATE OpenGL::GL)
+target_link_libraries(MenuDemoExecutable  PRIVATE GLEW::GLEW)
+target_link_libraries(MenuDemoExecutable  PRIVATE glfw)
+target_link_libraries(MenuDemoExecutable  PRIVATE SndFile::sndfile)
+target_link_libraries(MenuDemoExecutable  PRIVATE imgui::imgui) 
+
