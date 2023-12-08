@@ -25,16 +25,18 @@ public:
     ~UIHandler();
 
     // Draw method to draw different UI setups based on flags
-    UIEvents DrawAndPollEvents(UIFlags flags);
+    UIEvents DrawAndPollEvents(int flags);
 
 private:
     //Window
     GLFWwindow* window;
+    int display_w, display_h;
 
 
-    GLuint mainMenuButtonTexture;
-    GLuint pauseMenuButtonTexture;
-    GLuint hudButtonTexture;
+    GLuint img_gameStarts;
+    GLuint img_help;
+    GLuint img_exit;
+    GLuint img_MMBackground;
 
 
     GLuint LoadTexture(const char* path);

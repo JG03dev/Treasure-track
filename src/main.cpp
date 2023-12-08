@@ -122,7 +122,6 @@ int main(int argc, char **argv) {
     SoundDevice::Init();
 
     // Hide the cursor and capture it
-    glfwSetInputMode(g->GetWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     img_loader();
 
     GLenum err = glewInit();

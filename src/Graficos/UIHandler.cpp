@@ -5,23 +5,27 @@ UIHandler::UIHandler(GLFWwindow* window) : window(window) {
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init("#version 330");
 
+    glfwGetFramebufferSize(window, &display_w, &display_h);
+
     // Load textures
-    mainMenuButtonTexture = LoadTexture("path/to/Assets/main_menu_button.png");
-    pauseMenuButtonTexture = LoadTexture("path/to/Assets/pause_menu_button.png");
-    hudButtonTexture = LoadTexture("path/to/Assets/hud_button.png");
+    img_gameStarts = LoadTexture("../../../src/s2.jpg");
+    img_help = LoadTexture("../../../src/s2.jpg");
+    img_exit = LoadTexture("../../../src/s2.jpg");
+    img_MMBackground = LoadTexture("../../../src/s2.jpg");
 }
 
 UIHandler::~UIHandler() {
-    glDeleteTextures(1, &mainMenuButtonTexture);
-    glDeleteTextures(1, &pauseMenuButtonTexture);
-    glDeleteTextures(1, &hudButtonTexture);
+    glDeleteTextures(1, &img_gameStarts);
+    glDeleteTextures(1, &img_help);
+    glDeleteTextures(1, &img_exit);
+    glDeleteTextures(1, &img_MMBackground);
 
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
 }
 
-UIEvents UIHandler::DrawAndPollEvents(UIFlags flags)
+UIEvents UIHandler::DrawAndPollEvents(int flags)
 {
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
@@ -43,8 +47,6 @@ UIEvents UIHandler::DrawAndPollEvents(UIFlags flags)
     }
 
     ImGui::Render();
-    int display_w, display_h;
-    glfwGetFramebufferSize(window, &display_w, &display_h);
     glViewport(0, 0, display_w, display_h);
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
@@ -81,6 +83,42 @@ GLuint UIHandler::LoadTexture(const char* path)
 
 void UIHandler::DrawMainMenu(UIEvents& e)
 {
+    // Set the background image
+    ImVec2 windowSize(display_w, display_h);
+    ImGui::SetNextWindowSize(windowSize);
+    ImGui::SetNextWindowPos(ImVec2(0, 0));
+    ImGui::Begin("Background", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
+    ImGui::Image((void*)(intptr_t)img_MMBackground, windowSize);
+    ImGui::End();
+
+    // Set up the main menu
+    ImGui::SetNextWindowSize(windowSize);
+    ImGui::SetNextWindowPos(ImVec2(0, 0));
+    ImGui::Begin("Main Menu", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoBackground);
+
+    ImGui::SetNextWindowSizeConstraints(windowSize, windowSize);
+    // Calculate the center position for the buttons
+    ImVec2 centerPos = ImVec2((windowSize.x - 200) * 0.5f, (windowSize.y - 150) * 0.5f);
+
+    // Start button
+    ImGui::SetCursorPos(centerPos);
+    if (ImGui::ImageButton((void*)(intptr_t)img_gameStarts, ImVec2(200, 50))) {
+        e = Start_Game;
+    }
+
+    // Help button
+    ImGui::SetCursorPos(ImVec2(centerPos.x, centerPos.y + 100));  // Adjust the vertical distance
+    if (ImGui::ImageButton((void*)(intptr_t)img_help, ImVec2(200, 50))) {
+        e = Help;
+    }
+
+    // Exit button
+    ImGui::SetCursorPos(ImVec2(centerPos.x, centerPos.y + 200));  // Adjust the vertical distance
+    if (ImGui::ImageButton((void*)(intptr_t)img_exit, ImVec2(200, 50))) {
+        e = Exit;
+    }
+
+    ImGui::End();
 }
 
 void UIHandler::DrawPauseMenu(UIEvents& e)

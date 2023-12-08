@@ -3,6 +3,7 @@
 #pragma region PUBLIC_METHODS
 Game::~Game()
 {
+    delete m_ui;
     delete m_renderer;
     delete m_Player, m_Camera, m_dynamicsWorld;
     for (int i = 0; i < m_Objects.size(); i++)
@@ -11,9 +12,6 @@ Game::~Game()
 }
 int Game::Start()
 {
-    StartGame();
-    return 0;
-
     // This code will not execute for now
     m_ui = new UIHandler(m_Window);
     bool OpenMenu = true;
@@ -21,15 +19,31 @@ int Game::Start()
     // Main menu loop
     while (OpenMenu)
     {
-        //glfwPollEvents(); menu controls??
+        glfwPollEvents();
         UIEvents e = m_ui->DrawAndPollEvents(Main_Menu);
         switch (e) 
         {
         case Start_Game:
+            OpenMenu = false;
+            break;
+        case Help: //Or settings
+            // Call help or setting function
+            std::cout << "WASD to move, SHIFT for TURBO" << std::endl;
+            break;
+        case Exit:
+            return 0;
+        default:
             break;
         }
-    }
 
+        // Swap buffers
+        glfwSwapBuffers(m_Window);
+    }
+    //TODO: Show loading screen
+
+    // Game starts
+    glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    StartGame();
     return 0;
 }
 #pragma endregion
