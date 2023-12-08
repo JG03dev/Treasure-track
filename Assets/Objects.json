@@ -42,144 +42,236 @@
       "shine": 256,
       "instances": [
         {
-          "suffix": "0",
+          "suffix": "2i5j",
           "transform": { "translate": [ 16.0, -3.0, 0.0 ] }
         },
         {
-          "suffix": "1",
+          "suffix": "2i5j_m",
           "transform": { "translate": [ 36.0, -3.0, 0.0 ] }
         },
         {
-          "suffix": "2",
+          "suffix": "3i5j",
           "transform": { "translate": [ 56.0, -3.0, 0.0 ] }
         },
         {
-          "suffix": "3",
+          "suffix": "3i5j_m",
           "transform": { "translate": [ 85.0, -3.0, 0.0 ] }
         },
         {
-          "suffix": "4",
+          "suffix": "4i5j",
           "transform": { "translate": [ 114.0, -3.0, 0.0 ] }
         },
         {
-          "suffix": "5",
+          "suffix": "4i5j_m",
           "transform": { "translate": [ 114.0, -3.0, 31.0 ] }
         },
         {
-          "suffix": "6",
+          "suffix": "4i6j",
           "transform": { "translate": [ 114.0, -3.0, 62.0 ] }
         },
         {
-          "suffix": "7",
+          "suffix": "4i6j_m",
           "transform": { "translate": [ 85.0, -3.0, 62.0 ] }
         },
         {
-          "suffix": "8",
+          "suffix": "3i6j",
           "transform": { "translate": [ 56.0, -3.0, 62.0 ] }
         },
         {
-          "suffix": "9",
+          "suffix": "3i6j_m",
           "transform": { "translate": [ 28.0, -3.0, 62.0 ] }
         },
         {
-          "suffix": "10",
+          "suffix": "2i6j",
           "transform": { "translate": [ 0.0, -3.0, 62.0 ] }
         },
         {
-          "suffix": "11",
+          "suffix": "2i6j_m",
           "transform": { "translate": [ 0.0, -3.0, 76.5 ] }
         },
         {
-          "suffix": "12",
+          "suffix": "2i7j",
           "transform": { "translate": [ 0.0, -3.0, 91.0 ] }
         },
         {
-          "suffix": "13",
+          "suffix": "2i7j_m",
           "transform": { "translate": [ 0.0, -3.0, 102.5 ] }
         },
         {
-          "suffix": "14",
+          "suffix": "2i8j",
           "transform": { "translate": [ 0.0, -3.0, 114.0 ] }
         },
         {
-          "suffix": "15",
+          "suffix": "2i8j_m",
           "transform": { "translate": [ -28.0, -3.0, 114.0 ] }
         },
         {
-          "suffix": "16",
+          "suffix": "1i8j",
           "transform": { "translate": [ -56.0, -3.0, 114.0 ] }
         },
         {
-          "suffix": "17",
+          "suffix": "1i8j_m",
           "transform": { "translate": [ -85.0, -3.0, 114.0 ] }
         },
         {
-          "suffix": "18",
+          "suffix": "0i8j",
           "transform": { "translate": [ -114.0, -3.0, 114.0 ] }
         },
         {
-          "suffix": "19",
+          "suffix": "0i8j_m",
           "transform": { "translate": [ -114.0, -3.0, 102.5 ] }
         },
         {
-          "suffix": "20",
+          "suffix": "0i7j",
           "transform": { "translate": [ -114.0, -3.0, 91.0 ] }
         },
         {
-          "suffix": "21",
+          "suffix": "0i7j_m",
           "transform": { "translate": [ -114.0, -3.0, 76.5 ] }
         },
         {
-          "suffix": "22",
+          "suffix": "0i6j",
           "transform": { "translate": [ -114.0, -3.0, 62.0 ] }
         },
         {
-          "suffix": "23",
+          "suffix": "0i6j_m",
           "transform": { "translate": [ -85.0, -3.0, 62.0 ] }
         },
         {
-          "suffix": "24",
+          "suffix": "1i6j",
           "transform": { "translate": [ -56.0, -3.0, 62.0 ] }
         },
         {
-          "suffix": "25",
+          "suffix": "1i6j_m",
           "transform": { "translate": [ -56.0, -3.0, 31.0 ] }
         },
         {
-          "suffix": "26",
+          "suffix": "1i5j",
           "transform": { "translate": [ -56.0, -3.0, 0.0 ] }
         },
         {
-          "suffix": "27",
-          "transform": { "translate": [ -56.0, -3.0, -12.0 ] }
+          "suffix": "1i5j_m",
+          "transform": { "translate": [ -56.0, -3.0, -20.0 ] }
         },
         {
-          "suffix": "28",
-          "transform": { "translate": [ -56.0, -3.0, -24.0 ] }
+          "suffix": "1i4j",
+          "transform": { "translate": [ -56.0, -3.0, -40.0 ] }
         },
         {
-          "suffix": "29",
-          "transform": { "translate": [ -85.0, -3.0, -24.0 ] }
+          "suffix": "1i4j_m",
+          "transform": { "translate": [ -85.0, -3.0, -40.0 ] }
         },
         {
-          "suffix": "30",
-          "transform": { "translate": [ -114.0, -3.0, -24.0 ] }
+          "suffix": "0i4j",
+          "transform": { "translate": [ -114.0, -3.0, -40.0 ] }
         },
         {
-          "suffix": "31",
-          "transform": { "translate": [ -114.0, -3.0, -36.0 ] }
+          "suffix": "0i4j_m",
+          "transform": { "translate": [ -114.0, -3.0, -54.0 ] }
         },
         {
-          "suffix": "32",
-          "transform": { "translate": [ -114.0, -3.0, -48.0 ] }
-        },
-        {
-          "suffix": "33",
+          "suffix": "0i3j",
           "transform": { "translate": [ -114.0, -3.0, -68.0 ] }
         },
         {
-          "suffix": "34",
-          "transform": { "translate": [ -114.0, -3.0, -88.0 ] }
+          "suffix": "0i3j_m",
+          "transform": { "translate": [ -114.0, -3.0, -83.0 ] }
+        },
+        {
+          "suffix": "0i2j",
+          "transform": { "translate": [ -114.0, -3.0, -98.0 ] }
+        },
+        {
+          "suffix": "0i2j_m",
+          "transform": { "translate": [ -114.0, -3.0, -129.0 ] }
+        },
+        {
+          "suffix": "0i1j",
+          "transform": { "translate": [ -114.0, -3.0, -160.0 ] }
+        },
+        {
+          "suffix": "0i1j_m",
+          "transform": { "translate": [ -114.0, -3.0, -177.0 ] }
+        },
+        {
+          "suffix": "0i0j",
+          "transform": { "translate": [ -114.0, -3.0, -194.0 ] }
+        },
+        {
+          "suffix": "0i0j_m",
+          "transform": { "translate": [ -85.0, -3.0, -194.0 ] }
+        },
+        {
+          "suffix": "1i0j",
+          "transform": { "translate": [ -56.0, -3.0, -194.0 ] }
+        },
+        {
+          "suffix": "1i0j_m",
+          "transform": { "translate": [ -56.0, -3.0, -177.0 ] }
+        },
+        {
+          "suffix": "1i1j",
+          "transform": { "translate": [ -56.0, -3.0, -160.0 ] }
+        },
+        {
+          "suffix": "1i1j_m",
+          "transform": { "translate": [ -20.0, -3.0, -160.0 ] }
+        },
+        {
+          "suffix": "2i1j",
+          "transform": { "translate": [ 16.0, -3.0, -160.0 ] }
+        },
+        {
+          "suffix": "2i1j_m",
+          "transform": { "translate": [ 36.0, -3.0, -160.0 ] }
+        },
+        {
+          "suffix": "3i1j",
+          "transform": { "translate": [ 56.0, -3.0, -160.0 ] }
+        },
+        {
+          "suffix": "3i1j_m",
+          "transform": { "translate": [ 56.0, -3.0, -129.0 ] }
+        },
+        {
+          "suffix": "3i2j",
+          "transform": { "translate": [ 56.0, -3.0, -98.0 ] }
+        },
+        {
+          "suffix": "3i2j_m",
+          "transform": { "translate": [ 28.0, -3.0, -98.0 ] }
+        },
+        {
+          "suffix": "2i2j",
+          "transform": { "translate": [ 0.0, -3.0, -98.0 ] }
+        },
+        {
+          "suffix": "2i2j_m",
+          "transform": { "translate": [ 0.0, -3.0, -83.0 ] }
+        },
+        {
+          "suffix": "2i3j",
+          "transform": { "translate": [ 0.0, -3.0, -68.0 ] }
+        },
+        {
+          "suffix": "2i3j_m",
+          "transform": { "translate": [ 0.0, -3.0, -54.0 ] }
+        },
+        {
+          "suffix": "2i4ja",
+          "transform": { "translate": [ 0.0, -3.0, -40.0 ] }
+        },
+        {
+          "suffix": "2i4ja_m",
+          "transform": { "translate": [ 8.0, -3.0, -40.0 ] }
+        },
+        {
+          "suffix": "2i4jb",
+          "transform": { "translate": [ 16.0, -3.0, -40.0 ] }
+        },
+        {
+          "suffix": "2i4jb_m",
+          "transform": { "translate": [ 16.0, -3.0, -20.0 ] }
         }
       ]
     },
