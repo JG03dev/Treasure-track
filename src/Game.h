@@ -116,7 +116,6 @@ private:
 	// Contador Monedas
 	int m_coinsCollected;
 
-
 	// Initializers
 	void InitializePhysics();
 	void InitializeGraphics();
