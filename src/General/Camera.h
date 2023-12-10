@@ -87,8 +87,10 @@ public:
 
 	void setTarget(Player* p) { player = p; }
 
-private:
+	void changeCamera();
 
+private:
+	bool m_firstPerson;
 	// Update vectors of the camera
 	void update();
 };

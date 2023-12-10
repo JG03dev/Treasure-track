@@ -81,7 +81,7 @@ public:
             wasWPressed = false;
         }
 
-        if (GetKeyState(VK_SHIFT) & 0x8000)
+        if (GetKeyState(VK_SPACE) & 0x8000)
         {
             effectsPlayer4.Stop();
             effectsPlayer4.Play(sound6);

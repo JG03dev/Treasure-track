@@ -1,7 +1,7 @@
 #include "Player.h"
 
 // Constructor
-Player::Player(Model* m, btDiscreteDynamicsWorld* dynamicsWorld) : modelWheel(NULL), delaIzquierda(NULL), delaDerecha(NULL)
+Player::Player(Model* m, btDiscreteDynamicsWorld* dynamicsWorld) : modelWheel(NULL), delaIzquierda(NULL), delaDerecha(NULL), m_num_keys(0)
 {
 	modelChasis = m; // Model points to the same model shared
 
@@ -9,6 +9,7 @@ Player::Player(Model* m, btDiscreteDynamicsWorld* dynamicsWorld) : modelWheel(NU
 	hitbox.LoadModel(std::string("../../../Assets/") + m->GetName() + std::string("/") + m->GetName() + std::string("Hitbox.obj"), m->GetName() + std::string("Hitbox"));
 	this->CreateVehicle(dynamicsWorld, hitbox);
 	dynamicsWorld->addVehicle(this->vehicle);
+
 }
 
 // Destructor
@@ -53,10 +54,16 @@ void Player::InputMethod(int key, int keyPressed) {
 		case GLFW_KEY_W:
 			this->vehicle->applyEngineForce(this->vehicleParams.m_fEngineForce, 1);
 			this->vehicle->applyEngineForce(this->vehicleParams.m_fEngineForce, 0);
+			this->vehicle->setBrake(0, 2);
+			this->vehicle->setBrake(0, 3);
+			m_num_keys++;
 			break;
 		case GLFW_KEY_S:
 			this->vehicle->applyEngineForce(-this->vehicleParams.m_bEngineForce, 2);
 			this->vehicle->applyEngineForce(-this->vehicleParams.m_bEngineForce, 3);
+			this->vehicle->setBrake(0, 2);
+			this->vehicle->setBrake(0, 3);
+			m_num_keys++;
 			break;
 		case GLFW_KEY_A:
 			this->vehicle->setSteeringValue(this->vehicleParams.m_steeringValue, 0);
@@ -66,15 +73,16 @@ void Player::InputMethod(int key, int keyPressed) {
 			this->vehicle->setSteeringValue(-this->vehicleParams.m_steeringValue, 0);
 			this->vehicle->setSteeringValue(-this->vehicleParams.m_steeringValue, 1);
 			break;
-		case GLFW_KEY_LEFT_SHIFT:
-			this->vehicle->setBrake(600, 0);
-			this->vehicle->setBrake(600, 1);
+		case GLFW_KEY_SPACE:
 			this->vehicle->setBrake(600, 2);
 			this->vehicle->setBrake(600, 3);
 			break;
-		case GLFW_KEY_SPACE:
-			this->vehicle->applyEngineForce(this->vehicleParams.m_fEngineForce * 5, 2);
-			this->vehicle->applyEngineForce(this->vehicleParams.m_fEngineForce * 5, 3);
+		case GLFW_KEY_LEFT_SHIFT:
+			this->vehicle->applyEngineForce(this->vehicleParams.m_fEngineForce * 2, 2);
+			this->vehicle->applyEngineForce(this->vehicleParams.m_fEngineForce * 2, 3);
+			this->vehicle->setBrake(0, 2);
+			this->vehicle->setBrake(0, 3);
+			m_num_keys++;
 			break;
 		case GLFW_KEY_R:
 		{
@@ -100,23 +108,40 @@ void Player::InputMethod(int key, int keyPressed) {
 		switch (key)
 		{
 		case GLFW_KEY_W:
+			m_num_keys--;
 			this->vehicle->applyEngineForce(0, 0);
 			this->vehicle->applyEngineForce(0, 1);
+			if (m_num_keys == 0) {
+				this->vehicle->setBrake(50, 2);
+				this->vehicle->setBrake(50, 3);
+			}
 			break;
 		case GLFW_KEY_S:
+			m_num_keys--;
 			this->vehicle->applyEngineForce(0, 2);
 			this->vehicle->applyEngineForce(0, 3);
+			if (m_num_keys == 0) {
+				this->vehicle->setBrake(50, 2);
+				this->vehicle->setBrake(50, 3);
+			}
 			break;
 		case GLFW_KEY_A:
 		case GLFW_KEY_D:
 			this->vehicle->setSteeringValue(0, 0);
 			this->vehicle->setSteeringValue(0, 1);
 			break;
-		case GLFW_KEY_LEFT_SHIFT:
-			this->vehicle->setBrake(0, 0);
-			this->vehicle->setBrake(0, 1);
+		case GLFW_KEY_SPACE:
 			this->vehicle->setBrake(0, 2);
 			this->vehicle->setBrake(0, 3);
+			break;
+		case GLFW_KEY_LEFT_SHIFT:
+			m_num_keys--;
+			this->vehicle->applyEngineForce(0, 2);
+			this->vehicle->applyEngineForce(0, 3);
+			if (m_num_keys == 0) {
+				this->vehicle->setBrake(50, 2);
+				this->vehicle->setBrake(50, 3);
+			}
 			break;
 		default:
 			break;

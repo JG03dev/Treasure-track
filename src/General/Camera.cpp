@@ -21,6 +21,7 @@ Camera::Camera( // Init with vector
 		speed = SPEED;
 	sensitivity = SENSITIVITY;
 	fov = FOV;
+	m_firstPerson = false;
 	update();
 }
 
@@ -37,6 +38,7 @@ Camera::Camera( // Init with scalar values
 		speed = SPEED;
 	sensitivity = SENSITIVITY;
 	fov = FOV;
+	m_firstPerson = false;
 	update();
 }
 
@@ -86,6 +88,11 @@ void Camera::processAccerlate(bool accer) {
 	else speed = SPEED;
 }
 
+void Camera::changeCamera()
+{
+	m_firstPerson = !m_firstPerson;
+}
+
 void Camera::followPlayer()
 {
 	btTransform t;
@@ -93,26 +100,30 @@ void Camera::followPlayer()
 
 	btVector3 forward = this->player->vehicle->getForwardVector();
 	//std::cout << "Car Forward: " << forward.x() << ", " << forward.y() << ", " << forward.z() << std::endl;
-	btVector3 pos = t.getOrigin() - forward * 4; // Tercera Persona
-	//btVector3 pos = t.getOrigin(); // Primera Persona Externa
-	
-	front = glm::vec3(forward.x(), forward.y() - 0.2, forward.z());
-	right = glm::normalize(glm::cross(front, worldUp));
-	up = glm::normalize(glm::cross(right, front));
 
-	position = glm::vec3(float(pos.getX()), float(pos.getY()+1.5), float(pos.getZ()));
-
-	// btVector3 pos = t.getOrigin() - forward * 0.3; // Primera Persona Interna
-	// position = glm::vec3(float(pos.getX()), float(pos.getY()+0.15), float(pos.getZ()));
+	if (m_firstPerson) {
+		/* PRIMERA PERSONA INTERNA (DENTRO DEL VEHICULO) */
+		glm::vec3 rightCar = glm::normalize(glm::cross(glm::vec3(forward.getX(), forward.getY(), forward.getZ()), worldUp));
+		btVector3 pos = t.getOrigin() - btVector3(rightCar.x, rightCar.y, rightCar.z) * 0.2; // Primera Persona Interna
+		position = glm::vec3(float(pos.getX()), float(pos.getY() + 0.7), float(pos.getZ()));
+	}
+	else {
+		/* TERCERA PERSONA */
+		btVector3 pos = t.getOrigin() - forward * 4; // Tercera Persona
+		front = glm::vec3(forward.x(), forward.y() - 0.2, forward.z());
+		right = glm::normalize(glm::cross(front, worldUp));
+		up = glm::normalize(glm::cross(right, front));
+		position = glm::vec3(float(pos.getX()), float(pos.getY() + 1.5), float(pos.getZ()));
+	}
 }
 
 // Update front vector of the camera
 void Camera::update() {
-	/*glm::vec3 tmpFront;
+	glm::vec3 tmpFront;
 	tmpFront.x = cos(glm::radians(pitch)) * cos(glm::radians(yaw));
 	tmpFront.y = sin(glm::radians(pitch));
 	tmpFront.z = cos(glm::radians(pitch)) * sin(glm::radians(yaw));
-	front = glm::normalize(tmpFront);*/
+	front = glm::normalize(tmpFront);
 	right = glm::normalize(glm::cross(front, worldUp));
 	up = glm::normalize(glm::cross(right, front));
 }

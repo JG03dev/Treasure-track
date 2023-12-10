@@ -1,12 +1,26 @@
 # Blender 3.6.4 MTL File: 'None'
 # www.blender.org
 
-newmtl Material.002
-Ns 250.000000
+newmtl mat_laths
 Ka 1.000000 1.000000 1.000000
-Ks 0.500000 0.500000 0.500000
 Ke 0.000000 0.000000 0.000000
 Ni 1.450000
 d 1.000000
 illum 2
-map_Kd color.png
+map_Kd mat_laths_BaseColor.png
+map_Ks mat_laths_Specular.png
+map_Ns mat_laths_Roughness.png
+map_refl mat_laths_Metallic.png
+map_Bump -bm 1.000000 mat_laths_GL_Normal.png
+
+newmtl mat_rack
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mat_rack_BaseColor.png
+map_Ks mat_rack_Specular.png
+map_Ns mat_rack_Roughness.png
+map_refl mat_rack_Metallic.png
+map_Bump -bm 1.000000 mat_rack_GL_Normal.png

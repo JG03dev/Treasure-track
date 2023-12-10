@@ -250,6 +250,10 @@ void Game::ProcessInput(GLFWwindow* window, int key, int action)
         m_renderer->cycleDirLight();
         m_renderer->cycleSky();
     }
+    if (GLFW_KEY_C == key && action == GLFW_PRESS)
+    {
+        m_Camera->changeCamera();
+    }
 
     m_Player->InputMethod(key, action);
 }
