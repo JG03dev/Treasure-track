@@ -21,6 +21,8 @@ public:
 	Model* modelChasis;
 	Model* modelWheel;
 	btRaycastVehicle* vehicle;
+	btQuaternion lastQuaternion;
+	glm::vec3 lastForward;
 
 	// Constructor
 	Player(std::string const& modelPath, std::string const& modelName, btDiscreteDynamicsWorld* dynamicsWorld, GLfloat sIntensity, GLfloat shine, bool addHitbox = false);
@@ -39,6 +41,7 @@ public:
 	glm::mat3x3 getCarBasis();
 	glm::vec3 getCarPos();
 	glm::vec3 getCarForward();
+	btQuaternion getCarRotation();
 
 	//Seters
 	void setLights(SpotLight* delaIzq, SpotLight* delaDer) { delaIzquierda = delaIzq; delaDerecha = delaDer; }

@@ -97,26 +97,38 @@ void Camera::changeCamera()
 
 void Camera::followPlayer()
 {
-	btTransform t;
-	t = this->player->vehicle->getChassisWorldTransform();
-
-	btVector3 forward = this->player->vehicle->getForwardVector();
-	//std::cout << "Car Forward: " << forward.x() << ", " << forward.y() << ", " << forward.z() << std::endl;
+	glm::vec3 forward = this->player->getCarForward();
 
 	if (m_firstPerson) {
 		/* PRIMERA PERSONA */
-		glm::vec3 rightCar = glm::normalize(glm::cross(glm::vec3(forward.getX(), forward.getY(), forward.getZ()), worldUp));
-		btVector3 pos = t.getOrigin() - btVector3(rightCar.x, rightCar.y, rightCar.z) * 0.2;
-		position = glm::vec3(float(pos.getX()), float(pos.getY() + 0.7), float(pos.getZ()));
-		// front = glm::vec3(forward.x(), forward.y() - 0.1, forward.z());
+		glm::vec3 rightCar = glm::normalize(glm::cross(forward, worldUp));
+		glm::vec3 pos = this->player->getCarPos() - rightCar * 0.2f;
+		position = glm::vec3(float(pos.x), float(pos.y + 0.7), float(pos.z));
+		float yaw2, pitch2, roll2;
+		player->getCarRotation().getEulerZYX(yaw2, pitch2, roll2);
+		float actualYaw = glm::radians(yaw);
+		if (forward.x >= 0) {
+			actualYaw -= pitch2;
+		}
+		else {
+			actualYaw -= (pitch2 + (glm::pi<float>() / 2 - pitch2) * 2);
+		}
+		glm::vec3 tmpFront;
+		tmpFront.x = cos(glm::radians(pitch)) * cos(actualYaw);
+		tmpFront.y = sin(glm::radians(pitch));
+		tmpFront.z = cos(glm::radians(pitch)) * sin(actualYaw);
+		//std::cout << "Player forward: " << forward.x << ", " << forward.y << ", " << forward.z << std::endl;
+		front = glm::normalize(tmpFront);
+		right = glm::normalize(glm::cross(front, worldUp));
+		up = glm::normalize(glm::cross(right, front));
 	}
 	else {
 		/* TERCERA PERSONA */
-		btVector3 pos = t.getOrigin() - forward * 4;
-		front = glm::vec3(forward.x(), forward.y() - 0.2, forward.z());
+		glm::vec3 pos = this->player->getCarPos() - forward * 4.f;
+		front = glm::vec3(forward.x, forward.y - 0.2, forward.z);
 		right = glm::normalize(glm::cross(front, worldUp));
 		up = glm::normalize(glm::cross(right, front));
-		position = glm::vec3(float(pos.getX()), float(pos.getY() + 1.5), float(pos.getZ()));
+		position = glm::vec3(float(pos.x), float(pos.y + 1.5), float(pos.z));
 	}
 }
 

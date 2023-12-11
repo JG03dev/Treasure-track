@@ -9,7 +9,9 @@ Player::Player(Model* m, btDiscreteDynamicsWorld* dynamicsWorld) : modelWheel(NU
 	hitbox.LoadModel(std::string("../../../Assets/") + m->GetName() + std::string("/") + m->GetName() + std::string("Hitbox.obj"), m->GetName() + std::string("Hitbox"));
 	this->CreateVehicle(dynamicsWorld, hitbox);
 	dynamicsWorld->addVehicle(this->vehicle);
-
+	
+	lastQuaternion = this->getCarRotation();
+	lastForward = this->getCarForward();
 }
 
 // Destructor
@@ -177,6 +179,10 @@ glm::vec3 Player::getCarForward()
 	return glm::vec3(vehicle->getForwardVector().x(), vehicle->getForwardVector().y(), vehicle->getForwardVector().z());
 }
 
+btQuaternion Player::getCarRotation() {
+	return vehicle->getChassisWorldTransform().getRotation();
+}
+
 // Private Methods
 
 void Player::CreateVehicle(btDiscreteDynamicsWorld* dynamicsWorld, Model& hitbox) {
@@ -259,9 +265,9 @@ void Player::CreateVehicle(btDiscreteDynamicsWorld* dynamicsWorld, Model& hitbox
 	btVector3 wheelConnectionPoint(halfExtents.x() - wheelRadius*2, 0.6, halfExtents.z() - wheelWidth);
 
 	// Adds the front wheels
-	vehicle->addWheel(wheelConnectionPoint * btVector3(1, 1, -1), wheelDirectionCS0, wheelAxleCS, suspensionRestLength, wheelRadius, tuning, true);
+	vehicle->addWheel(wheelConnectionPoint * btVector3(1.2, 1, -1), wheelDirectionCS0, wheelAxleCS, suspensionRestLength, wheelRadius, tuning, true);
 
-	vehicle->addWheel(wheelConnectionPoint * btVector3(1, 1, 1), wheelDirectionCS0, wheelAxleCS, suspensionRestLength, wheelRadius, tuning, true);
+	vehicle->addWheel(wheelConnectionPoint * btVector3(1.2, 1, 1), wheelDirectionCS0, wheelAxleCS, suspensionRestLength, wheelRadius, tuning, true);
 
 	// Adds the rear wheels
 	vehicle->addWheel(wheelConnectionPoint * btVector3(-1, 1, -1), wheelDirectionCS0, wheelAxleCS, suspensionRestLength, wheelRadius, tuning, false);

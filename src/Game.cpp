@@ -260,6 +260,9 @@ void Game::ProcessInput(GLFWwindow* window, int key, int action)
 
 void Game::Actualizar(float deltaTime, MySoundEffects& sound)
 {
+    this->m_Player->lastForward = this->m_Player->getCarForward();
+    this->m_Player->lastQuaternion = this->m_Player->getCarRotation();
+
     // Physics
     m_dynamicsWorld->stepSimulation(deltaTime, 2);
 
