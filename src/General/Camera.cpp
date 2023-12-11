@@ -22,6 +22,7 @@ Camera::Camera( // Init with vector
 	sensitivity = SENSITIVITY;
 	fov = FOV;
 	m_firstPerson = false;
+	m_isCameraMoving = false;
 	update();
 }
 
@@ -39,6 +40,7 @@ Camera::Camera( // Init with scalar values
 	sensitivity = SENSITIVITY;
 	fov = FOV;
 	m_firstPerson = false;
+	m_isCameraMoving = false;
 	update();
 }
 
@@ -102,14 +104,15 @@ void Camera::followPlayer()
 	//std::cout << "Car Forward: " << forward.x() << ", " << forward.y() << ", " << forward.z() << std::endl;
 
 	if (m_firstPerson) {
-		/* PRIMERA PERSONA INTERNA (DENTRO DEL VEHICULO) */
 		glm::vec3 rightCar = glm::normalize(glm::cross(glm::vec3(forward.getX(), forward.getY(), forward.getZ()), worldUp));
-		btVector3 pos = t.getOrigin() - btVector3(rightCar.x, rightCar.y, rightCar.z) * 0.2; // Primera Persona Interna
+		btVector3 pos = t.getOrigin() - btVector3(rightCar.x, rightCar.y, rightCar.z) * 0.2;
 		position = glm::vec3(float(pos.getX()), float(pos.getY() + 0.7), float(pos.getZ()));
+		if (!m_isCameraMoving) { // Add this condition
+			front = glm::vec3(forward.x(), 0.0f, forward.z()); // Keep the y component constant
+		}
 	}
 	else {
-		/* TERCERA PERSONA */
-		btVector3 pos = t.getOrigin() - forward * 4; // Tercera Persona
+		btVector3 pos = t.getOrigin() - forward * 4;
 		front = glm::vec3(forward.x(), forward.y() - 0.2, forward.z());
 		right = glm::normalize(glm::cross(front, worldUp));
 		up = glm::normalize(glm::cross(right, front));
