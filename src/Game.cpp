@@ -201,13 +201,6 @@ void Game::Run()
         {
             timer -= deltaTime;
         }
-        else
-        {
-            while (!glfwWindowShouldClose(m_Window))
-            {
-                
-            }
-        }
         
 
         ImGui::End();
