@@ -145,7 +145,7 @@ void Game::Run()
     // Inicialización de ImGui para GLFW y OpenGL
     ImGui_ImplGlfw_InitForOpenGL(m_Window, true);
     ImGui_ImplOpenGL3_Init("#version 330");
-    static float timer = 0.0f;
+    static float timer = 15.0f;
 
     while (!glfwWindowShouldClose(m_Window))
     {
@@ -186,10 +186,29 @@ void Game::Run()
 
         ImGui::Begin("Temporizador", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoCollapse);
         ImGui::SetWindowFontScale(2.0f);
-        ImGui::TextColored(ImVec4(1.0f, 1.0f, 1.0f, 1.0f), "Tiempo: %.2f", timer);
+        if (timer > 25.0f)
+        {
+            ImGui::TextColored(ImVec4(1.0f, 1.0f, 1.0f, 1.0f), "Tiempo: %.2f", timer);
+        }
+        else
+        {
+            ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "Tiempo: %.2f", timer);
+        }
+        
 
         // Incrementar el temporizador
-        timer += deltaTime;
+        if (timer > 0.0f)
+        {
+            timer -= deltaTime;
+        }
+        else
+        {
+            while (!glfwWindowShouldClose(m_Window))
+            {
+                
+            }
+        }
+        
 
         ImGui::End();
         ImGui::PopStyleVar(3);
