@@ -1,4 +1,8 @@
 #include "Game.h"
+#include <future>
+#include <thread>
+#include <mutex>
+#include <condition_variable>
 
 #pragma region PUBLIC_METHODS
 Game::~Game()
@@ -10,53 +14,92 @@ Game::~Game()
     if (m_dynamicsWorld != NULL) delete m_dynamicsWorld;
     for (int i = 0; i < m_Objects.size(); i++)
         if (m_Objects[i] != NULL) delete m_Objects[i];
+    if (m_sound != NULL) delete m_sound;
 }
+void Game::HandleMainMenu()
+{
+    UIEvents e = m_ui->DrawAndPollEvents(Main_Menu);
+
+    switch (e)
+    {
+    case Start_Game:
+        glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        m_currentState = Loading;
+        break;
+    case Help: //Or settings
+        // Call help or setting function
+        std::cout << "WASD to move, SHIFT for TURBO" << std::endl;
+        break;
+    case Exit:
+        glfwSetWindowShouldClose(m_Window, true);
+    default:
+        break;    
+    }
+}
+
+GLFWwindow* Game::CreateSharedGLFWWindow() {
+    // Create and configure a GLFW window with a shared OpenGL context
+    // Note: This is a simplified example; adjust based on your GLFW setup
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+    GLFWwindow* sharedContextWindow = glfwCreateWindow(1, 1, "SharedContextWindow", nullptr, nullptr);
+    if (!sharedContextWindow) {
+        // Handle window creation failure
+        return nullptr;
+    }
+
+    return sharedContextWindow;
+}
+void Game::HandleLoading()
+{
+    // This is executed in the main thread
+    LoadScreen();
+    InitializeGame();
+    m_currentState = InGame;
+}
+
+void Game::HandleGameOver()
+{
+}
+
 int Game::Start()
 {
-    // This code will not execute for now
     m_ui = new UIHandler(m_Window);
-    bool OpenMenu = true;
-    
+    img_loader();
+
     // Main menu loop
-    while (OpenMenu)
+    while (!glfwWindowShouldClose(m_Window))
     {
         glfwPollEvents();
-        UIEvents e = m_ui->DrawAndPollEvents(Main_Menu);
-        
-        switch (e) 
-        {
-        case Start_Game:
-            OpenMenu = false;
+
+        switch (m_currentState) {
+        case GameState::MainMenu:
+            HandleMainMenu();
             break;
-        case Help: //Or settings
-            // Call help or setting function
-            std::cout << "WASD to move, SHIFT for TURBO" << std::endl;
+        case GameState::Loading:
+            HandleLoading();
             break;
-        case Exit:
-            return 0;
-        default:
+        case GameState::InGame:
+            Run();
+            break;
+        case GameState::GameOver:
+            HandleGameOver();
             break;
         }
 
-        // Swap buffers
         glfwSwapBuffers(m_Window);
     }
-    //TODO: Show loading screen
-
-    // Game starts
-    glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-    StartGame();
     return 0;
 }
 #pragma endregion
 
 #pragma region PRIVATE_METHODS_INITIALIZERS
-void Game::StartGame() {
+void Game::InitializeGame() {
     InitializePhysics();
-    
     InitializeGraphics();
-
-    Run();
+    InitializeSound();
 }
 
 void Game::InitializePhysics()
@@ -83,7 +126,7 @@ void Game::InitializePhysics()
 
 void Game::InitializeGraphics()
 {
-    // Init renderer
+
     m_renderer = new Renderer("../../../Assets/Objects.json", m_SCR_WIDTH, m_SCR_HEIGHT);
     //Iniciamos objetos
     
@@ -94,9 +137,8 @@ void Game::InitializeGraphics()
     //TODO: Aquesta part pot ser bastant lenta, es pot mirar de renderitzar una pantalla de carga abans que aixo.
     for (auto& Obj : m_renderer->getModelList())
     {
-        LoadScreen();
         if (!Obj.second.first->loaded())
-            Obj.second.first->Load();
+            Obj.second.first->Load();//TODO: Check if Assimp is paralizable
         glm::mat4 model(1.0f);
         if (Obj.first == "Player")
         {
@@ -121,6 +163,11 @@ void Game::InitializeGraphics()
     // Inicializar camara
     //m_Camera = new Camera(glm::vec3(0.0f, 0.0f, 3.0f));
     m_Camera->setTarget(m_Player);
+}
+
+void Game::InitializeSound()
+{
+    m_sound = new MySoundEffects();
 }
 
 int Game::InitializeWindow()
@@ -161,35 +208,19 @@ void Game::img_loader() {
 
 void Game::Run()
 {
-    // timing
-    float deltaTime = 0.0f;
-    float lastFrame = 0.0f;
-    MySoundEffects sound;
-
-    img_loader();
-
-    while (!glfwWindowShouldClose(m_Window))
-    {
         // per-frame time logic
         // --------------------
         float currentFrame = static_cast<float>(glfwGetTime());
-        deltaTime = currentFrame - lastFrame;
-        lastFrame = currentFrame;
+        m_deltaTime = currentFrame - m_lastFrame;
+        m_lastFrame = currentFrame;
 
-        sound.PlaySound(deltaTime);
-
-        // input: Manejar entrada de usuario
-        // -----
-        glfwPollEvents();
+        m_sound->PlaySound(m_deltaTime);
 
         //Actualizar Informacion (Mover coordenadas)
-        Actualizar(deltaTime);
+        Actualizar(m_deltaTime);
 
         //Renderizar
         Render();
-
-        glfwSwapBuffers(m_Window);
-    }
 }
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
@@ -250,7 +281,6 @@ void Game::Render()
 
 void Game::LoadScreen() {
     m_ui->DrawAndPollEvents(Load_Screen);
-    glfwSwapBuffers(m_Window);
 }
 
 // Function to perform jump and spin animation

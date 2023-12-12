@@ -41,33 +41,50 @@
 
 // --OTHER INCLUDES--
 
+enum GameState {
+	MainMenu,
+	Loading,
+	InGame,
+	GameOver
+};
+
 class Game
 {
-public: 
+public:
 	// Public Attributes
 
 	const char* name = "Nombre juego";
 
 	// Constructors
 
-	Game() :m_Window(NULL), m_renderer(NULL), m_Camera(NULL), m_dynamicsWorld(NULL), m_Player(NULL), m_sinTime(0) { m_Camera = new Camera(glm::vec3(0.0f, 0.0f, 3.0f)); InitializeWindow(); };
-
-	// Destructors
-
+	Game() :m_Window(NULL), m_renderer(NULL), m_Camera(NULL),
+		m_dynamicsWorld(NULL), m_Player(NULL), m_sinTime(0),
+		m_currentState(GameState::MainMenu), m_deltaTime(0.0f), m_lastFrame(0.0f),
+		m_sound(NULL){
+		m_Camera = new Camera(glm::vec3(0.0f, 0.0f, 3.0f));
+		InitializeWindow();
+	};
+	// Destructor
 	~Game();
-	
+
+	// Game States
+	void HandleMainMenu();
+	void HandleLoading();
+	GLFWwindow* CreateSharedGLFWWindow();
+	void HandleGameOver();
+
 	// Public Methods
-	int Start();	
+	int Start();
 
 	GLFWwindow* GetWindow() { return m_Window; }
 	Camera* GetCamera() { return m_Camera; }
 
 	void ProcessInput(GLFWwindow* window, int key, int action);
 	void img_loader();
-	
+
 private:
 	/// Private Attributes
-	
+	GameState m_currentState;
 	// Window
 	GLFWwindow* m_Window;
 	const unsigned int m_SCR_WIDTH = 1280;
@@ -106,16 +123,20 @@ private:
 	const float spinSpeed = 2.0f;
 
 
+	// Sound
+	MySoundEffects* m_sound;
+
 
 	// Initializers
-	void StartGame();
+	void InitializeGame();
 	void InitializePhysics();
 	void InitializeGraphics();
+	void InitializeSound();
 	int InitializeWindow();
 
 	// Functionality
 	void Run();
-	
+
 	void Actualizar(float deltaTime);
 	void Render();
 

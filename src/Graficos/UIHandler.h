@@ -38,6 +38,7 @@ private:
     GLuint img_help;
     GLuint img_exit;
     GLuint img_MMBackground;
+    GLuint img_LSBackground;
 
 
     GLuint LoadTexture(const char* path);

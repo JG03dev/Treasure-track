@@ -12,6 +12,7 @@ UIHandler::UIHandler(GLFWwindow* window) : window(window), progress(0.0f) {
     img_help = LoadTexture("../../../src/s2.jpg");
     img_exit = LoadTexture("../../../src/s2.jpg");
     img_MMBackground = LoadTexture("../../../src/s2.jpg");
+    img_LSBackground = LoadTexture("../../../src/LoadingScreenFoto.jpg");
 }
 
 UIHandler::~UIHandler() {
@@ -52,7 +53,7 @@ UIEvents UIHandler::DrawAndPollEvents(int flags)
     ImGui::Render();
     glViewport(0, 0, display_w, display_h);
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
     return result;
@@ -138,6 +139,7 @@ void UIHandler::DrawLoadScreen(UIEvents& e) {
     ImGui::SetNextWindowSize(windowSize);
     ImGui::SetNextWindowPos(ImVec2(0, 0));
     ImGui::Begin("Background", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
+    ImGui::Image((void*)(intptr_t)img_LSBackground, windowSize);
     ImGui::End();
 
     // Set up the loading bar
