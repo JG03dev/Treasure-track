@@ -3,24 +3,26 @@
 #pragma region PUBLIC_METHODS
 Game::~Game()
 {
-    delete m_ui;
-    delete m_renderer;
-    delete m_Player, m_Camera, m_dynamicsWorld;
+    if (m_ui != NULL) delete m_ui;
+    if (m_renderer != NULL) delete m_renderer;
+    if (m_Player != NULL) delete m_Player;
+    if (m_Camera != NULL) delete m_Camera;
+    if (m_dynamicsWorld != NULL) delete m_dynamicsWorld;
     for (int i = 0; i < m_Objects.size(); i++)
-        delete m_Objects[i];
-    
+        if (m_Objects[i] != NULL) delete m_Objects[i];
 }
 int Game::Start()
 {
     // This code will not execute for now
     m_ui = new UIHandler(m_Window);
     bool OpenMenu = true;
-
+    
     // Main menu loop
     while (OpenMenu)
     {
         glfwPollEvents();
         UIEvents e = m_ui->DrawAndPollEvents(Main_Menu);
+        
         switch (e) 
         {
         case Start_Game:
@@ -49,10 +51,9 @@ int Game::Start()
 #pragma endregion
 
 #pragma region PRIVATE_METHODS_INITIALIZERS
-
 void Game::StartGame() {
-
     InitializePhysics();
+    
     InitializeGraphics();
 
     Run();
@@ -87,12 +88,13 @@ void Game::InitializeGraphics()
     //Iniciamos objetos
     
     Model* p = m_renderer->getModel("Player").first;
-
+    
     //Load objects
     //TODO: find some way to init ChassisWorldTransform based on object TG (stored at Obj.second.second)
     //TODO: Aquesta part pot ser bastant lenta, es pot mirar de renderitzar una pantalla de carga abans que aixo.
     for (auto& Obj : m_renderer->getModelList())
     {
+        LoadScreen();
         if (!Obj.second.first->loaded())
             Obj.second.first->Load();
         glm::mat4 model(1.0f);
@@ -244,6 +246,11 @@ void Game::Render()
     glm::mat4 projection = glm::perspective(glm::radians(m_Camera->FOV), (float)m_SCR_WIDTH / (float)m_SCR_HEIGHT, c_near, c_far);
 
     m_renderer->RenderEverything(*m_Camera, projection);
+}
+
+void Game::LoadScreen() {
+    m_ui->DrawAndPollEvents(Load_Screen);
+    glfwSwapBuffers(m_Window);
 }
 
 // Function to perform jump and spin animation

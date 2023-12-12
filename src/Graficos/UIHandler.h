@@ -7,6 +7,7 @@ enum UIFlags {
     Main_Menu = 1 << 0,
     Pause_Menu = 1 << 1,
     HUD = 1 << 2,
+    Load_Screen = 1 << 3,
 };
 
 //Only ONE event will be handled per frame
@@ -41,10 +42,12 @@ private:
 
     GLuint LoadTexture(const char* path);
 
+    float progress;
+
     //Draws (one per flag)
     void DrawMainMenu(UIEvents& e);
     void DrawPauseMenu(UIEvents& e);
     void DrawHUD(UIEvents& e);
-
+    void DrawLoadScreen(UIEvents& e);
 
 };

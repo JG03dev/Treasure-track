@@ -76,6 +76,7 @@ using namespace glm;
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
+#include <imgui_internal.h>
 
 // Desactivar en llistat compilaci� warning C4244: 'argumento': conversi�n de 'double' a 'GLfloat'; posible p�rdida de datos
 #  pragma warning (disable:4244)  // Disable bogus VC++ 4.2 conversion warnings.

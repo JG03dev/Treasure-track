@@ -50,7 +50,7 @@ public:
 
 	// Constructors
 
-	Game() :m_Window(NULL), m_Camera(NULL), m_dynamicsWorld(NULL), m_Player(NULL), m_sinTime(0) { m_Camera = new Camera(glm::vec3(0.0f, 0.0f, 3.0f)); InitializeWindow(); };
+	Game() :m_Window(NULL), m_renderer(NULL), m_Camera(NULL), m_dynamicsWorld(NULL), m_Player(NULL), m_sinTime(0) { m_Camera = new Camera(glm::vec3(0.0f, 0.0f, 3.0f)); InitializeWindow(); };
 
 	// Destructors
 
@@ -118,4 +118,6 @@ private:
 	
 	void Actualizar(float deltaTime);
 	void Render();
+
+	void LoadScreen();
 };

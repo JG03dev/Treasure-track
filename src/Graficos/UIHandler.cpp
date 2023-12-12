@@ -1,6 +1,6 @@
 #include "UIHandler.h"
 
-UIHandler::UIHandler(GLFWwindow* window) : window(window) {
+UIHandler::UIHandler(GLFWwindow* window) : window(window), progress(0.0f) {
     ImGui::CreateContext();
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init("#version 330");
@@ -35,7 +35,7 @@ UIEvents UIHandler::DrawAndPollEvents(int flags)
     //Warning! only one event can be handled at a time
     //This means result 
     UIEvents result = None;
-
+    
     if (flags & Main_Menu) {
         DrawMainMenu(result);
     }
@@ -44,6 +44,9 @@ UIEvents UIHandler::DrawAndPollEvents(int flags)
     }
     if (flags & HUD) {
         DrawMainMenu(result);
+    }
+    if (flags & Load_Screen) {
+        DrawLoadScreen(result);
     }
 
     ImGui::Render();
@@ -128,6 +131,35 @@ void UIHandler::DrawPauseMenu(UIEvents& e)
 void UIHandler::DrawHUD(UIEvents& e)
 {
 }
+
+void UIHandler::DrawLoadScreen(UIEvents& e) {
+    // Set the background image
+    ImVec2 windowSize(display_w, display_h);
+    ImGui::SetNextWindowSize(windowSize);
+    ImGui::SetNextWindowPos(ImVec2(0, 0));
+    ImGui::Begin("Background", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
+    ImGui::End();
+
+    // Set up the loading bar
+    ImGui::SetNextWindowSize(windowSize);
+    ImGui::SetNextWindowPos(ImVec2(0, 0));
+    ImGui::Begin("Loading Bar", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoBackground);
+    ImGui::SetNextWindowSizeConstraints(windowSize, windowSize);
+
+    std::cout << progress << std::endl;
+    ImGui::ProgressBar(progress);
+
+    if (progress < 1.0f) {
+        progress += 1.0f/5.0f;
+    }
+    else {
+        progress = 0.0f;
+    }
+
+    ImGui::End();
+}
+
+
 
 
 
