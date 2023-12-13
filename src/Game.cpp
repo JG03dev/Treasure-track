@@ -61,11 +61,11 @@ void Game::HandleLoading()
         m_ui->cycleLoadingTexts();
     }
     
-    if (m_progressBar > 0.5f && m_progressBar < 0.6f) 
+    if (m_progressBar > 0.4f && m_progressBar < 0.45f) 
     {
         InitializeSound();
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
-        m_progressBar = 0.61f;
+        m_progressBar = 0.46f;
         m_ui->cycleLoadingTexts();
     }
     

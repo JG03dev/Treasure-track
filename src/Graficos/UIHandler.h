@@ -55,7 +55,7 @@ private:
     int m_progText;
     const char* loadingTexts[LOADING_STAGES] = {
       "Setting up Physics...",
-      "Setting everything up...",
+      "Setting up Sounds...",
       "Setting up Graphics...",
       "Loading Models..."
     };
