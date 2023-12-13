@@ -96,8 +96,11 @@ int Game::Start()
 #pragma endregion
 
 #pragma region PRIVATE_METHODS_INITIALIZERS
+
 void Game::InitializeGame() {
+    // Paralalize physics
     InitializePhysics();
+    // 
     InitializeGraphics();
     InitializeSound();
 }
