@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.26)
+cmake_minimum_required(VERSION 3.24.3)
 project(VGI-ABP)
 
 set(CMAKE_CXX_STANDARD 14)
@@ -7,8 +7,11 @@ IF (WIN32)
     set(CMAKE_TOOLCHAIN_FILE "${CMAKE_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake")
 ENDIF()
 
+include(GoogleTest)
+enable_testing()
+
 find_package(OpenGL REQUIRED)
-find_package(GLEW REQUIRED)
+find_package(GLEW REQUIRED PATHS "${CMAKE_SOURCE_DIR}/vcpkg/installed/x64-windows/glew-x.y.z/include")
 find_package(glm CONFIG REQUIRED)
 find_package(OpenAL CONFIG REQUIRED)
 find_package(Bullet CONFIG REQUIRED)
@@ -87,9 +90,80 @@ add_executable(GameExecutable
         src/Music/MySoundEffects.cpp 
         src/Music/MySoundEffects.cpp)
 
+
 add_executable(MenuDemoExecutable src/main-menu.cpp
             src/Encabezados/stdafx.h
             src/Encabezados/stb_image.h
+
+# Ficheros para el sonido
+        src/Music/MusicBuffer.cpp
+        src/Music/MusicBuffer.h
+        src/Music/SoundDevice.cpp
+        src/Music/SoundDevice.h
+        src/Music/SoundEffectsLibrary.cpp
+        src/Music/SoundEffectsLibrary.h
+        src/Music/SoundEffectsPlayer.cpp
+        src/Music/SoundEffectsPlayer.h 
+        src/Music/MySoundEffects.h 
+        src/Music/MySoundEffects.cpp 
+        src/Music/MySoundEffects.cpp)
+
+
+add_executable(TestExecutable 
+# Ficheros principales
+        src/main.cpp
+        src/Game.cpp
+        src/Game.h
+
+# Ficheros de funcionalidades extra
+        src/Encabezados/stdafx.h
+        src/Encabezados/stb_image.h
+        src/Encabezados/json.hpp
+        
+# Fiechros de funcionalidades del juego
+        src/General/Camera.h
+        src/General/Camera.cpp
+        src/General/Object.cpp
+        src/General/Object.h
+        src/General/Player.cpp
+        src/General/Player.h
+
+# Ficheros UI
+        src/Graficos/UIHandler.h
+        src/Graficos/UIHandler.cpp
+
+# Parte Graficos
+        src/Graficos/Renderer.h 
+        src/Graficos/Renderer.cpp
+        src/Graficos/Shader.h
+        src/Graficos/Shader.cpp
+        src/Graficos/Skybox.h
+        src/Graficos/Skybox.cpp
+
+# Ficheros de Objecto
+        src/Graficos/Modelo/Model.h
+        src/Graficos/Modelo/Model.cpp
+        src/Graficos/Modelo/Mesh.h
+        src/Graficos/Modelo/Mesh.cpp
+        src/Graficos/Modelo/Material.h
+        src/Graficos/Modelo/Material.cpp
+        src/Graficos/Modelo/Texture.h
+        src/Graficos/Modelo/Texture.cpp 
+
+# Ficheros para la iluminacion
+        src/Graficos/Luces/DirectionalLight.cpp
+        src/Graficos/Luces/DirectionalLight.h
+        src/Graficos/Luces/Light.cpp
+        src/Graficos/Luces/Light.h
+        src/Graficos/Luces/PointLight.cpp
+        src/Graficos/Luces/PointLight.h
+        src/Graficos/Luces/SpotLight.cpp
+        src/Graficos/Luces/SpotLight.h
+
+        src/Graficos/Sombras/ShadowMap.h
+        src/Graficos/Sombras/ShadowMap.cpp
+        src/Graficos/Sombras/OmniShadowMap.h
+        src/Graficos/Sombras/OmniShadowMap.cpp
 
 # Ficheros para el sonido
         src/Music/MusicBuffer.cpp
@@ -122,3 +196,15 @@ target_link_libraries(MenuDemoExecutable  PRIVATE glfw)
 target_link_libraries(MenuDemoExecutable  PRIVATE SndFile::sndfile)
 target_link_libraries(MenuDemoExecutable  PRIVATE imgui::imgui) 
 
+target_link_libraries(TestExecutable  PRIVATE OpenAL::OpenAL)
+target_link_libraries(TestExecutable  PRIVATE OpenGL::GL)
+target_link_libraries(TestExecutable  PRIVATE GLEW::GLEW)
+target_link_libraries(TestExecutable  PRIVATE glfw)
+target_link_libraries(TestExecutable  PRIVATE "${BULLET_LIBRARIES}")
+target_link_libraries(TestExecutable  PRIVATE SndFile::sndfile)
+target_link_libraries(TestExecutable  PRIVATE soil2)
+target_link_libraries(TestExecutable  PRIVATE ${ASSIMP_LIBRARIES})
+target_link_libraries(TestExecutable  PRIVATE imgui::imgui) 
+
+# Discover and run tests
+gtest_discover_tests(TestExecutable)
