@@ -1,8 +1,5 @@
 #include "Game.h"
-#include <future>
-#include <thread>
-#include <mutex>
-#include <condition_variable>
+
 
 #pragma region PUBLIC_METHODS
 Game::~Game()
@@ -54,10 +51,43 @@ GLFWwindow* Game::CreateSharedGLFWWindow() {
 }
 void Game::HandleLoading()
 {
-    // This is executed in the main thread
-    LoadScreen();
-    InitializeGame();
-    m_currentState = InGame;
+    UpdateProgressBar();
+    
+    if (m_progressBar > 0.25f && m_progressBar < 0.3f)
+    {
+        InitializePhysics();
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        m_progressBar = 0.31f;
+        m_ui->cycleLoadingTexts();
+    }
+    
+    if (m_progressBar > 0.5f && m_progressBar < 0.6f) 
+    {
+        InitializeSound();
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        m_progressBar = 0.61f;
+        m_ui->cycleLoadingTexts();
+    }
+    
+    if (m_progressBar > 0.8f && m_progressBar < 0.85f)
+    {
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+        m_progressBar = 0.86f;
+        m_ui->cycleLoadingTexts();
+    }
+
+    if (m_progressBar > 0.95f)
+    {
+        InitializeGraphics();
+        m_progressBar = 1.0f;
+    }
+
+    // Update progress bar with easing
+    m_ui->DrawAndPollEvents(Load_Screen, m_progressBar);
+
+    // Once progress bar is finished start the game
+    if(m_progressBar >= 1.0f)
+        m_currentState = InGame;
 }
 
 void Game::HandleGameOver()
@@ -97,12 +127,9 @@ int Game::Start()
 
 #pragma region PRIVATE_METHODS_INITIALIZERS
 
-void Game::InitializeGame() {
-    // Paralalize physics
-    InitializePhysics();
-    // 
-    InitializeGraphics();
-    InitializeSound();
+void Game::UpdateProgressBar()
+{// TODO: try different easing functions
+    m_progressBar += 1.0f / 25000.0f;
 }
 
 void Game::InitializePhysics()
@@ -124,12 +151,11 @@ void Game::InitializePhysics()
     //Creates the dynamics world, wich will be responsable for managing our physics objects and constraints
     this->m_dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguration);
 
-    this->m_dynamicsWorld->setGravity(gravity);
+    this->m_dynamicsWorld->setGravity(gravity); 
 }
 
 void Game::InitializeGraphics()
 {
-
     m_renderer = new Renderer("../../../Assets/Objects.json", m_SCR_WIDTH, m_SCR_HEIGHT);
     //Iniciamos objetos
     
@@ -141,7 +167,8 @@ void Game::InitializeGraphics()
     for (auto& Obj : m_renderer->getModelList())
     {
         if (!Obj.second.first->loaded())
-            Obj.second.first->Load();//TODO: Check if Assimp is paralizable
+            Obj.second.first->Load();
+
         glm::mat4 model(1.0f);
         if (Obj.first == "Player")
         {
@@ -283,7 +310,6 @@ void Game::Render()
 }
 
 void Game::LoadScreen() {
-    m_ui->DrawAndPollEvents(Load_Screen);
 }
 
 // Function to perform jump and spin animation

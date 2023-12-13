@@ -1,6 +1,10 @@
 #pragma once
 
 #include "../Encabezados/stdafx.h"
+#include <future>
+#include <thread>
+#include <mutex>
+#include <condition_variable>
 
 // There can be multiple events drawn (ej. Pause and HUD)
 enum UIFlags {
@@ -19,6 +23,9 @@ enum UIEvents {
     Exit
 };
 
+const int LOADING_STAGES = 4;
+
+
 class UIHandler {
 public:
     UIHandler(GLFWwindow* window);
@@ -26,7 +33,9 @@ public:
     ~UIHandler();
 
     // Draw method to draw different UI setups based on flags
-    UIEvents DrawAndPollEvents(int flags);
+    UIEvents DrawAndPollEvents(int flags, float data = 0.0f);
+
+    void cycleLoadingTexts() { m_progText = m_progText + 1 < LOADING_STAGES ? m_progText + 1 : 0; }
 
 private:
     //Window
@@ -43,12 +52,18 @@ private:
 
     GLuint LoadTexture(const char* path);
 
-    float progress;
+    int m_progText;
+    const char* loadingTexts[LOADING_STAGES] = {
+      "Setting up Physics...",
+      "Setting everything up...",
+      "Setting up Graphics...",
+      "Loading Models..."
+    };
 
     //Draws (one per flag)
     void DrawMainMenu(UIEvents& e);
     void DrawPauseMenu(UIEvents& e);
     void DrawHUD(UIEvents& e);
-    void DrawLoadScreen(UIEvents& e);
+    void DrawLoadScreen(UIEvents& e, float progress);
 
 };

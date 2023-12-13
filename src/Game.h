@@ -60,7 +60,7 @@ public:
 	Game() :m_Window(NULL), m_renderer(NULL), m_Camera(NULL),
 		m_dynamicsWorld(NULL), m_Player(NULL), m_sinTime(0),
 		m_currentState(GameState::MainMenu), m_deltaTime(0.0f), m_lastFrame(0.0f),
-		m_sound(NULL){
+		m_sound(NULL), m_progressBar(0.01f){
 		m_Camera = new Camera(glm::vec3(0.0f, 0.0f, 3.0f));
 		InitializeWindow();
 	};
@@ -110,6 +110,9 @@ private:
 	Player* m_Player;
 	std::vector<Object*> m_Objects;
 
+	// Sound
+	MySoundEffects* m_sound;
+
 	//// Private Methods
 
 	/// Animations
@@ -122,23 +125,25 @@ private:
 
 	const float spinSpeed = 2.0f;
 
-
-	// Sound
-	MySoundEffects* m_sound;
+	/// Loading
+	float m_progressBar;
+	void UpdateProgressBar(); 
 
 
 	// Initializers
-	void InitializeGame();
 	void InitializePhysics();
 	void InitializeGraphics();
 	void InitializeSound();
 	int InitializeWindow();
 
-	// Functionality
+	/// Functionality
 	void Run();
+
+	float easeInOutQuad(float t) { return t < 0.5 ? 8 * pow(t, 4) : 1 - pow(-2 * t + 2, 4) / 2; }
 
 	void Actualizar(float deltaTime);
 	void Render();
 
 	void LoadScreen();
 };
+

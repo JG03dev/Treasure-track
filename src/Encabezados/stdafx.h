@@ -51,6 +51,8 @@ using namespace glm;
 #include <time.h>
 #include <memory>
 #include <malloc.h>
+#include <chrono>
+#include <thread>
 //Datastructures
 #include <vector>
 #include <string>

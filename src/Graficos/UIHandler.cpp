@@ -1,6 +1,6 @@
 #include "UIHandler.h"
 
-UIHandler::UIHandler(GLFWwindow* window) : window(window), progress(0.0f) {
+UIHandler::UIHandler(GLFWwindow* window) : window(window), m_progText(0) {
     ImGui::CreateContext();
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init("#version 330");
@@ -12,7 +12,7 @@ UIHandler::UIHandler(GLFWwindow* window) : window(window), progress(0.0f) {
     img_help = LoadTexture("../../../src/s2.jpg");
     img_exit = LoadTexture("../../../src/s2.jpg");
     img_MMBackground = LoadTexture("../../../src/s2.jpg");
-    img_LSBackground = LoadTexture("../../../src/LoadingScreenFoto.jpg");
+    img_LSBackground = LoadTexture("../../../src/LoadingScreenFoto.png");
 }
 
 UIHandler::~UIHandler() {
@@ -26,7 +26,7 @@ UIHandler::~UIHandler() {
     ImGui::DestroyContext();
 }
 
-UIEvents UIHandler::DrawAndPollEvents(int flags)
+UIEvents UIHandler::DrawAndPollEvents(int flags, float data)
 {
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
@@ -47,7 +47,7 @@ UIEvents UIHandler::DrawAndPollEvents(int flags)
         DrawMainMenu(result);
     }
     if (flags & Load_Screen) {
-        DrawLoadScreen(result);
+        DrawLoadScreen(result, data);
     }
 
     ImGui::Render();
@@ -133,7 +133,7 @@ void UIHandler::DrawHUD(UIEvents& e)
 {
 }
 
-void UIHandler::DrawLoadScreen(UIEvents& e) {
+void UIHandler::DrawLoadScreen(UIEvents& e, float progress) {
     // Set the background image
     ImVec2 windowSize(display_w, display_h);
     ImGui::SetNextWindowSize(windowSize);
@@ -144,19 +144,20 @@ void UIHandler::DrawLoadScreen(UIEvents& e) {
 
     // Set up the loading bar
     ImGui::SetNextWindowSize(windowSize);
-    ImGui::SetNextWindowPos(ImVec2(0, 0));
+    ImGui::SetNextWindowPos(ImVec2(0, display_h - 30)); // Bottom of the screen
     ImGui::Begin("Loading Bar", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoBackground);
     ImGui::SetNextWindowSizeConstraints(windowSize, windowSize);
 
-    std::cout << progress << std::endl;
-    ImGui::ProgressBar(progress);
+    // Set text color to white
+    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
 
-    if (progress < 1.0f) {
-        progress += 1.0f/5.0f;
-    }
-    else {
-        progress = 0.0f;
-    }
+    // Draw white text
+    ImGui::Text(loadingTexts[m_progText]);
+
+    // Pop the text color change
+    ImGui::PopStyleColor();
+
+    ImGui::ProgressBar(progress, ImVec2(-1, 0));
 
     ImGui::End();
 }
