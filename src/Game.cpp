@@ -7,7 +7,6 @@
 void Game::StartGame() {
     img_loader();
     InitializePhysics();
-    DisplayLoadingScreen();
     InitializeGraphics();
     Run();
 }
@@ -67,8 +66,9 @@ void Game::InitializeGraphics()
             // This could be at the constructor
             m_Player->vehicle->getChassisWorldTransform().getOpenGLMatrix(glm::value_ptr(model));
             m_renderer->setModelMatrix(Obj.first, model);
+            /*
             if (m_renderer->getNSpotLights() >= 2) //TODO: study a way to avoid magic numbers
-                m_Player->setLights(m_renderer->getSpotLight(0), m_renderer->getSpotLight(1));
+                m_Player->setLights(m_renderer->getSpotLight(0), m_renderer->getSpotLight(1));*/
         }
         else if (Obj.first.substr(0, 4) == "Coin") { // CREAR OBJETO MONEDA
             m_Coins.push_back(new Coin(Obj.second.first, m_dynamicsWorld, Obj.second.second, Obj.first));
@@ -126,86 +126,6 @@ void Game::img_loader() {
     glfwSetWindowIcon(m_Window, 1, images);
 }
 
-GLuint LoadTexture(const char* filepath)
-{
-    int width, height, nrChannels;
-    unsigned char* data = stbi_load(filepath, &width, &height, &nrChannels, 0);
-    if (data)
-    {
-        GLuint textureID;
-        glGenTextures(1, &textureID);
-        glBindTexture(GL_TEXTURE_2D, textureID);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-        glGenerateMipmap(GL_TEXTURE_2D);
-        stbi_image_free(data);
-        return textureID;
-    }
-    else
-    {
-        std::cout << "Failed to load texture" << std::endl;
-        return 0;
-    }
-}
-
-void Game::DisplayLoadingScreen()
-{
-    // Load your jpg image here
-    GLuint textureID = LoadTexture("../../../Assets/Imagenes/LoadingScreenFoto.png");
-
-    // Create a quad for the image to be displayed on
-    float vertices[] = {
-        // positions          // texture coords
-         1.0f,  1.0f, 0.0f,   1.0f, 1.0f, // top right
-         1.0f, -1.0f, 0.0f,   1.0f, 0.0f, // bottom right
-        -1.0f, -1.0f, 0.0f,   0.0f, 0.0f, // bottom left
-        -1.0f,  1.0f, 0.0f,   0.0f, 1.0f  // top left 
-    };
-
-    unsigned int indices[] = {
-        0, 1, 3, // first triangle
-        1, 2, 3  // second triangle
-    };
-
-    // Create Vertex Buffer Object (VBO), Vertex Array Object (VAO), and Element Buffer Object (EBO)
-    GLuint VBO, VAO, EBO;
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-    glGenBuffers(1, &EBO);
-
-    glBindVertexArray(VAO);
-
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-    // position attribute
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-    // texture attribute
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-    glEnableVertexAttribArray(1);
-
-    // Render the image
-    glBindTexture(GL_TEXTURE_2D, textureID);
-
-    // Assuming you have an instance of the Shader class called 'shader'
-    Shader shader;
-    glUseProgram(shader.getProgramID());
-
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-
-    // Cleanup
-    glDeleteVertexArrays(1, &VAO);
-    glDeleteBuffers(1, &VBO);
-    glDeleteBuffers(1, &EBO);
-
-    // Swap the buffers
-    glfwSwapBuffers(m_Window);
-}
-
-
 void Game::Run()
 {
     // timing
@@ -254,6 +174,18 @@ void Game::ProcessInput(GLFWwindow* window, int key, int action)
     {
         m_Camera->changeCamera();
     }
+
+    // Luces
+    if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS)
+    {
+        // Cambiar el estado de las luces
+        m_renderer->getSpotLight(0)->Toggle();
+        m_renderer->getSpotLight(1)->Toggle();
+    }
+    if (m_renderer->getNSpotLights() >= 2 && m_renderer->getSpotLight(0)->isActive() && m_renderer->getSpotLight(1)->isActive()) //TODO: study a way to avoid magic numbers
+        m_Player->setLights(m_renderer->getSpotLight(0), m_renderer->getSpotLight(1));
+    else
+        m_Player->setLights(nullptr, nullptr);
 
     m_Player->InputMethod(key, action);
 }

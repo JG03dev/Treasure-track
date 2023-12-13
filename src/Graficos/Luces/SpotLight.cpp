@@ -22,12 +22,12 @@ SpotLight::SpotLight(GLuint shadowWidth, GLuint shadowHeight,
 
 	edge = edg;
 	procEdge = cosf(glm::radians(edge));
+	active = isOn;
 }
 
 void SpotLight::UseLight(Shader& s, int nLight)
 {
-	if (!active)
-		return;
+	
 
 	char locBuff[100] = { '\0' };
 
@@ -69,6 +69,9 @@ void SpotLight::UseLight(Shader& s, int nLight)
 
 	snprintf(locBuff, sizeof(locBuff), "spotLights[%d].edge", nLight);
 	s.setUniform(locBuff, procEdge);
+
+	snprintf(locBuff, sizeof(locBuff), "spotLights[%d].base.active", nLight);
+	s.setUniform(locBuff, active);
 }
 
 void SpotLight::SetFlash(glm::vec3 pos, glm::vec3 dir)
