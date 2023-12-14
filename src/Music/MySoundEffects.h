@@ -17,7 +17,7 @@
 
 class MySoundEffects {
 public:
-    MySoundEffects() : wasWPressed(false), once(true) {
+    MySoundEffects() : wasWPressed(false), once(true), myMusic("../../../music/coconut.wav") {
         sound1 = SE_LOAD("../../../music/sounds/arranque.wav");
         sound2 = SE_LOAD("../../../music/sounds/acelerar2.wav");
         sound3 = SE_LOAD("../../../music/sounds/frenar.wav");
@@ -90,6 +90,26 @@ public:
         }
     }
 
+    void PlayMusic(float deltaTime) {
+        myMusic.UpdateBufferStream();
+
+        static float musiccontrolcooldown = 1;
+        musiccontrolcooldown += deltaTime;
+        if (musiccontrolcooldown > 0 && GetKeyState('Q') & 0x8000)
+        {
+            if (myMusic.isPlaying())
+            {
+                myMusic.Pause();
+            }
+            else
+            {
+                myMusic.Play();
+            }
+            _sleep(100);
+            musiccontrolcooldown = 0;
+        }
+    }
+
 private:
     SoundEffectsPlayer effectsPlayer1;
     SoundEffectsPlayer effectsPlayer2;
@@ -101,4 +121,5 @@ private:
 
     bool wasWPressed;
     bool once;
+    MusicBuffer myMusic;
 };

@@ -335,6 +335,7 @@ void Game::Run()
         lastFrame = currentFrame;
 
         sound.PlaySound(deltaTime);
+        sound.PlayMusic(deltaTime);
 
         // input: Manejar entrada de usuario
         // -----
