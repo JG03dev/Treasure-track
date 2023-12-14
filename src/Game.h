@@ -34,7 +34,11 @@
 #include "Music/MySoundEffects.h"
 
 #pragma endregion
-
+#pragma region TEXTO
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
+#pragma endregion
 
 // --OTHER INCLUDES--
 

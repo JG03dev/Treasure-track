@@ -1,4 +1,6 @@
 #include "Game.h"
+#include <SOIL2/SOIL2.h>
+#include "imgui_internal.h"
 
 #pragma region PUBLIC_METHODS
 
@@ -205,6 +207,95 @@ void Game::DisplayLoadingScreen()
     glfwSwapBuffers(m_Window);
 }
 
+GLuint LoadTexture2(const char* path) {
+    GLuint textureID;
+    int width, height, channels;
+
+    // Cargar la textura con SOIL2
+    unsigned char* image = SOIL_load_image(path, &width, &height, &channels, SOIL_LOAD_RGBA);
+
+    if (!image) {
+        std::cerr << "Error cargando la textura desde " << path << std::endl;
+        return 0;
+    }
+
+    // Generar un ID de textura
+    glGenTextures(1, &textureID);
+    glBindTexture(GL_TEXTURE_2D, textureID);
+
+    // Configurar la textura
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    // Liberar memoria de la imagen cargada
+    SOIL_free_image_data(image);
+
+    // Configurar parámetros de textura (puedes ajustarlos según tus necesidades)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    return textureID;
+}
+
+int rotation_start_index;
+void ImRotateStart()
+{
+    rotation_start_index = ImGui::GetWindowDrawList()->VtxBuffer.Size;
+}
+
+ImVec2 ImRotationCenter()
+{
+    ImVec2 l(FLT_MAX, FLT_MAX), u(-FLT_MAX, -FLT_MAX); // bounds
+
+    auto& buf = ImGui::GetWindowDrawList()->VtxBuffer;
+    for (int i = rotation_start_index; i < buf.Size; i++) 
+        l = ImMin(l, buf[i].pos), u = ImMax(u, buf[i].pos);
+        
+
+    return ImVec2((l.x + u.x) / 2, (l.y + u.y) / 2); // or use _ClipRectStack?
+}
+
+ImVec2 operator-(const ImVec2& l, const ImVec2& r) { return{ l.x - r.x, l.y - r.y }; }
+ImVec2 operator+(const ImVec2& l, const ImVec2& r) { return{ l.x + r.x, l.y + r.y }; }
+ImVec2 prueba(1050, 550);
+ImVec2 sin_cos_interval_min(0.735723, -0.727309);
+ImVec2 sin_cos_interval_max(0.68631, 0.677282);
+void ImRotateEnd(float rad, ImVec2 center = ImRotationCenter())
+{
+    float desfase = -M_PI / 3.8f;
+    float s = sin(rad - desfase), c = cos(rad - desfase);
+    
+    center = ImRotate(center, s, c) - center;
+    if (s >= sin_cos_interval_min.x && s <= sin_cos_interval_max.x &&
+        c >= sin_cos_interval_min.y && c <= sin_cos_interval_max.y)
+    {
+        std::cout << "beep beep" << std::endl;
+    }
+        auto& buf = ImGui::GetWindowDrawList()->VtxBuffer;
+        for (int i = rotation_start_index; i < buf.Size; i++)
+            buf[i].pos = ImRotate(buf[i].pos, s, c) - center;     
+}
+
+void ImRotateEnd_MinMax(float rad, int v, ImVec2 center = ImRotationCenter())
+{
+    float s, c;
+    if (v == 0)
+    {
+        s = 0.735723, c = 0.677282;
+    }
+    else
+    {
+        s = 0.68631, c = -0.727309;
+    }
+        
+    center = ImRotate(center, s, c) - center;
+    auto& buf = ImGui::GetWindowDrawList()->VtxBuffer;
+    for (int i = rotation_start_index; i < buf.Size; i++)
+        buf[i].pos = ImRotate(buf[i].pos, s, c) - center;
+}
+
 
 void Game::Run()
 {
@@ -213,6 +304,27 @@ void Game::Run()
     float lastFrame = 0.0f;
     MySoundEffects sound;
     
+    //HABRIA QUE PONERLO EN UNA FUNCION A PARTE...
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO();
+    io.Fonts->AddFontFromFileTTF("../../../src/Graficos/NFS.ttf", 15.0f);  // Cambia el nombre del archivo y el tamaño según tus necesidades
+    ImFont* myFont = io.Fonts->Fonts[0];
+
+    // Inicialización de ImGui para GLFW y OpenGL
+    ImGui_ImplGlfw_InitForOpenGL(m_Window, true);
+    ImGui_ImplOpenGL3_Init("#version 330");
+    static float timer = 100.0f;
+
+    // Cargar texturas
+    GLuint textureSpeedometer = LoadTexture2("../../../src/speedometer.png");
+    GLuint texturePointer = LoadTexture2("../../../src/pointer.png");
+
+    // Verifica que los IDs de textura sean válidos antes de usarlos en la renderización
+    if (textureSpeedometer == 0 || texturePointer == 0) {
+        // Manejo de error, por ejemplo, salir del programa o mostrar un mensaje de error
+        std::cerr << "Error cargando texturas." << std::endl;
+        exit;
+    }
 
     while (!glfwWindowShouldClose(m_Window))
     {
@@ -228,11 +340,92 @@ void Game::Run()
         // -----
         glfwPollEvents();
 
+        //Renderizar
+        Render();
+
+        //PONER TODO ESTO DE AQUÍ ABAJO EN UNA FUNCION A PARTE HACE QUE EL TEMPORIZADOR NO VAYA, PQ??
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+        ImGui::PushFont(myFont);
+        ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_Always);
+        ImGui::SetNextWindowSize(ImVec2(250, 50), ImGuiCond_Always);
+
+        //Desactivar las decoraciones de la ventana
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+        ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
+
+        //Quitar el fondo transparente
+        ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
+
+        ImGui::Begin("Temporizador", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoCollapse);
+        ImGui::SetWindowFontScale(2.0f);
+        if (timer > 25.0f)
+        {
+            ImGui::TextColored(ImVec4(1.0f, 1.0f, 1.0f, 1.0f), "Tiempo: %.2f", timer);
+        }
+        else
+        {
+            ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "Tiempo: %.2f", timer);
+        }
+
+        // Incrementar el temporizador
+        if (timer > 0.0f)
+        {
+            timer -= deltaTime;
+        }
+        ImGui::End();
+
         //Actualizar Informacion (Mover coordenadas)
         Actualizar(deltaTime, sound);
 
-        //Renderizar
-        Render();
+        ImGui::SetNextWindowPos(ImVec2(900, 400), ImGuiCond_Always);
+        ImGui::SetNextWindowSize(ImVec2(450, 500), ImGuiCond_Always);
+        ImGui::Begin("Speedometer", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoCollapse);
+        // Mostrar la imagen del velocímetro
+        ImVec2 speedometerSize(300.0f, 300.0f);  // Ajusta según sea necesario
+        ImGui::Image((void*)(intptr_t)textureSpeedometer, speedometerSize);
+        ImGui::End();
+
+
+        float carSpeed = m_Player->vehicle->getCurrentSpeedKmHour();
+        float carSpeedRad = carSpeed * (M_PI / 180.0f);
+        float rotationAngle = carSpeedRad * 1.8f;
+
+        ImGui::SetNextWindowPos(ImVec2(900, 400), ImGuiCond_Always);
+        ImGui::SetNextWindowSize(ImVec2(450, 500), ImGuiCond_Always);
+        ImGui::Begin("pointer", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoCollapse);
+
+        // Mostrar la imagen del indicador
+        ImVec2 pointerSize(300.0f, 300.0f); // Ajusta según sea necesario
+        std::cout << carSpeed << "," << rotationAngle << std::endl;
+        // Dibuja la imagen sin rotación
+        ImRotateStart();
+        ImGui::Image((void*)(intptr_t)texturePointer, pointerSize);
+        if (carSpeed > 150)
+        {
+            ImRotateEnd_MinMax(-rotationAngle, 1);
+        }
+        else
+        {
+            if (carSpeed < -1)
+            {
+                ImRotateEnd_MinMax(-rotationAngle, 0);
+            }
+            else
+            {
+                ImRotateEnd(-rotationAngle);
+            }
+        }
+        ImGui::End();
+
+        ImGui::PopStyleVar(3);
+        ImGui::PopStyleColor();
+        ImGui::PopFont();
+        // Renderizar la interfaz de usuario de ImGui
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
         glfwSwapBuffers(m_Window);
     }
@@ -297,6 +490,15 @@ void Game::Actualizar(float deltaTime, MySoundEffects& sound)
     }
     // Update sinTime
 	m_sinTime += deltaTime;
+
+    // Actualizar el contador de monedas en la interfaz
+    ImGui::SetNextWindowPos(ImVec2(10, 50), ImGuiCond_Always);
+    ImGui::SetNextWindowSize(ImVec2(250, 50), ImGuiCond_Always);
+
+    ImGui::Begin("Contador de Monedas", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoCollapse);
+    ImGui::SetWindowFontScale(2.0f);
+    ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "Monedas: %d / %d", m_coinsCollected, m_Coins.size() + m_coinsCollected);
+    ImGui::End();
 }
 
 void Game::Render()
