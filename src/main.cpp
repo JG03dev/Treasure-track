@@ -109,7 +109,7 @@ int main(int argc, char **argv) {
     SoundDevice::Init();
 
     // Hide the cursor and capture it
-    img_loader();
+    //img_loader();
 
     GLenum err = glewInit();
     if (err != GLEW_OK)

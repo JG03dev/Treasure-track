@@ -41,6 +41,8 @@ set(GAME_SOURCES
         src/General/Object.h
         src/General/Player.cpp
         src/General/Player.h
+        src/General/Coin.cpp
+        src/General/Coin.h
 
         # Ficheros UI
         src/Graficos/UIHandler.h

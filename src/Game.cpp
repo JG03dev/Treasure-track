@@ -1,17 +1,8 @@
 #include "Game.h"
 #include <SOIL2/SOIL2.h>
-#include "imgui_internal.h"
 
 #pragma region PUBLIC_METHODS
 
-
-
-void Game::StartGame() {
-    img_loader();
-    InitializePhysics();
-    InitializeGraphics();
-    Run();
-}
 Game::~Game()
 {
     if (m_ui != NULL) delete m_ui;
@@ -500,7 +491,7 @@ void Game::Run()
         ImGui::End();
 
         //Actualizar Informacion (Mover coordenadas)
-        Actualizar(deltaTime, sound);
+        Actualizar(deltaTime);
 
         ImGui::SetNextWindowPos(ImVec2(900, 400), ImGuiCond_Always);
         ImGui::SetNextWindowSize(ImVec2(450, 500), ImGuiCond_Always);
@@ -584,7 +575,7 @@ void Game::ProcessInput(GLFWwindow* window, int key, int action)
     m_Player->InputMethod(key, action);
 }
 
-void Game::Actualizar(float deltaTime, MySoundEffects& sound)
+void Game::Actualizar(float deltaTime)
 {
     this->m_Player->lastForward = this->m_Player->getCarForward();
     this->m_Player->lastQuaternion = this->m_Player->getCarRotation();
@@ -601,7 +592,7 @@ void Game::Actualizar(float deltaTime, MySoundEffects& sound)
             if (obj == m_Player->vehicle->getRigidBody()) {
                 std::cout << "COLISION!" << std::endl;
                 // El jugador ha recogido la moneda, as� que la eliminamos
-                sound.PlayCoinSound();
+                m_sound->PlayCoinSound();
                 m_coinsCollected++;
                 std::cout << "Monedas recogidas: " << m_coinsCollected << std::endl;
                 m_dynamicsWorld->removeCollisionObject((*coin)->getGhostObject());
