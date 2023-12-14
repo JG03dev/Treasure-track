@@ -264,7 +264,7 @@ ImVec2 sin_cos_interval_min(0.735723, -0.727309);
 ImVec2 sin_cos_interval_max(0.68631, 0.677282);
 void ImRotateEnd(float rad, ImVec2 center = ImRotationCenter())
 {
-    float desfase = -M_PI / 3.8f;
+    float desfase = M_PI / 1.35f;
     float s = sin(rad - desfase), c = cos(rad - desfase);
 
     center = ImRotate(center, s, c) - center;
@@ -283,11 +283,11 @@ void ImRotateEnd_MinMax(float rad, int v, ImVec2 center = ImRotationCenter())
     float s, c;
     if (v == 0)
     {
-        s = 0.735723, c = 0.677282;
+        s = -0.735723, c = -0.677282;
     }
     else
     {
-        s = 0.68631, c = -0.727309;
+        s = -0.68631, c = 0.727309;
     }
 
     center = ImRotate(center, s, c) - center;
