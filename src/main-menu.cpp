@@ -113,24 +113,21 @@ int main(int argc, char** argv) {
 
     // Depth test
     glEnable(GL_DEPTH_TEST);
-
-    // Carrega de textures
     GLuint Background = LoadTexture("../../../src/fondo.png");
     GLuint Title = LoadTexture("../../../src/title6.png");
-    GLuint Controles = LoadTexture("../../../src/controles.jpg");
+    GLuint Controles = LoadTexture("../../../src/Controles.jpg");
 
     GLuint Play = LoadTexture("../../../src/button_play.png"); 
-    GLuint Info = LoadTexture("../../../src/button_info2.png"); 
+    GLuint Info = LoadTexture("../../../src/button_info.png"); 
     GLuint Exit = LoadTexture("../../../src/button_exit.png");
     GLuint Continue = LoadTexture("../../../src/button_continue.png");
 
     GLuint Play_press = LoadTexture("../../../src/button_play_press.png"); 
-    GLuint Info_press = LoadTexture("../../../src/button_info2_press.png"); 
+    GLuint Info_press = LoadTexture("../../../src/button_info_press.png"); 
     GLuint Exit_press = LoadTexture("../../../src/button_exit_press.png"); 
-    GLuint Continue_presss = LoadTexture("../../../src/button_continue_press.png");
+    GLuint Continue_press = LoadTexture("../../../src/button_continue_press.png");
 
-    bool hover = false;
-
+    bool hover = false; //para mirar si esta presionado o no
 
     ImGui::CreateContext();
     ImGui_ImplGlfw_InitForOpenGL(m_Window, true);
@@ -167,7 +164,6 @@ int main(int argc, char** argv) {
         ImGui::SetCursorPos(ImVec2(centerPos.x - 250, centerPos.y - 150));
         ImGui::Image((void*)(intptr_t)Title, ImVec2(877 * 0.8f, 197 * 0.8f)); 
 
-        // Obtén el estilo actual de ImGui
         ImGuiStyle& style = ImGui::GetStyle(); 
 
         // Cambia el canal alfa del color de fondo de los botones a un valor transparente (0.0)
@@ -192,6 +188,7 @@ int main(int argc, char** argv) {
             if (ImGui::ImageButton((void*)(intptr_t)Play_press, ImVec2(200, 50)))
             {
                 std::cout << "PLAY" << std::endl;
+                //iniciar el juego
             }
         }
 
@@ -232,14 +229,75 @@ int main(int argc, char** argv) {
             if (ImGui::ImageButton((void*)(intptr_t)Info_press, ImVec2(50, 50))) 
             { 
                 std::cout << "Need Help?" << std::endl;
-                ImGui::SetCursorPos(ImVec2(centerPos.x, centerPos.y));
+                ImGui::SetCursorPos(ImVec2(centerPos.x, centerPos.y)); //poner
                 ImGui::Image((void*)(intptr_t)Controles, ImVec2(1600 * 0.8f, 900 * 0.8f));
             }
         }
 
+        // Menu pausa
+        //// Continue button
+        //if (ImGui::IsMouseHoveringRect(centerPos, ImVec2(centerPos.x + 200, centerPos.y + 50))) {
+        //    hover = true;
+        //}
+        //else {
+        //    hover = false;
+        //}
+
+        //ImGui::SetCursorPos(centerPos);
+        //if (!hover) {
+        //    ImGui::ImageButton((void*)(intptr_t)Continue, ImVec2(200, 50));
+        //}
+        //else {
+        //    if (ImGui::ImageButton((void*)(intptr_t)Continue_press, ImVec2(200, 50)))
+        //    {
+        //        std::cout << "Continua" << std::endl;
+        //        //continuar el juego
+        //    }
+        //}
+
+
+        ////// Exit button
+        //if (ImGui::IsMouseHoveringRect(ImVec2(centerPos.x, centerPos.y + 80), ImVec2(centerPos.x + 200, centerPos.y + 80 + 50))) {
+        //    hover = true;
+        //}
+        //else {
+        //    hover = false;
+        //}
+
+        //ImGui::SetCursorPos(ImVec2(centerPos.x, centerPos.y + 80));
+        //if (!hover) {
+        //    ImGui::ImageButton((void*)(intptr_t)Exit, ImVec2(200, 50));
+        //}
+        //else {
+        //    if (ImGui::ImageButton((void*)(intptr_t)Exit_press, ImVec2(200, 50)))
+        //    {
+        //        std::cout << "GOODBYE!" << std::endl;
+        //        glfwSetWindowShouldClose(m_Window, true);
+        //    }
+        //}
+
+        //// Help button
+        //if (ImGui::IsMouseHoveringRect(ImVec2(centerPos.x + 650, centerPos.y + 350), ImVec2(centerPos.x + 650 + 50, centerPos.y + 350 + 50))) {
+        //    hover = true;
+        //}
+        //else {
+        //    hover = false;
+        //}
+
+        //ImGui::SetCursorPos(ImVec2(centerPos.x + 650, centerPos.y + 350));
+        //if (!hover) {
+        //    ImGui::ImageButton((void*)(intptr_t)Info, ImVec2(50, 50));
+        //}
+        //else {
+        //    if (ImGui::ImageButton((void*)(intptr_t)Info_press, ImVec2(50, 50)))
+        //    {
+        //        std::cout << "Need Help?" << std::endl;
+        //        ImGui::SetCursorPos(ImVec2(centerPos.x, centerPos.y)); //poner
+        //        ImGui::Image((void*)(intptr_t)Controles, ImVec2(1600 * 0.8f, 900 * 0.8f));
+        //    }
+        //}
+
         ImGui::End();
-
-
 
         // Render ImGui
         ImGui::Render();
