@@ -52,7 +52,7 @@ public:
 
 	// Constructors
 
-	Game() :m_Window(NULL), m_Camera(NULL), m_skybox(NULL), m_Light(NULL), m_dynamicsWorld(NULL), m_Player(NULL), m_sinTime(0), m_coinsCollected(0) { m_Camera = new Camera(glm::vec3(0.0f, 0.0f, 3.0f)); InitializeWindow(); };
+	Game() :m_Window(NULL), m_Camera(NULL), m_skybox(NULL), m_Light(NULL), m_dynamicsWorld(NULL), m_Player(NULL), m_sinTime(0), m_coinsCollected(0), m_lightsOn(false) { m_Camera = new Camera(glm::vec3(0.0f, 0.0f, 3.0f)); InitializeWindow(); };
 
 	// Destructors
 
@@ -125,8 +125,8 @@ private:
 	void InitializeGraphics();
 	int InitializeWindow();
 
-	// LoadingScreen
-	void DisplayLoadingScreen();
+	// Lights
+	bool m_lightsOn;
 
 	// Functionality
 	void Run();

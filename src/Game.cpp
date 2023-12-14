@@ -9,7 +9,6 @@
 void Game::StartGame() {
     img_loader();
     InitializePhysics();
-    DisplayLoadingScreen();
     InitializeGraphics();
     Run();
 }
@@ -69,8 +68,9 @@ void Game::InitializeGraphics()
             // This could be at the constructor
             m_Player->vehicle->getChassisWorldTransform().getOpenGLMatrix(glm::value_ptr(model));
             m_renderer->setModelMatrix(Obj.first, model);
+            /*
             if (m_renderer->getNSpotLights() >= 2) //TODO: study a way to avoid magic numbers
-                m_Player->setLights(m_renderer->getSpotLight(0), m_renderer->getSpotLight(1));
+                m_Player->setLights(m_renderer->getSpotLight(0), m_renderer->getSpotLight(1));*/
         }
         else if (Obj.first.substr(0, 4) == "Coin") { // CREAR OBJETO MONEDA
             m_Coins.push_back(new Coin(Obj.second.first, m_dynamicsWorld, Obj.second.second, Obj.first));
@@ -207,95 +207,6 @@ void Game::DisplayLoadingScreen()
     glfwSwapBuffers(m_Window);
 }
 
-GLuint LoadTexture2(const char* path) {
-    GLuint textureID;
-    int width, height, channels;
-
-    // Cargar la textura con SOIL2
-    unsigned char* image = SOIL_load_image(path, &width, &height, &channels, SOIL_LOAD_RGBA);
-
-    if (!image) {
-        std::cerr << "Error cargando la textura desde " << path << std::endl;
-        return 0;
-    }
-
-    // Generar un ID de textura
-    glGenTextures(1, &textureID);
-    glBindTexture(GL_TEXTURE_2D, textureID);
-
-    // Configurar la textura
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
-    glGenerateMipmap(GL_TEXTURE_2D);
-
-    // Liberar memoria de la imagen cargada
-    SOIL_free_image_data(image);
-
-    // Configurar parámetros de textura (puedes ajustarlos según tus necesidades)
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-    return textureID;
-}
-
-int rotation_start_index;
-void ImRotateStart()
-{
-    rotation_start_index = ImGui::GetWindowDrawList()->VtxBuffer.Size;
-}
-
-ImVec2 ImRotationCenter()
-{
-    ImVec2 l(FLT_MAX, FLT_MAX), u(-FLT_MAX, -FLT_MAX); // bounds
-
-    auto& buf = ImGui::GetWindowDrawList()->VtxBuffer;
-    for (int i = rotation_start_index; i < buf.Size; i++) 
-        l = ImMin(l, buf[i].pos), u = ImMax(u, buf[i].pos);
-        
-
-    return ImVec2((l.x + u.x) / 2, (l.y + u.y) / 2); // or use _ClipRectStack?
-}
-
-ImVec2 operator-(const ImVec2& l, const ImVec2& r) { return{ l.x - r.x, l.y - r.y }; }
-ImVec2 operator+(const ImVec2& l, const ImVec2& r) { return{ l.x + r.x, l.y + r.y }; }
-ImVec2 prueba(1050, 550);
-ImVec2 sin_cos_interval_min(0.735723, -0.727309);
-ImVec2 sin_cos_interval_max(0.68631, 0.677282);
-void ImRotateEnd(float rad, ImVec2 center = ImRotationCenter())
-{
-    float desfase = -M_PI / 3.8f;
-    float s = sin(rad - desfase), c = cos(rad - desfase);
-    
-    center = ImRotate(center, s, c) - center;
-    if (s >= sin_cos_interval_min.x && s <= sin_cos_interval_max.x &&
-        c >= sin_cos_interval_min.y && c <= sin_cos_interval_max.y)
-    {
-        std::cout << "beep beep" << std::endl;
-    }
-        auto& buf = ImGui::GetWindowDrawList()->VtxBuffer;
-        for (int i = rotation_start_index; i < buf.Size; i++)
-            buf[i].pos = ImRotate(buf[i].pos, s, c) - center;     
-}
-
-void ImRotateEnd_MinMax(float rad, int v, ImVec2 center = ImRotationCenter())
-{
-    float s, c;
-    if (v == 0)
-    {
-        s = 0.735723, c = 0.677282;
-    }
-    else
-    {
-        s = 0.68631, c = -0.727309;
-    }
-        
-    center = ImRotate(center, s, c) - center;
-    auto& buf = ImGui::GetWindowDrawList()->VtxBuffer;
-    for (int i = rotation_start_index; i < buf.Size; i++)
-        buf[i].pos = ImRotate(buf[i].pos, s, c) - center;
-}
-
 
 void Game::Run()
 {
@@ -307,10 +218,10 @@ void Game::Run()
     //HABRIA QUE PONERLO EN UNA FUNCION A PARTE...
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO();
-    io.Fonts->AddFontFromFileTTF("../../../src/Graficos/NFS.ttf", 15.0f);  // Cambia el nombre del archivo y el tamaño según tus necesidades
+    io.Fonts->AddFontFromFileTTF("../../../src/Graficos/NFS.ttf", 15.0f);  // Cambia el nombre del archivo y el tamaï¿½o segï¿½n tus necesidades
     ImFont* myFont = io.Fonts->Fonts[0];
 
-    // Inicialización de ImGui para GLFW y OpenGL
+    // Inicializaciï¿½n de ImGui para GLFW y OpenGL
     ImGui_ImplGlfw_InitForOpenGL(m_Window, true);
     ImGui_ImplOpenGL3_Init("#version 330");
     static float timer = 100.0f;
@@ -319,7 +230,7 @@ void Game::Run()
     GLuint textureSpeedometer = LoadTexture2("../../../src/speedometer.png");
     GLuint texturePointer = LoadTexture2("../../../src/pointer.png");
 
-    // Verifica que los IDs de textura sean válidos antes de usarlos en la renderización
+    // Verifica que los IDs de textura sean vï¿½lidos antes de usarlos en la renderizaciï¿½n
     if (textureSpeedometer == 0 || texturePointer == 0) {
         // Manejo de error, por ejemplo, salir del programa o mostrar un mensaje de error
         std::cerr << "Error cargando texturas." << std::endl;
@@ -343,7 +254,7 @@ void Game::Run()
         //Renderizar
         Render();
 
-        //PONER TODO ESTO DE AQUÍ ABAJO EN UNA FUNCION A PARTE HACE QUE EL TEMPORIZADOR NO VAYA, PQ??
+        //PONER TODO ESTO DE AQUï¿½ ABAJO EN UNA FUNCION A PARTE HACE QUE EL TEMPORIZADOR NO VAYA, PQ??
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
@@ -383,8 +294,8 @@ void Game::Run()
         ImGui::SetNextWindowPos(ImVec2(900, 400), ImGuiCond_Always);
         ImGui::SetNextWindowSize(ImVec2(450, 500), ImGuiCond_Always);
         ImGui::Begin("Speedometer", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoCollapse);
-        // Mostrar la imagen del velocímetro
-        ImVec2 speedometerSize(300.0f, 300.0f);  // Ajusta según sea necesario
+        // Mostrar la imagen del velocï¿½metro
+        ImVec2 speedometerSize(300.0f, 300.0f);  // Ajusta segï¿½n sea necesario
         ImGui::Image((void*)(intptr_t)textureSpeedometer, speedometerSize);
         ImGui::End();
 
@@ -398,9 +309,9 @@ void Game::Run()
         ImGui::Begin("pointer", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoCollapse);
 
         // Mostrar la imagen del indicador
-        ImVec2 pointerSize(300.0f, 300.0f); // Ajusta según sea necesario
+        ImVec2 pointerSize(300.0f, 300.0f); // Ajusta segï¿½n sea necesario
         std::cout << carSpeed << "," << rotationAngle << std::endl;
-        // Dibuja la imagen sin rotación
+        // Dibuja la imagen sin rotaciï¿½n
         ImRotateStart();
         ImGui::Image((void*)(intptr_t)texturePointer, pointerSize);
         if (carSpeed > 150)
@@ -448,11 +359,26 @@ void Game::ProcessInput(GLFWwindow* window, int key, int action)
         m_Camera->changeCamera();
     }
 
+    // Luces
+    if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS)
+    {
+        // Cambiar el estado de las luces
+        m_renderer->getSpotLight(0)->Toggle();
+        m_renderer->getSpotLight(1)->Toggle();
+    }
+    if (m_renderer->getNSpotLights() >= 2 && m_renderer->getSpotLight(0)->isActive() && m_renderer->getSpotLight(1)->isActive()) //TODO: study a way to avoid magic numbers
+        m_Player->setLights(m_renderer->getSpotLight(0), m_renderer->getSpotLight(1));
+    else
+        m_Player->setLights(nullptr, nullptr);
+
     m_Player->InputMethod(key, action);
 }
 
 void Game::Actualizar(float deltaTime, MySoundEffects& sound)
 {
+    this->m_Player->lastForward = this->m_Player->getCarForward();
+    this->m_Player->lastQuaternion = this->m_Player->getCarRotation();
+
     // Physics
     m_dynamicsWorld->stepSimulation(deltaTime, 2);
 
@@ -464,7 +390,7 @@ void Game::Actualizar(float deltaTime, MySoundEffects& sound)
             // Comprueba si el objeto que se superpone es el que te interesa (por ejemplo, el jugador)
             if (obj == m_Player->vehicle->getRigidBody()) {
                 std::cout << "COLISION!" << std::endl;
-                // El jugador ha recogido la moneda, así que la eliminamos
+                // El jugador ha recogido la moneda, asï¿½ que la eliminamos
                 sound.PlayCoinSound();
                 m_coinsCollected++;
                 std::cout << "Monedas recogidas: " << m_coinsCollected << std::endl;
@@ -506,7 +432,7 @@ void Game::Render()
     {
 		glm::mat4 model(1.0f);
 		m_Player->vehicle->getChassisWorldTransform().getOpenGLMatrix(glm::value_ptr(model));
-        // model = glm::scale(model, glm::vec3(1.5, 1.5, 1.5)); CAMBIAR TAMAÑO COCHE
+        // model = glm::scale(model, glm::vec3(1.5, 1.5, 1.5)); CAMBIAR TAMAï¿½O COCHE
         //std::cout << "Player position:" << m_Player->vehicle->getChassisWorldTransform().getOrigin().getY() << std::endl;
         m_renderer->setModelMatrix("Player", model);
         m_Player->updatePlayerData();
@@ -515,7 +441,7 @@ void Game::Render()
     for (int i = 0; i < 4; i++) {
         glm::mat4 model(1.0f);
         m_Player->vehicle->getWheelTransformWS(i).getOpenGLMatrix(glm::value_ptr(model));
-        // model = glm::scale(model, glm::vec3(1.5, 1.5, 1.5)); CAMBIAR TAMAÑO COCHE
+        // model = glm::scale(model, glm::vec3(1.5, 1.5, 1.5)); CAMBIAR TAMAï¿½O COCHE
         m_renderer->setModelMatrix("Wheel" + std::to_string(i), model);
     }
 
