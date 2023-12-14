@@ -35,14 +35,393 @@
   ],
   "models": [
     {
-      "id": "Test-Coin",
+      "id": "Coin",
       "path": "../../../Assets/Moneda/Moneda.obj",
       "name": "Moneda",
       "intensity": 4.0,
       "shine": 256,
-      "transform": {
-        "translate": [ 0.0, -3.0, 1.0 ]
-      }
+      "instances": [
+        {
+          "suffix": "2i5j",
+          "transform": { "translate": [ 16.0, -3.4, 0.0 ] }
+        },
+        {
+          "suffix": "2i5j_m",
+          "transform": { "translate": [ 36.0, -3.4, 0.0 ] }
+        },
+        {
+          "suffix": "3i5j",
+          "transform": { "translate": [ 56.0, -3.4, 0.0 ] }
+        },
+        {
+          "suffix": "3i5j_m",
+          "transform": { "translate": [ 85.0, -3.4, 0.0 ] }
+        },
+        {
+          "suffix": "4i5j",
+          "transform": { "translate": [ 114.0, -3.4, 0.0 ] }
+        },
+        {
+          "suffix": "4i5j_m",
+          "transform": { "translate": [ 114.0, -3.4, 31.0 ] }
+        },
+        {
+          "suffix": "4i6j",
+          "transform": { "translate": [ 114.0, -3.4, 62.0 ] }
+        },
+        {
+          "suffix": "4i6j_m",
+          "transform": { "translate": [ 85.0, -3.4, 62.0 ] }
+        },
+        {
+          "suffix": "3i6j",
+          "transform": { "translate": [ 56.0, -3.4, 62.0 ] }
+        },
+        {
+          "suffix": "3i6j_m",
+          "transform": { "translate": [ 28.0, -3.4, 62.0 ] }
+        },
+        {
+          "suffix": "2i6j",
+          "transform": { "translate": [ 0.0, -3.4, 62.0 ] }
+        },
+        {
+          "suffix": "2i6j_m",
+          "transform": { "translate": [ 0.0, -3.4, 76.5 ] }
+        },
+        {
+          "suffix": "2i7j",
+          "transform": { "translate": [ 0.0, -3.4, 91.0 ] }
+        },
+        {
+          "suffix": "2i7j_m",
+          "transform": { "translate": [ 0.0, -3.4, 102.5 ] }
+        },
+        {
+          "suffix": "2i8j",
+          "transform": { "translate": [ 0.0, -3.4, 114.0 ] }
+        },
+        {
+          "suffix": "2i8j_m",
+          "transform": { "translate": [ -28.0, -3.4, 114.0 ] }
+        },
+        {
+          "suffix": "1i8j",
+          "transform": { "translate": [ -56.0, -3.4, 114.0 ] }
+        },
+        {
+          "suffix": "1i8j_m",
+          "transform": { "translate": [ -85.0, -3.4, 114.0 ] }
+        },
+        {
+          "suffix": "0i8j",
+          "transform": { "translate": [ -114.0, -3.4, 114.0 ] }
+        },
+        {
+          "suffix": "0i8j_m",
+          "transform": { "translate": [ -114.0, -3.4, 102.5 ] }
+        },
+        {
+          "suffix": "0i7j",
+          "transform": { "translate": [ -114.0, -3.4, 91.0 ] }
+        },
+        {
+          "suffix": "0i7j_m",
+          "transform": { "translate": [ -114.0, -3.4, 76.5 ] }
+        },
+        {
+          "suffix": "0i6j",
+          "transform": { "translate": [ -114.0, -3.4, 62.0 ] }
+        },
+        {
+          "suffix": "0i6j_m",
+          "transform": { "translate": [ -85.0, -3.4, 62.0 ] }
+        },
+        {
+          "suffix": "1i6j",
+          "transform": { "translate": [ -56.0, -3.4, 62.0 ] }
+        },
+        {
+          "suffix": "1i6j_m",
+          "transform": { "translate": [ -56.0, -3.4, 31.0 ] }
+        },
+        {
+          "suffix": "1i5j",
+          "transform": { "translate": [ -56.0, -3.4, 0.0 ] }
+        },
+        {
+          "suffix": "1i5j_m",
+          "transform": { "translate": [ -56.0, -3.4, -20.0 ] }
+        },
+        {
+          "suffix": "1i4j",
+          "transform": { "translate": [ -56.0, -3.4, -40.0 ] }
+        },
+        {
+          "suffix": "1i4j_m",
+          "transform": { "translate": [ -85.0, -3.4, -40.0 ] }
+        },
+        {
+          "suffix": "0i4j",
+          "transform": { "translate": [ -114.0, -3.4, -40.0 ] }
+        },
+        {
+          "suffix": "0i4j_m",
+          "transform": { "translate": [ -114.0, -3.4, -54.0 ] }
+        },
+        {
+          "suffix": "0i3j",
+          "transform": { "translate": [ -114.0, -3.4, -68.0 ] }
+        },
+        {
+          "suffix": "0i3j_m",
+          "transform": { "translate": [ -114.0, -3.4, -83.0 ] }
+        },
+        {
+          "suffix": "0i2j",
+          "transform": { "translate": [ -114.0, -3.4, -98.0 ] }
+        },
+        {
+          "suffix": "0i2j_m",
+          "transform": { "translate": [ -114.0, -3.4, -129.0 ] }
+        },
+        {
+          "suffix": "0i1j",
+          "transform": { "translate": [ -114.0, -3.4, -160.0 ] }
+        },
+        {
+          "suffix": "0i1j_m",
+          "transform": { "translate": [ -114.0, -3.4, -177.0 ] }
+        },
+        {
+          "suffix": "0i0j",
+          "transform": { "translate": [ -114.0, -3.4, -194.0 ] }
+        },
+        {
+          "suffix": "0i0j_m",
+          "transform": { "translate": [ -85.0, -3.4, -194.0 ] }
+        },
+        {
+          "suffix": "1i0j",
+          "transform": { "translate": [ -56.0, -3.4, -194.0 ] }
+        },
+        {
+          "suffix": "1i0j_m",
+          "transform": { "translate": [ -56.0, -3.4, -177.0 ] }
+        },
+        {
+          "suffix": "1i1j",
+          "transform": { "translate": [ -56.0, -3.4, -160.0 ] }
+        },
+        {
+          "suffix": "1i1j_m",
+          "transform": { "translate": [ -20.0, -3.4, -160.0 ] }
+        },
+        {
+          "suffix": "2i1j",
+          "transform": { "translate": [ 16.0, -3.4, -160.0 ] }
+        },
+        {
+          "suffix": "2i1j_m",
+          "transform": { "translate": [ 36.0, -3.4, -160.0 ] }
+        },
+        {
+          "suffix": "3i1j",
+          "transform": { "translate": [ 56.0, -3.4, -160.0 ] }
+        },
+        {
+          "suffix": "3i1j_m",
+          "transform": { "translate": [ 56.0, -3.4, -129.0 ] }
+        },
+        {
+          "suffix": "3i2j",
+          "transform": { "translate": [ 56.0, -3.4, -98.0 ] }
+        },
+        {
+          "suffix": "3i2j_m",
+          "transform": { "translate": [ 28.0, -3.4, -98.0 ] }
+        },
+        {
+          "suffix": "2i2j",
+          "transform": { "translate": [ 0.0, -3.4, -98.0 ] }
+        },
+        {
+          "suffix": "2i2j_m",
+          "transform": { "translate": [ 0.0, -3.4, -83.0 ] }
+        },
+        {
+          "suffix": "2i3j",
+          "transform": { "translate": [ 0.0, -3.4, -68.0 ] }
+        },
+        {
+          "suffix": "2i3j_m",
+          "transform": { "translate": [ 0.0, -3.4, -54.0 ] }
+        },
+        {
+          "suffix": "2i4ja",
+          "transform": { "translate": [ 0.0, -3.4, -40.0 ] }
+        },
+        {
+          "suffix": "2i4ja_m",
+          "transform": { "translate": [ 8.0, -3.4, -40.0 ] }
+        },
+        {
+          "suffix": "2i4jb",
+          "transform": { "translate": [ 16.0, -3.4, -40.0 ] }
+        },
+        {
+          "suffix": "2i4jb_m",
+          "transform": { "translate": [ 16.0, -3.4, -20.0 ] }
+        }
+      ]
+    },
+    {
+      "id": "BigBen",
+      "path": "../../../Assets/BigBen/BigBen.obj",
+      "name": "BigBen",
+      "intensity": 4.0,
+      "shine": 256,
+      "instances": [
+        {
+          "suffix": "0",
+          "transform": { "translate": [ 14.0, -3.2, 25.5 ] }
+        },
+        {
+          "suffix": "1",
+          "transform": { "translate": [ -13.5, -3.2, -122.0 ] }
+        }
+      ]
+    },
+    {
+      "id": "Banco",
+      "path": "../../../Assets/Banco/Banco.obj",
+      "name": "Banco",
+      "intensity": 4.0,
+      "shine": 256,
+      "instances": [
+        {
+          "suffix": "0",
+          "transform": { "translate": [ -16.8, -3.2, 50.1 ] }
+        },
+        {
+          "suffix": "1",
+          "transform": { "translate": [ -0.6, -3.2, 50.1 ] }
+        },
+        {
+          "suffix": "2",
+          "transform": { "translate": [ 27.0, -3.2, 50.1 ] }
+        },
+        {
+          "suffix": "3",
+          "transform": { "translate": [ -16.8, -3.2, 11.3 ] }
+        },
+        {
+          "suffix": "4",
+          "transform": { "translate": [ -0.6, -3.2, 11.3 ] }
+        },
+        {
+          "suffix": "5",
+          "transform": { "translate": [ 27.0, -3.2, 11.3 ] }
+        },
+        {
+          "suffix": "6",
+          "transform": { "translate": [ -16.8, -3.2, -109.8 ] }
+        },
+        {
+          "suffix": "7",
+          "transform": { "translate": [ -0.6, -3.2, -109.8 ] }
+        },
+        {
+          "suffix": "8",
+          "transform": { "translate": [ 27.0, -3.2, -109.8 ] }
+        },
+        {
+          "suffix": "9",
+          "transform": { "translate": [ -16.8, -3.2, -148.6 ] }
+        },
+        {
+          "suffix": "10",
+          "transform": { "translate": [ -0.6, -3.2, -148.6 ] }
+        },
+        {
+          "suffix": "11",
+          "transform": { "translate": [ 27.0, -3.2, -148.6 ] }
+        }
+      ]
+    },
+    {
+      "id": "BigBen",
+      "path": "../../../Assets/BigBen/BigBen.obj",
+      "name": "BigBen",
+      "intensity": 4.0,
+      "shine": 256,
+      "instances": [
+        {
+          "suffix": "0",
+          "transform": { "translate": [ 14.0, -3.2, 25.5 ] }
+        },
+        {
+          "suffix": "1",
+          "transform": { "translate": [ -13.5, -3.2, -122.0 ] }
+        }
+      ]
+    },
+    {
+      "id": "Banco",
+      "path": "../../../Assets/Banco/Banco.obj",
+      "name": "Banco",
+      "intensity": 4.0,
+      "shine": 256,
+      "instances": [
+        {
+          "suffix": "0",
+          "transform": { "translate": [ -16.8, -3.2, 50.1 ] }
+        },
+        {
+          "suffix": "1",
+          "transform": { "translate": [ -0.6, -3.2, 50.1 ] }
+        },
+        {
+          "suffix": "2",
+          "transform": { "translate": [ 27.0, -3.2, 50.1 ] }
+        },
+        {
+          "suffix": "3",
+          "transform": { "translate": [ -16.8, -3.2, 11.3 ] }
+        },
+        {
+          "suffix": "4",
+          "transform": { "translate": [ -0.6, -3.2, 11.3 ] }
+        },
+        {
+          "suffix": "5",
+          "transform": { "translate": [ 27.0, -3.2, 11.3 ] }
+        },
+        {
+          "suffix": "6",
+          "transform": { "translate": [ -16.8, -3.2, -109.8 ] }
+        },
+        {
+          "suffix": "7",
+          "transform": { "translate": [ -0.6, -3.2, -109.8 ] }
+        },
+        {
+          "suffix": "8",
+          "transform": { "translate": [ 27.0, -3.2, -109.8 ] }
+        },
+        {
+          "suffix": "9",
+          "transform": { "translate": [ -16.8, -3.2, -148.6 ] }
+        },
+        {
+          "suffix": "10",
+          "transform": { "translate": [ -0.6, -3.2, -148.6 ] }
+        },
+        {
+          "suffix": "11",
+          "transform": { "translate": [ 27.0, -3.2, -148.6 ] }
+        }
+      ]
     },
     {
       "id": "Player",

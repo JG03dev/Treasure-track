@@ -53,7 +53,8 @@ public:
 	GLuint getNSpotLights() { return spotLights.size(); }
 	SpotLight* getSpotLight(int i) { return i < spotLights.size() ? spotLights[i] : nullptr; };
 
-
+	// Delete model
+	void RemoveModel(std::string id);
 
 	// Seters
 	void setModelMatrix(std::string id, glm::mat4 modelmat);

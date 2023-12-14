@@ -21,6 +21,8 @@ Camera::Camera( // Init with vector
 		speed = SPEED;
 	sensitivity = SENSITIVITY;
 	fov = FOV;
+	m_firstPerson = false;
+	m_isCameraMoving = false;
 	update();
 }
 
@@ -37,6 +39,8 @@ Camera::Camera( // Init with scalar values
 		speed = SPEED;
 	sensitivity = SENSITIVITY;
 	fov = FOV;
+	m_firstPerson = false;
+	m_isCameraMoving = false;
 	update();
 }
 
@@ -86,31 +90,55 @@ void Camera::processAccerlate(bool accer) {
 	else speed = SPEED;
 }
 
+void Camera::changeCamera()
+{
+	m_firstPerson = !m_firstPerson;
+}
+
 void Camera::followPlayer()
 {
-	btTransform t;
-	t = this->player->vehicle->getChassisWorldTransform();
+	glm::vec3 forward = this->player->getCarForward();
 
-	btVector3 forward = this->player->vehicle->getForwardVector();
-	//std::cout << "Car Forward: " << forward.x() << ", " << forward.y() << ", " << forward.z() << std::endl;
-	btVector3 pos = t.getOrigin() - forward * 4; // Tercera Persona
-	//btVector3 pos = t.getOrigin(); // Primera Persona Externa
-	
-	front = glm::vec3(forward.x(), forward.y(), forward.z());
-
-	position = glm::vec3(float(pos.getX()), float(pos.getY()+1.), float(pos.getZ()));
-
-	// btVector3 pos = t.getOrigin() - forward * 0.3; // Primera Persona Interna
-	// position = glm::vec3(float(pos.getX()), float(pos.getY()+0.15), float(pos.getZ()));
+	if (m_firstPerson) {
+		/* PRIMERA PERSONA */
+		glm::vec3 rightCar = glm::normalize(glm::cross(forward, worldUp));
+		glm::vec3 pos = this->player->getCarPos() - rightCar * 0.2f;
+		position = glm::vec3(float(pos.x), float(pos.y + 0.7), float(pos.z));
+		float yaw2, pitch2, roll2;
+		player->getCarRotation().getEulerZYX(yaw2, pitch2, roll2);
+		float actualYaw = glm::radians(yaw);
+		if (forward.x >= 0) {
+			actualYaw -= pitch2;
+		}
+		else {
+			actualYaw -= (pitch2 + (glm::pi<float>() / 2 - pitch2) * 2);
+		}
+		glm::vec3 tmpFront;
+		tmpFront.x = cos(glm::radians(pitch)) * cos(actualYaw);
+		tmpFront.y = sin(glm::radians(pitch));
+		tmpFront.z = cos(glm::radians(pitch)) * sin(actualYaw);
+		//std::cout << "Player forward: " << forward.x << ", " << forward.y << ", " << forward.z << std::endl;
+		front = glm::normalize(tmpFront);
+		right = glm::normalize(glm::cross(front, worldUp));
+		up = glm::normalize(glm::cross(right, front));
+	}
+	else {
+		/* TERCERA PERSONA */
+		glm::vec3 pos = this->player->getCarPos() - forward * 4.f;
+		front = glm::vec3(forward.x, forward.y - 0.2, forward.z);
+		right = glm::normalize(glm::cross(front, worldUp));
+		up = glm::normalize(glm::cross(right, front));
+		position = glm::vec3(float(pos.x), float(pos.y + 1.5), float(pos.z));
+	}
 }
 
 // Update front vector of the camera
 void Camera::update() {
-	/*glm::vec3 tmpFront;
+	glm::vec3 tmpFront;
 	tmpFront.x = cos(glm::radians(pitch)) * cos(glm::radians(yaw));
 	tmpFront.y = sin(glm::radians(pitch));
 	tmpFront.z = cos(glm::radians(pitch)) * sin(glm::radians(yaw));
-	front = glm::normalize(tmpFront);*/
+	front = glm::normalize(tmpFront);
 	right = glm::normalize(glm::cross(front, worldUp));
 	up = glm::normalize(glm::cross(right, front));
 }

@@ -13,6 +13,7 @@
 #include "General/Camera.h"
 #include "General/Object.h"
 #include "General/Player.h"
+#include "General/Coin.h"
 
 #pragma endregion
 
@@ -37,7 +38,11 @@
 #include "Music/MySoundEffects.h"
 
 #pragma endregion
-
+#pragma region TEXTO
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
+#pragma endregion
 
 // --OTHER INCLUDES--
 
@@ -58,7 +63,7 @@ public:
 	// Constructors
 
 	Game() :m_Window(NULL), m_renderer(NULL), m_Camera(NULL),
-		m_dynamicsWorld(NULL), m_Player(NULL), m_sinTime(0),
+		m_dynamicsWorld(NULL), m_Player(NULL), m_sinTime(0), m_coinsCollected(0), m_lightsOn(false),
 		m_currentState(GameState::MainMenu), m_deltaTime(0.0f), m_lastFrame(0.0f),
 		m_sound(NULL), m_progressBar(0.01f){
 		m_Camera = new Camera(glm::vec3(0.0f, 0.0f, 3.0f));
@@ -109,18 +114,21 @@ private:
 	// Objects
 	Player* m_Player;
 	std::vector<Object*> m_Objects;
+	std::vector<Coin*> m_Coins;
+	
 
 	// Sound
 	MySoundEffects* m_sound;
 
 	//// Private Methods
 
+
 	/// Animations
 	void performJumpAndSpin(std::string id, float time1, float time2);
 	//Time
 	float m_sinTime;
 	// Constants for animation parameters
-	const float jumpHeight = 0.3f;
+	const float jumpHeight = 0.12f;
 	const float jumpDuration = 2.0f;
 
 	const float spinSpeed = 2.0f;
@@ -128,13 +136,21 @@ private:
 	/// Loading
 	float m_progressBar;
 	void UpdateProgressBar(); 
-
+	// Contador Monedas
+	int m_coinsCollected;
 
 	// Initializers
 	void InitializePhysics();
 	void InitializeGraphics();
 	void InitializeSound();
 	int InitializeWindow();
+
+	// Lights
+	bool m_lightsOn;
+
+	// LoadingScreen
+	void DisplayLoadingScreen();
+
 
 	/// Functionality
 	void Run();

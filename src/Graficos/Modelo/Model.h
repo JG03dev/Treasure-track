@@ -13,7 +13,7 @@ public:
 
 	Model(Material& m) : materialModel(m) {};
 	Model(GLfloat sIntensity, GLfloat shine) : materialModel(sIntensity, shine) {}
-	Model(GLfloat sIntensity, GLfloat shine, std::string path, std::string name, int nIns=1) :
+	Model(GLfloat sIntensity, GLfloat shine, std::string path, std::string name ,int nIns=1) :
 		materialModel(sIntensity, shine), modelPath(path), m_name(name), nInstances(nIns), isLoaded(false) {}
 
 	void LoadModel(const std::string& fileName, std::string name);

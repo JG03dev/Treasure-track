@@ -172,6 +172,23 @@ void Renderer::RenderEverything(Camera c, glm::mat4 projectionMatrix)
 	RenderObjects(c, projectionMatrix);
 }
 
+void Renderer::RemoveModel(std::string id) {
+	auto it = Models.find(id);
+	if (it != Models.end()) {
+		// Aquí puedes agregar código para liberar cualquier recurso asociado con el modelo
+		// Por ejemplo, si estás almacenando punteros a objetos que se crearon con new, querrás llamar a delete en ellos
+		// delete it->second.first; // Solo si se creó con new
+
+		Models.erase(it);
+	}
+	else {
+		std::cout << "Modelo con ID " << id << " no encontrado." << std::endl;
+	}
+}
+
+
+
+
 // TODO: check the parameters passed through these functions
 
 void Renderer::RenderShadowDirLight(DirectionalLight* light)

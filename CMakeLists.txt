@@ -24,6 +24,7 @@ find_package(SndFile REQUIRED)
 find_package(soil2 CONFIG REQUIRED)
 find_package(assimp REQUIRED)
 find_package(imgui CONFIG REQUIRED)
+find_package(imgui CONFIG REQUIRED)
 
 set(GAME_SOURCES
         src/Game.cpp

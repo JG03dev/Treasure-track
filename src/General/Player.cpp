@@ -1,7 +1,7 @@
 #include "Player.h"
 
 // Constructor
-Player::Player(Model* m, btDiscreteDynamicsWorld* dynamicsWorld) : modelWheel(NULL), delaIzquierda(NULL), delaDerecha(NULL)
+Player::Player(Model* m, btDiscreteDynamicsWorld* dynamicsWorld) : modelWheel(NULL), delaIzquierda(NULL), delaDerecha(NULL), m_num_keys(0)
 {
 	modelChasis = m; // Model points to the same model shared
 
@@ -9,6 +9,9 @@ Player::Player(Model* m, btDiscreteDynamicsWorld* dynamicsWorld) : modelWheel(NU
 	hitbox.LoadModel(std::string("../../../Assets/") + m->GetName() + std::string("/") + m->GetName() + std::string("Hitbox.obj"), m->GetName() + std::string("Hitbox"));
 	this->CreateVehicle(dynamicsWorld, hitbox);
 	dynamicsWorld->addVehicle(this->vehicle);
+	
+	lastQuaternion = this->getCarRotation();
+	lastForward = this->getCarForward();
 }
 
 // Destructor
@@ -51,16 +54,18 @@ void Player::InputMethod(int key, int keyPressed) {
 		switch (key)
 		{
 		case GLFW_KEY_W:
-			this->vehicle->setBrake(0, 0);
-			this->vehicle->setBrake(0, 1);
-			this->vehicle->applyEngineForce(this->vehicleParams.m_fEngineForce, 2);
-			this->vehicle->applyEngineForce(this->vehicleParams.m_fEngineForce, 3);
-			break;
-		case GLFW_KEY_S:
-			this->vehicle->applyEngineForce(-this->vehicleParams.m_bEngineForce, 0);
-			this->vehicle->applyEngineForce(-this->vehicleParams.m_bEngineForce, 1);
+			this->vehicle->applyEngineForce(this->vehicleParams.m_fEngineForce, 1);
+			this->vehicle->applyEngineForce(this->vehicleParams.m_fEngineForce, 0);
 			this->vehicle->setBrake(0, 2);
 			this->vehicle->setBrake(0, 3);
+			m_num_keys++;
+			break;
+		case GLFW_KEY_S:
+			this->vehicle->applyEngineForce(-this->vehicleParams.m_bEngineForce, 2);
+			this->vehicle->applyEngineForce(-this->vehicleParams.m_bEngineForce, 3);
+			this->vehicle->setBrake(0, 2);
+			this->vehicle->setBrake(0, 3);
+			m_num_keys++;
 			break;
 		case GLFW_KEY_A:
 			this->vehicle->setSteeringValue(this->vehicleParams.m_steeringValue, 0);
@@ -70,10 +75,31 @@ void Player::InputMethod(int key, int keyPressed) {
 			this->vehicle->setSteeringValue(-this->vehicleParams.m_steeringValue, 0);
 			this->vehicle->setSteeringValue(-this->vehicleParams.m_steeringValue, 1);
 			break;
-		case GLFW_KEY_LEFT_CONTROL:
-			this->vehicle->setBrake(150, 2);
-			this->vehicle->setBrake(150, 3);
+		case GLFW_KEY_SPACE:
+			this->vehicle->setBrake(600, 2);
+			this->vehicle->setBrake(600, 3);
 			break;
+		case GLFW_KEY_LEFT_SHIFT:
+			this->vehicle->applyEngineForce(this->vehicleParams.m_fEngineForce * 2, 2);
+			this->vehicle->applyEngineForce(this->vehicleParams.m_fEngineForce * 2, 3);
+			this->vehicle->setBrake(0, 2);
+			this->vehicle->setBrake(0, 3);
+			m_num_keys++;
+			break;
+		case GLFW_KEY_R:
+		{
+			for (int i = 0; i < 4; i++) {
+				this->vehicle->applyEngineForce(0, i);
+				this->vehicle->setSteeringValue(0, i);
+			}
+			btTransform t;
+			t.setOrigin(btVector3(0, -3.2, 0));
+			t.setRotation(btQuaternion(0, 0, 0));
+			this->vehicle->getRigidBody()->setWorldTransform(t);
+			this->vehicle->getRigidBody()->setLinearVelocity(btVector3(0, 0, 0));
+			this->vehicle->getRigidBody()->setAngularVelocity(btVector3(0, 0, 0));
+			break;
+		}
 		default:
 			break;
 		}
@@ -84,24 +110,40 @@ void Player::InputMethod(int key, int keyPressed) {
 		switch (key)
 		{
 		case GLFW_KEY_W:
-		case GLFW_KEY_S:
+			m_num_keys--;
 			this->vehicle->applyEngineForce(0, 0);
 			this->vehicle->applyEngineForce(0, 1);
+			if (m_num_keys == 0) {
+				this->vehicle->setBrake(50, 2);
+				this->vehicle->setBrake(50, 3);
+			}
+			break;
+		case GLFW_KEY_S:
+			m_num_keys--;
 			this->vehicle->applyEngineForce(0, 2);
 			this->vehicle->applyEngineForce(0, 3);
-
-			//Default braking force, always added otherwise there is no friction on the wheels
-			this->vehicle->setBrake(50, 2);
-			this->vehicle->setBrake(50, 3);
+			if (m_num_keys == 0) {
+				this->vehicle->setBrake(50, 2);
+				this->vehicle->setBrake(50, 3);
+			}
 			break;
 		case GLFW_KEY_A:
 		case GLFW_KEY_D:
 			this->vehicle->setSteeringValue(0, 0);
 			this->vehicle->setSteeringValue(0, 1);
 			break;
-		case GLFW_KEY_LEFT_CONTROL:
+		case GLFW_KEY_SPACE:
 			this->vehicle->setBrake(0, 2);
 			this->vehicle->setBrake(0, 3);
+			break;
+		case GLFW_KEY_LEFT_SHIFT:
+			m_num_keys--;
+			this->vehicle->applyEngineForce(0, 2);
+			this->vehicle->applyEngineForce(0, 3);
+			if (m_num_keys == 0) {
+				this->vehicle->setBrake(50, 2);
+				this->vehicle->setBrake(50, 3);
+			}
 			break;
 		default:
 			break;
@@ -135,6 +177,10 @@ glm::vec3 Player::getCarPos()
 glm::vec3 Player::getCarForward()
 {
 	return glm::vec3(vehicle->getForwardVector().x(), vehicle->getForwardVector().y(), vehicle->getForwardVector().z());
+}
+
+btQuaternion Player::getCarRotation() {
+	return vehicle->getChassisWorldTransform().getRotation();
 }
 
 // Private Methods
@@ -172,7 +218,7 @@ void Player::CreateVehicle(btDiscreteDynamicsWorld* dynamicsWorld, Model& hitbox
 
 	btVector3 localInertia(0, 0, 0);
 	chassisShape->calculateLocalInertia(mass, localInertia);
-	chassisTransform.setOrigin(btVector3(0, 0, 0));
+	chassisTransform.setOrigin(btVector3(0, -3.2, 0));
 
 	btDefaultMotionState* chassisMotionState = new btDefaultMotionState(chassisTransform);
 	btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, chassisMotionState, temp, localInertia);
@@ -216,12 +262,12 @@ void Player::CreateVehicle(btDiscreteDynamicsWorld* dynamicsWorld, Model& hitbox
 	btScalar connectionHeight(this->vehicleParams.m_connectionHeight);
 
 	// All the wheel configuration assumes the vehicle is centered at the origin and a right handed coordinate system is used
-	btVector3 wheelConnectionPoint(halfExtents.x() - wheelRadius*2, 0.5, halfExtents.z() - wheelWidth);
+	btVector3 wheelConnectionPoint(halfExtents.x() - wheelRadius*2, 0.6, halfExtents.z() - wheelWidth);
 
 	// Adds the front wheels
-	vehicle->addWheel(wheelConnectionPoint * btVector3(1, 1, -1), wheelDirectionCS0, wheelAxleCS, suspensionRestLength, wheelRadius, tuning, true);
+	vehicle->addWheel(wheelConnectionPoint * btVector3(1.2, 1, -1), wheelDirectionCS0, wheelAxleCS, suspensionRestLength, wheelRadius, tuning, true);
 
-	vehicle->addWheel(wheelConnectionPoint * btVector3(1, 1, 1), wheelDirectionCS0, wheelAxleCS, suspensionRestLength, wheelRadius, tuning, true);
+	vehicle->addWheel(wheelConnectionPoint * btVector3(1.2, 1, 1), wheelDirectionCS0, wheelAxleCS, suspensionRestLength, wheelRadius, tuning, true);
 
 	// Adds the rear wheels
 	vehicle->addWheel(wheelConnectionPoint * btVector3(-1, 1, -1), wheelDirectionCS0, wheelAxleCS, suspensionRestLength, wheelRadius, tuning, false);

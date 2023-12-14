@@ -82,19 +82,6 @@ void glfw_onFramebufferSize(GLFWwindow* window, int width, int height)
 }
 #pragma endregion
 
-void img_loader() {
-    int width, height;
-    int channels;
-    unsigned char* pixels = stbi_load("../../../src/s2.jpg", &width, &height, &channels, 4);
-
-    GLFWimage images[1];
-    images[0].width = width;
-    images[0].height = height;
-    images[0].pixels = pixels;
-
-    glfwSetWindowIcon(g->GetWindow(), 1, images);
-}
-
 int main(int argc, char **argv) {
     std::cout << argv[0] << std::endl;
     int state = 0;

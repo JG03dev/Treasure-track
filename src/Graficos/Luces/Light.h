@@ -13,9 +13,8 @@ public:
 			GLfloat aIntensity, GLfloat dIntensity, bool isOn);
 
 	ShadowMap* getShadowMap() { return shadowMap; }
-
+	bool isActive() { return active; }
 	void Toggle() { active = !active; }
-
 	~Light();
 
 protected:

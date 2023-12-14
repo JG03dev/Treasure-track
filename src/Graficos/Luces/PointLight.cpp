@@ -29,6 +29,7 @@ PointLight::PointLight(GLuint shadowWidth, GLuint shadowHeight,
 
 	shadowMap = new OmniShadowMap();
 	shadowMap->Init(shadowWidth, shadowHeight);
+	active = isOn;
 }
 
 void PointLight::UseLight(Shader& s, int nLight)
