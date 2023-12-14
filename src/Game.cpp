@@ -207,6 +207,95 @@ void Game::DisplayLoadingScreen()
     glfwSwapBuffers(m_Window);
 }
 
+GLuint LoadTexture2(const char* path) {
+    GLuint textureID;
+    int width, height, channels;
+
+    // Cargar la textura con SOIL2
+    unsigned char* image = SOIL_load_image(path, &width, &height, &channels, SOIL_LOAD_RGBA);
+
+    if (!image) {
+        std::cerr << "Error cargando la textura desde " << path << std::endl;
+        return 0;
+    }
+
+    // Generar un ID de textura
+    glGenTextures(1, &textureID);
+    glBindTexture(GL_TEXTURE_2D, textureID);
+
+    // Configurar la textura
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    // Liberar memoria de la imagen cargada
+    SOIL_free_image_data(image);
+
+    // Configurar parámetros de textura (puedes ajustarlos según tus necesidades)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    return textureID;
+}
+
+int rotation_start_index;
+void ImRotateStart()
+{
+    rotation_start_index = ImGui::GetWindowDrawList()->VtxBuffer.Size;
+}
+
+ImVec2 ImRotationCenter()
+{
+    ImVec2 l(FLT_MAX, FLT_MAX), u(-FLT_MAX, -FLT_MAX); // bounds
+
+    auto& buf = ImGui::GetWindowDrawList()->VtxBuffer;
+    for (int i = rotation_start_index; i < buf.Size; i++)
+        l = ImMin(l, buf[i].pos), u = ImMax(u, buf[i].pos);
+
+
+    return ImVec2((l.x + u.x) / 2, (l.y + u.y) / 2); // or use _ClipRectStack?
+}
+
+ImVec2 operator-(const ImVec2& l, const ImVec2& r) { return{ l.x - r.x, l.y - r.y }; }
+ImVec2 operator+(const ImVec2& l, const ImVec2& r) { return{ l.x + r.x, l.y + r.y }; }
+
+ImVec2 sin_cos_interval_min(0.735723, -0.727309);
+ImVec2 sin_cos_interval_max(0.68631, 0.677282);
+void ImRotateEnd(float rad, ImVec2 center = ImRotationCenter())
+{
+    float desfase = -M_PI / 3.8f;
+    float s = sin(rad - desfase), c = cos(rad - desfase);
+
+    center = ImRotate(center, s, c) - center;
+    if (s >= sin_cos_interval_min.x && s <= sin_cos_interval_max.x &&
+        c >= sin_cos_interval_min.y && c <= sin_cos_interval_max.y)
+    {
+        std::cout << "beep beep" << std::endl;
+    }
+    auto& buf = ImGui::GetWindowDrawList()->VtxBuffer;
+    for (int i = rotation_start_index; i < buf.Size; i++)
+        buf[i].pos = ImRotate(buf[i].pos, s, c) - center;
+}
+
+void ImRotateEnd_MinMax(float rad, int v, ImVec2 center = ImRotationCenter())
+{
+    float s, c;
+    if (v == 0)
+    {
+        s = 0.735723, c = 0.677282;
+    }
+    else
+    {
+        s = 0.68631, c = -0.727309;
+    }
+
+    center = ImRotate(center, s, c) - center;
+    auto& buf = ImGui::GetWindowDrawList()->VtxBuffer;
+    for (int i = rotation_start_index; i < buf.Size; i++)
+        buf[i].pos = ImRotate(buf[i].pos, s, c) - center;
+}
+
 
 void Game::Run()
 {
@@ -310,7 +399,6 @@ void Game::Run()
 
         // Mostrar la imagen del indicador
         ImVec2 pointerSize(300.0f, 300.0f); // Ajusta seg�n sea necesario
-        std::cout << carSpeed << "," << rotationAngle << std::endl;
         // Dibuja la imagen sin rotaci�n
         ImRotateStart();
         ImGui::Image((void*)(intptr_t)texturePointer, pointerSize);

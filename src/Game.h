@@ -128,6 +128,9 @@ private:
 	// Lights
 	bool m_lightsOn;
 
+	// LoadingScreen
+	void DisplayLoadingScreen();
+
 	// Functionality
 	void Run();
 	
