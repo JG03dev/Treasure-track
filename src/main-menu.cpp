@@ -5,7 +5,6 @@
 */
 
 // --OUR INCLUDES--
-#define STB_IMAGE_IMPLEMENTATION    
 
 #pragma region ENCABEZADOS
 

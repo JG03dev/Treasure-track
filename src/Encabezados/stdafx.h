@@ -53,6 +53,7 @@ using namespace glm;
 #include <malloc.h>
 #include <chrono>
 #include <thread>
+#include <cstdarg>
 //Datastructures
 #include <vector>
 #include <string>

@@ -33,7 +33,7 @@ public:
     ~UIHandler();
 
     // Draw method to draw different UI setups based on flags
-    UIEvents DrawAndPollEvents(int flags, float data = 0.0f);
+    UIEvents UIHandler::DrawAndPollEvents(int flags, ...);
 
     void cycleLoadingTexts() { m_progText = m_progText + 1 < LOADING_STAGES ? m_progText + 1 : 0; }
 
@@ -48,7 +48,12 @@ private:
     GLuint img_exit;
     GLuint img_MMBackground;
     GLuint img_LSBackground;
+    GLuint img_Speedometer;
+    GLuint img_SpeedPointer;
 
+
+    ImFont* m_HUDFont;
+    ImGuiIO io;
 
     GLuint LoadTexture(const char* path);
 
@@ -60,10 +65,18 @@ private:
       "Loading Models..."
     };
 
+    // HUD logic
+    int m_rotation_start_index;
+    void ImRotateStart();
+    ImVec2 ImRotationCenter();
+    void ImRotateEnd(float rad);
+    void ImRotateEnd_MinMax(float rad, int v);
+
+
     //Draws (one per flag)
     void DrawMainMenu(UIEvents& e);
     void DrawPauseMenu(UIEvents& e);
-    void DrawHUD(UIEvents& e);
+    void DrawHUD(float timer, float carSpeed, float rotationAngle, int coinsCollected, int totalCoins);
     void DrawLoadScreen(UIEvents& e, float progress);
 
 };

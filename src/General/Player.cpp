@@ -9,9 +9,6 @@ Player::Player(Model* m, btDiscreteDynamicsWorld* dynamicsWorld) : modelWheel(NU
 	hitbox.LoadModel(std::string("../../../Assets/") + m->GetName() + std::string("/") + m->GetName() + std::string("Hitbox.obj"), m->GetName() + std::string("Hitbox"));
 	this->CreateVehicle(dynamicsWorld, hitbox);
 	dynamicsWorld->addVehicle(this->vehicle);
-	
-	lastQuaternion = this->getCarRotation();
-	lastForward = this->getCarForward();
 }
 
 // Destructor

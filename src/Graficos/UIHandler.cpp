@@ -1,18 +1,27 @@
 #include "UIHandler.h"
 
-UIHandler::UIHandler(GLFWwindow* window) : window(window), m_progText(0) {
+UIHandler::UIHandler(GLFWwindow* window) : window(window), m_progText(0), m_rotation_start_index(0) {
     ImGui::CreateContext();
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init("#version 330");
-
+    
     glfwGetFramebufferSize(window, &display_w, &display_h);
 
+    //HABRIA QUE PONERLO EN UNA FUNCION A PARTE...
+    io = ImGui::GetIO();
+    io.Fonts->AddFontFromFileTTF("../../../src/Graficos/NFS.ttf", 15.0f);  // Cambia el nombre del archivo y el tamano segun tus necesidades
+    m_HUDFont = io.Fonts->Fonts[0];
+
+
     // Load textures
-    img_gameStarts = LoadTexture("../../../src/s2.jpg");
-    img_help = LoadTexture("../../../src/s2.jpg");
-    img_exit = LoadTexture("../../../src/s2.jpg");
-    img_MMBackground = LoadTexture("../../../src/s2.jpg");
-    img_LSBackground = LoadTexture("../../../src/LoadingScreenFoto.png");
+    img_gameStarts = LoadTexture("../../../Assets/Imagenes/s2.jpg");
+    img_help = LoadTexture("../../../Assets/Imagenes/s2.jpg");
+    img_exit = LoadTexture("../../../Assets/Imagenes/s2.jpg");
+    img_MMBackground = LoadTexture("../../../Assets/Imagenes/s2.jpg");
+    img_LSBackground = LoadTexture("../../../Assets/Imagenes/LoadingScreenFoto.png");
+    // Cargar texturas
+    img_Speedometer = LoadTexture("../../../Assets/Imagenes/speedometer.png");
+    img_SpeedPointer = LoadTexture("../../../Assets/Imagenes/pointer.png");
 }
 
 UIHandler::~UIHandler() {
@@ -26,12 +35,14 @@ UIHandler::~UIHandler() {
     ImGui::DestroyContext();
 }
 
-UIEvents UIHandler::DrawAndPollEvents(int flags, float data)
+UIEvents UIHandler::DrawAndPollEvents(int flags, ...)
 {
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
 
+    va_list args;
+    va_start(args, flags);
 
     //Warning! only one event can be handled at a time
     //This means result 
@@ -41,13 +52,14 @@ UIEvents UIHandler::DrawAndPollEvents(int flags, float data)
         DrawMainMenu(result);
     }
     if (flags & Pause_Menu) {
-        DrawMainMenu(result);
+		DrawPauseMenu(result);
     }
     if (flags & HUD) {
-        DrawMainMenu(result);
+        //      timer,              carSpeed,           rotationAngle,          coinsCollected,     totalCoins
+        DrawHUD(va_arg(args, float), va_arg(args, float), va_arg(args, float), va_arg(args, int), va_arg(args, int));
     }
     if (flags & Load_Screen) {
-        DrawLoadScreen(result, data);
+        DrawLoadScreen(result, va_arg(args, float));
     }
 
     ImGui::Render();
@@ -77,7 +89,7 @@ GLuint UIHandler::LoadTexture(const char* path)
         stbi_image_free(data);
     }
     else {
-        // Handle image loading failure
+        std::cerr << "Error cargando textura " << path << std::endl;
     }
 
     return textureID;
@@ -129,8 +141,124 @@ void UIHandler::DrawPauseMenu(UIEvents& e)
 {
 }
 
-void UIHandler::DrawHUD(UIEvents& e)
+void UIHandler::ImRotateStart()
 {
+	m_rotation_start_index = ImGui::GetWindowDrawList()->VtxBuffer.Size;
+}
+
+ImVec2 UIHandler::ImRotationCenter()
+{
+    ImVec2 l(FLT_MAX, FLT_MAX), u(-FLT_MAX, -FLT_MAX); // bounds
+
+    auto& buf = ImGui::GetWindowDrawList()->VtxBuffer;
+    for (int i = m_rotation_start_index; i < buf.Size; i++)
+        l = ImMin(l, buf[i].pos), u = ImMax(u, buf[i].pos);
+
+
+    return ImVec2((l.x + u.x) / 2, (l.y + u.y) / 2); // or use _ClipRectStack?
+}
+
+ImVec2 operator-(const ImVec2& l, const ImVec2& r) { return{ l.x - r.x, l.y - r.y }; }
+ImVec2 operator+(const ImVec2& l, const ImVec2& r) { return{ l.x + r.x, l.y + r.y }; }
+
+void UIHandler::ImRotateEnd(float rad)
+{
+    ImVec2 center = ImRotationCenter();
+    float desfase = M_PI / 1.35f;
+    float s = sin(rad - desfase), c = cos(rad - desfase);
+
+    center = ImRotate(center, s, c) - center;
+    auto& buf = ImGui::GetWindowDrawList()->VtxBuffer;
+    for (int i = m_rotation_start_index; i < buf.Size; i++)
+        buf[i].pos = ImRotate(buf[i].pos, s, c) - center;
+}
+
+void UIHandler::ImRotateEnd_MinMax(float rad, int v)
+{
+    ImVec2 center = ImRotationCenter();
+    float s, c;
+    if (v == 0)
+    {
+        s = -0.735723, c = -0.677282;
+    }
+    else
+    {
+        s = -0.68631, c = 0.727309;
+    }
+
+    center = ImRotate(center, s, c) - center;
+    auto& buf = ImGui::GetWindowDrawList()->VtxBuffer;
+    for (int i = m_rotation_start_index; i < buf.Size; i++)
+        buf[i].pos = ImRotate(buf[i].pos, s, c) - center;
+}
+
+
+void UIHandler::DrawHUD(float timer, float carSpeed, float rotationAngle, int coinsCollected, int totalCoins)
+{
+    ImGui::PushFont(m_HUDFont);
+
+    //Desactivar las decoraciones de la ventana
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
+
+    //Quitar el fondo transparente
+    ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
+
+    ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_Always);
+    ImGui::SetNextWindowSize(ImVec2(250, 50), ImGuiCond_Always);
+    ImGui::Begin("Temporizador", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoCollapse);
+    ImGui::SetWindowFontScale(2.0f);
+    if (timer > 25.0f)
+    {
+        ImGui::TextColored(ImVec4(1.0f, 1.0f, 1.0f, 1.0f), "Tiempo: %.2f", timer);
+    }
+    else
+    {
+        ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "Tiempo: %.2f", timer);
+    }
+   
+    ImGui::End();
+
+    ImGui::SetNextWindowPos(ImVec2(900, 400), ImGuiCond_Always);
+    ImGui::SetNextWindowSize(ImVec2(450, 500), ImGuiCond_Always);
+    ImGui::Begin("Speedometer", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoCollapse);
+    //Mostrar la imagen del velocimetro
+    ImVec2 speedometerSize(300.0f, 300.0f);  // Ajusta segun sea necesario
+    ImGui::Image((void*)(intptr_t)img_Speedometer, speedometerSize);
+    ImGui::End();
+
+
+    ImGui::SetNextWindowPos(ImVec2(900, 400), ImGuiCond_Always);
+    ImGui::SetNextWindowSize(ImVec2(450, 500), ImGuiCond_Always);
+    ImGui::Begin("pointer", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoCollapse);
+    // Mostrar la imagen del indicador
+    ImVec2 pointerSize(300.0f, 300.0f); // Ajusta seg?n sea necesario
+    // Dibuja la imagen sin rotaci?n
+    ImRotateStart();
+    ImGui::Image((void*)(intptr_t)img_SpeedPointer, pointerSize);
+    
+    if (carSpeed > 150)
+        ImRotateEnd_MinMax(-rotationAngle, 1);
+    else if (carSpeed < -1)
+        ImRotateEnd_MinMax(-rotationAngle, 0);
+    else
+        ImRotateEnd(-rotationAngle);
+
+    ImGui::End();
+
+    // Actualizar el contador de monedas en la interfaz
+    ImGui::SetNextWindowPos(ImVec2(10, 50), ImGuiCond_Always);
+    ImGui::SetNextWindowSize(ImVec2(250, 50), ImGuiCond_Always);
+
+    ImGui::Begin("Contador de Monedas", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoCollapse);
+    ImGui::SetWindowFontScale(2.0f);
+    ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "Monedas: %d / %d", coinsCollected, totalCoins + coinsCollected);
+    ImGui::End();
+
+    ImGui::PopStyleVar(3);
+    ImGui::PopStyleColor();
+    ImGui::PopFont();
 }
 
 void UIHandler::DrawLoadScreen(UIEvents& e, float progress) {

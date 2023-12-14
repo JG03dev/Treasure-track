@@ -63,9 +63,9 @@ public:
 	// Constructors
 
 	Game() :m_Window(NULL), m_renderer(NULL), m_Camera(NULL),
-		m_dynamicsWorld(NULL), m_Player(NULL), m_sinTime(0), m_coinsCollected(0), m_lightsOn(false),
+		m_dynamicsWorld(NULL), m_Player(NULL), m_sinTime(0), m_coinsCollected(0),
 		m_currentState(GameState::MainMenu), m_deltaTime(0.0f), m_lastFrame(0.0f),
-		m_sound(NULL), m_progressBar(0.01f){
+		m_sound(NULL), m_progressBar(0.01f), m_timer(100.0f){
 		m_Camera = new Camera(glm::vec3(0.0f, 0.0f, 3.0f));
 		InitializeWindow();
 	};
@@ -75,7 +75,6 @@ public:
 	// Game States
 	void HandleMainMenu();
 	void HandleLoading();
-	GLFWwindow* CreateSharedGLFWWindow();
 	void HandleGameOver();
 
 	// Public Methods
@@ -139,18 +138,13 @@ private:
 	// Contador Monedas
 	int m_coinsCollected;
 
+	float m_timer;
+
 	// Initializers
 	void InitializePhysics();
 	void InitializeGraphics();
 	void InitializeSound();
 	int InitializeWindow();
-
-	// Lights
-	bool m_lightsOn;
-
-	// LoadingScreen
-	void DisplayLoadingScreen();
-
 
 	/// Functionality
 	void Run();
