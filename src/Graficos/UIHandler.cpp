@@ -35,14 +35,11 @@ UIHandler::~UIHandler() {
     ImGui::DestroyContext();
 }
 
-UIEvents UIHandler::DrawAndPollEvents(int flags, ...)
+UIEvents UIHandler::DrawAndPollEvents(int flags, float data, float carSpeed, float rotAngle, int actCoin, int totalCoin)
 {
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
-
-    va_list args;
-    va_start(args, flags);
 
     //Warning! only one event can be handled at a time
     //This means result 
@@ -56,16 +53,14 @@ UIEvents UIHandler::DrawAndPollEvents(int flags, ...)
     }
     if (flags & HUD) {
         //      timer,              carSpeed,           rotationAngle,          coinsCollected,     totalCoins
-        DrawHUD(va_arg(args, float), va_arg(args, float), va_arg(args, float), va_arg(args, int), va_arg(args, int));
+        DrawHUD(data, carSpeed, rotAngle, actCoin, totalCoin);
     }
     if (flags & Load_Screen) {
-        DrawLoadScreen(result, va_arg(args, float));
+        DrawLoadScreen(result, data);
     }
 
     ImGui::Render();
     glViewport(0, 0, display_w, display_h);
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
     return result;

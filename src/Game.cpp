@@ -300,6 +300,20 @@ void Game::Run()
 
         //Renderizar
         Render();
+
+        ///HUD Logic
+
+        // Incrementar el temporizador
+        if (m_timer > 0.0f)
+        {
+            m_timer -= m_deltaTime;
+        }
+
+        float carSpeed = m_Player->vehicle->getCurrentSpeedKmHour();
+        float carSpeedRad = carSpeed * (M_PI / 180.0f);
+        float rotationAngle = carSpeedRad * 1.8f;
+
+        m_ui->DrawAndPollEvents(HUD, m_timer, carSpeed, rotationAngle, m_coinsCollected, m_Coins.size());
     
 }
 
@@ -374,20 +388,6 @@ void Game::Actualizar(float deltaTime)
     }
     // Update sinTime
 	m_sinTime += deltaTime;
-
-    ///HUD Logic
-
-    // Incrementar el temporizador
-    if (m_timer > 0.0f)
-    {
-        m_timer -= deltaTime;
-    }
-
-    float carSpeed = m_Player->vehicle->getCurrentSpeedKmHour();
-    float carSpeedRad = carSpeed * (M_PI / 180.0f);
-    float rotationAngle = carSpeedRad * 1.8f;
-
-    m_ui->DrawAndPollEvents(HUD, m_timer, carSpeed, rotationAngle, m_coinsCollected, m_Coins.size());
 }
 
 void Game::Render()

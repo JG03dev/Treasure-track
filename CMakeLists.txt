@@ -8,7 +8,7 @@ IF (WIN32)
 ENDIF()
 
 find_package(OpenGL REQUIRED)
-find_package(GLEW REQUIRED)
+find_package(GLEW REQUIRED) 
 find_package(glm CONFIG REQUIRED)
 find_package(OpenAL CONFIG REQUIRED)
 find_package(Bullet CONFIG REQUIRED)

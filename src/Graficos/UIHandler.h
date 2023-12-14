@@ -33,7 +33,7 @@ public:
     ~UIHandler();
 
     // Draw method to draw different UI setups based on flags
-    UIEvents UIHandler::DrawAndPollEvents(int flags, ...);
+    UIEvents UIHandler::DrawAndPollEvents(int flags, float data = 0.0f, float carSpeed = 0.0f, float rotAngle = 0.0f, int actCoin = 0, int totalCoin = 0);
 
     void cycleLoadingTexts() { m_progText = m_progText + 1 < LOADING_STAGES ? m_progText + 1 : 0; }
 
