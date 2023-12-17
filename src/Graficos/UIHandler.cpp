@@ -313,15 +313,11 @@ void UIHandler::DrawPauseMenu(UIEvents& e)
 	ImGui::SetCursorPos(centerPos);
 	if (ImGui::ImageButton((void*)(intptr_t)img_gameStarts, ImVec2(200, 50))) {
 		e = Resume;
-	}
-
-	// Controls Image
-	ImGui::SetCursorPos(ImVec2(centerPos.x + 400, centerPos.y + 100));  // Adjust the vertical distance
-    ImGui::Image((void*)(intptr_t)img_Controls, ImVec2(200, 200));
+	}	
 
 	// Return Button
 	ImGui::SetCursorPos(ImVec2(centerPos.x, centerPos.y + 100));  // Adjust the vertical distance
-	if (ImGui::ImageButton((void*)(intptr_t)img_exit, ImVec2(200, 50))) {
+	if (ImGui::ImageButton((void*)(intptr_t)img_Afternoon, ImVec2(200, 50))) {
 		e = Return;
 	}
 
@@ -331,8 +327,11 @@ void UIHandler::DrawPauseMenu(UIEvents& e)
 		e = Exit;
 	}
 
-	ImGui::End();
+    // Controls Image
+    ImGui::SetCursorPos(ImVec2(centerPos.x + 400, centerPos.y + 100));  // Adjust the vertical distance
+    ImGui::Image((void*)(intptr_t)img_Controls, ImVec2(200, 200));
 
+	ImGui::End();
 }
 
 void UIHandler::ImRotateStart()
