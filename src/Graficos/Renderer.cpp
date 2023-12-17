@@ -4,7 +4,8 @@
 
 #include "Renderer.h"
 
-Renderer::Renderer(const char* Parser, GLsizei viewPortWidth, GLsizei viewPortHeight) : vwidth(viewPortWidth), vheight(viewPortHeight)
+Renderer::Renderer(const char* Parser, GLsizei viewPortWidth, GLsizei viewPortHeight, int initCurrentDir, int initSky) : vwidth(viewPortWidth), vheight(viewPortHeight), 
+currentDirLight(initCurrentDir), currentSky(initSky)
 {
 	std::ifstream configFile(Parser);
 	json config;
@@ -64,9 +65,8 @@ Renderer::Renderer(const char* Parser, GLsizei viewPortWidth, GLsizei viewPortHe
 			dX = DL["direction"][0], dY = DL["direction"][1], dZ = DL["direction"][2]; // Direction
 		bool isOn = false; // initalState
 		dirLights.push_back(new DirectionalLight(sWidth, sHeight, cR, cG, cB, intensity, diffuse, dX, dY, dZ, isOn));
-	} 
-	currentDirLight = 0; 
-	dirLights[0]->Toggle();
+	}  
+	dirLights[currentDirLight]->Toggle();
 
 	// Point Lights
 	for (const auto& PL : config["lights"]["pointLights"]) {
@@ -106,8 +106,6 @@ Renderer::Renderer(const char* Parser, GLsizei viewPortWidth, GLsizei viewPortHe
 		};
 		skyList.push_back(Skybox(faces));
 	}
-	// First skybox is current by default
-	currentSky = 0;
 }
 
 void Renderer::AddLight(DirectionalLight* l)

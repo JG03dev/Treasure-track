@@ -69,7 +69,7 @@ private:
 		btScalar m_suspensionCompression = 0.83; //0.83;
 		btScalar m_suspensionDamping = 0.88; //0.88;
 		btScalar m_maxSuspensionTravelCm = 5.;
-		btScalar m_frictionSlip = 1000;//10.5;	//Larger friction slips will result in better handling
+		btScalar m_frictionSlip = 50;//10.5;	//Larger friction slips will result in better handling
 		btScalar m_maxSuspensionForce = 6000;//6000.;
 		//btScalar m_rollInfluence = 1;
 	} wheelParams;

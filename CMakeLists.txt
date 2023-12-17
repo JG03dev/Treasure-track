@@ -123,3 +123,5 @@ target_link_libraries(MenuDemoExecutable  PRIVATE GLEW::GLEW)
 target_link_libraries(MenuDemoExecutable  PRIVATE glfw)
 target_link_libraries(MenuDemoExecutable  PRIVATE SndFile::sndfile)
 target_link_libraries(MenuDemoExecutable  PRIVATE imgui::imgui) 
+target_link_libraries(MenuDemoExecutable  PRIVATE soil2)
+

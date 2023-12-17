@@ -9,6 +9,7 @@ public:
 	void Pause();
 	void Stop();
 	void Resume();
+	void Reset(const char* filename);
 
 	void UpdateBufferStream();
 

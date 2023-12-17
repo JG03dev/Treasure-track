@@ -49,6 +49,9 @@
 enum GameState {
 	MainMenu,
 	Loading,
+	ModeSelector,
+	TimeSelector,
+	Paused,
 	InGame,
 	GameOver
 };
@@ -65,7 +68,7 @@ public:
 	Game() :m_Window(NULL), m_renderer(NULL), m_Camera(NULL),
 		m_dynamicsWorld(NULL), m_Player(NULL), m_sinTime(0), m_coinsCollected(0),
 		m_currentState(GameState::MainMenu), m_deltaTime(0.0f), m_lastFrame(0.0f),
-		m_sound(NULL), m_progressBar(0.01f), m_timer(100.0f){
+		m_sound(NULL), m_progressBar(0.01f), m_timer(100.0f), m_initSky(0), m_coinMode(true){
 		m_Camera = new Camera(glm::vec3(0.0f, 0.0f, 3.0f));
 		InitializeWindow();
 	};
@@ -75,6 +78,10 @@ public:
 	// Game States
 	void HandleMainMenu();
 	void HandleLoading();
+	//Run
+	void HandlePause();
+	void HandleModeSelector();
+	void HandleTimeSelection();
 	void HandleGameOver();
 
 	// Public Methods
@@ -121,7 +128,7 @@ private:
 
 	// Sound
 	MySoundEffects* m_sound;
-
+	float v_ant;
 	//// Private Methods
 
 
@@ -150,6 +157,9 @@ private:
 	void InitializeInput();
 	int InitializeWindow();
 
+	// Parameters for initialization
+	int m_initSky;
+	bool m_coinMode;
 
 	/// Functionality
 	void Run();

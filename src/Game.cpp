@@ -1,7 +1,6 @@
 #include "Game.h"
 #include <SOIL2/SOIL2.h>
 
-#pragma region PUBLIC_METHODS
 
 Game::~Game()
 {
@@ -14,15 +13,17 @@ Game::~Game()
         if (m_Objects[i] != NULL) delete m_Objects[i];
     if (m_sound != NULL) delete m_sound;
 }
+
+#pragma region HANDLERS
+
 void Game::HandleMainMenu()
 {
-    UIEvents e = m_ui->DrawAndPollEvents(Main_Menu);
+    UIEvents e = m_ui->DrawAndPollEvents(DMainMenu);
 
     switch (e)
     {
     case Start_Game:
-        glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-        m_currentState = Loading;
+        m_currentState = ModeSelector;
         break;
     case Help: //Or settings
         // Call help or setting function
@@ -31,7 +32,7 @@ void Game::HandleMainMenu()
     case Exit:
         glfwSetWindowShouldClose(m_Window, true);
     default:
-        break;    
+        break;
     }
 }
 
@@ -69,7 +70,7 @@ void Game::HandleLoading()
     }
 
     // Update progress bar with easing
-    m_ui->DrawAndPollEvents(Load_Screen, m_progressBar);
+    m_ui->DrawAndPollEvents(DLoadScreen, m_progressBar);
 
     // Once progress bar is finished start the game
     if (m_progressBar >= 1.0f) {
@@ -78,40 +79,106 @@ void Game::HandleLoading()
     }
 }
 
+void Game::HandlePause()
+{
+	switch (m_ui->DrawAndPollEvents(DPauseMenu)) {
+	case Resume:
+		m_currentState = InGame;
+	}
+}
+
+void Game::HandleModeSelector()
+{
+    //Make UI Draw Mode
+    switch(m_ui->DrawAndPollEvents(DMenuModeSelection)){
+    case CoinMode:
+    // Coin mode
+        m_coinMode = true;
+        m_currentState = TimeSelector;
+        break;
+    case FreeMode:
+    // No coins
+        m_coinMode = false;
+		m_currentState = TimeSelector;
+        break;
+    }
+}
+
+void Game::HandleTimeSelection()
+{
+	//Make UI Draw Mode
+	switch (m_ui->DrawAndPollEvents(DMenuTimeSelection)) {
+	case Day:
+		// Set day
+		glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		m_initSky = 0;
+        m_currentState = Loading;
+		break;
+	case Afternoon:
+		// Set afternoon
+        glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		m_initSky = 1;
+		m_currentState = Loading;
+		break;
+	case Night:
+		// Set night
+        glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		m_initSky = 2;
+		m_currentState = Loading;
+		break;
+	}
+}
+
 void Game::HandleGameOver()
 {
+    
 }
+
+#pragma endregion
 
 int Game::Start()
 {
-    m_ui = new UIHandler(m_Window);
-    img_loader();
+	m_ui = new UIHandler(m_Window);
+	img_loader();
 
-    // Main menu loop
-    while (!glfwWindowShouldClose(m_Window))
-    {
-        glfwPollEvents();
+	// Main menu loop
+	while (!glfwWindowShouldClose(m_Window))
+	{
+		glfwPollEvents();
+		// per-frame time logic
+		// --------------------
+		float currentFrame = static_cast<float>(glfwGetTime());
+		m_deltaTime = currentFrame - m_lastFrame;
+		m_lastFrame = currentFrame;
 
-        switch (m_currentState) {
-        case GameState::MainMenu:
-            HandleMainMenu();
+		switch (m_currentState) {
+		case GameState::MainMenu:
+			HandleMainMenu();
+			break;
+		case GameState::Loading:
+			HandleLoading();
+			break;
+		case GameState::InGame:
+			Run();
+			break;
+		case GameState::Paused:
+			HandlePause();
+			break;
+        case GameState::ModeSelector:
+            HandleModeSelector();
             break;
-        case GameState::Loading:
-            HandleLoading();
-            break;
-        case GameState::InGame:
-            Run();
-            break;
-        case GameState::GameOver:
-            HandleGameOver();
-            break;
-        }
-
-        glfwSwapBuffers(m_Window);
-    }
-    return 0;
+		case GameState::TimeSelector:
+			HandleTimeSelection();
+			break;
+		case GameState::GameOver:
+			HandleGameOver();
+			break;
+		}
+		glfwSwapBuffers(m_Window);
+	}
+	return 0;
 }
-#pragma endregion
+
 
 #pragma region PRIVATE_METHODS_INITIALIZERS
 
@@ -144,7 +211,7 @@ void Game::InitializePhysics()
 
 void Game::InitializeGraphics()
 {
-    m_renderer = new Renderer("../../../Assets/Objects.json", m_SCR_WIDTH, m_SCR_HEIGHT);
+    m_renderer = new Renderer("../../../Assets/Objects.json", m_SCR_WIDTH, m_SCR_HEIGHT, m_initSky, m_initSky);
     //Iniciamos objetos
     
     Model* p = m_renderer->getModel("Player").first;
@@ -169,9 +236,16 @@ void Game::InitializeGraphics()
                 m_Player->setLights(m_renderer->getSpotLight(0), m_renderer->getSpotLight(1));*/
         }
         else if (Obj.first.substr(0, 4) == "Coin") { // CREAR OBJETO MONEDA
-            m_Coins.push_back(new Coin(Obj.second.first, m_dynamicsWorld, Obj.second.second, Obj.first));
-            m_Coins.back()->getGhostObject()->getWorldTransform().getOpenGLMatrix(glm::value_ptr(model));
-            m_renderer->setModelMatrix(Obj.first, model);
+            if(m_coinMode)
+            {
+                m_Coins.push_back(new Coin(Obj.second.first, m_dynamicsWorld, Obj.second.second, Obj.first));
+                m_Coins.back()->getGhostObject()->getWorldTransform().getOpenGLMatrix(glm::value_ptr(model));
+                m_renderer->setModelMatrix(Obj.first, model);
+            } 
+            else
+            {
+                m_renderer->RemoveModel(Obj.first);
+            }
         }
         else if(Obj.first.substr(0, 5) != "Wheel") // CREAR RESTO DE OBJETOS MENOS RUEDAS
         {
@@ -306,35 +380,29 @@ GLuint LoadTexture2(const char* path) {
 
 void Game::Run()
 {
+    m_sound->PlayMusic(m_deltaTime);
+    m_sound->PlaySound(m_deltaTime);
 
-        // per-frame time logic
-        // --------------------
-        float currentFrame = static_cast<float>(glfwGetTime());
-        m_deltaTime = currentFrame - m_lastFrame;
-        m_lastFrame = currentFrame;
+    //Actualizar Informacion (Mover coordenadas)
+    Actualizar(m_deltaTime);
+    v_ant = m_Player->vehicle->getCurrentSpeedKmHour();
 
-        m_sound->PlayMusic(m_deltaTime);
-        m_sound->PlaySound(m_deltaTime);
+    //Renderizar
+    Render();
 
-        //Actualizar Informacion (Mover coordenadas)
-        Actualizar(m_deltaTime);
+    ///HUD Logic
 
-        //Renderizar
-        Render();
+    // Incrementar el temporizador
+    if (m_timer > 0.0f)
+    {
+        m_timer -= m_deltaTime;
+    }
 
-        ///HUD Logic
+    float carSpeed = m_Player->vehicle->getCurrentSpeedKmHour();
+    float carSpeedRad = carSpeed * (M_PI / 180.0f);
+    float rotationAngle = carSpeedRad * 1.8f;
 
-        // Incrementar el temporizador
-        if (m_timer > 0.0f)
-        {
-            m_timer -= m_deltaTime;
-        }
-
-        float carSpeed = m_Player->vehicle->getCurrentSpeedKmHour();
-        float carSpeedRad = carSpeed * (M_PI / 180.0f);
-        float rotationAngle = carSpeedRad * 1.8f;
-
-        m_ui->DrawAndPollEvents(HUD, m_timer, carSpeed, rotationAngle, m_coinsCollected, m_Coins.size());
+    m_ui->DrawAndPollEvents(DHUD, m_timer, carSpeed, rotationAngle, m_coinsCollected, m_Coins.size());
     
 }
 
@@ -344,7 +412,20 @@ void Game::KeyCallback(GLFWwindow* window, int key, int scancode, int action, in
 {
     
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, true);
+        if (m_currentState == MainMenu)
+            glfwSetWindowShouldClose(window, true);
+        else if (m_currentState == ModeSelector)
+            m_currentState = GameState::MainMenu;
+        else if (m_currentState == TimeSelector)
+            m_currentState = GameState::ModeSelector;
+	    else if (m_currentState == Loading) {} // Do nothing when its loading
+	    else {
+		    glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+		    m_currentState = Paused;
+
+		    // Round up camera front to avoid pause view glitches
+		    m_Camera->front = glm::vec3(float(int(m_Camera->front.x)), float(int(m_Camera->front.y)), float(int(m_Camera->front.z)));
+	    }
     if (glfwGetKey(window, GLFW_KEY_TAB) == GLFW_PRESS)
     {
         m_renderer->cycleDirLight();
@@ -398,6 +479,11 @@ void Game::Actualizar(float deltaTime)
 {
     // Physics
     m_dynamicsWorld->stepSimulation(deltaTime, 2);
+
+    //Sonido choque
+    if (m_Player->vehicle->getCurrentSpeedKmHour() < (v_ant - 10)) {
+        m_sound->Choque();
+    }
 
     // Loop for the ghost coin!
     for (auto coin = m_Coins.begin(); coin != m_Coins.end();) {

@@ -32,7 +32,7 @@ public:
 	// Constructors
 	Renderer() {}
 
-	Renderer(const char* Parser, GLsizei viewPortWidth, GLsizei viewPortHeight);
+	Renderer(const char* Parser, GLsizei viewPortWidth, GLsizei viewPortHeight, int initCurrentDir, int initSky);
 
 	// Data modifiers 
 

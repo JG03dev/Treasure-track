@@ -38,13 +38,13 @@ bool g_loadingFinished = false;
 
 //Game* g = nullptr;
 GLFWwindow* m_Window;
-const unsigned int m_SCR_WIDTH = 1280;
-const unsigned int m_SCR_HEIGHT = 720;
+const unsigned int m_SCR_WIDTH = 1920;
+const unsigned int m_SCR_HEIGHT = 1080;
 
 void img_loader(GLFWwindow* m_Window) {
     int width, height;
     int channels;
-    unsigned char* pixels = stbi_load("../../../src/s2.jpg", &width, &height, &channels, 4);
+    unsigned char* pixels = stbi_load("../../../Assets/Imagenes/s2.jpg", &width, &height, &channels, 4);
 
     GLFWimage images[1];
     images[0].width = width;
@@ -144,19 +144,19 @@ int main(int argc, char** argv) {
 
     // Depth test
     glEnable(GL_DEPTH_TEST);
-    GLuint Background = LoadTexture("../../../src/fondo.png");
-    GLuint Title = LoadTexture("../../../src/title6.png");
-    GLuint Controles = LoadTexture("../../../src/Controles.jpg");
+    GLuint Background = LoadTexture("../../../Assets/Imagenes/fondo.png");
+    GLuint Title = LoadTexture("../../../Assets/Imagenes/title6.png");
+    GLuint Controles = LoadTexture("../../../Assets/Imagenes/Controles.jpg");
 
-    GLuint Play = LoadTexture("../../../src/button_play.png"); 
-    GLuint Info = LoadTexture("../../../src/button_info.png"); 
-    GLuint Exit = LoadTexture("../../../src/button_exit.png");
-    GLuint Continue = LoadTexture("../../../src/button_continue.png");
+    GLuint Play = LoadTexture("../../../Assets/Imagenes/button_play.png"); 
+    GLuint Info = LoadTexture("../../../Assets/Imagenes/button_info.png"); 
+    GLuint Exit = LoadTexture("../../../Assets/Imagenes/button_exit.png");
+    GLuint Continue = LoadTexture("../../../Assets/Imagenes/button_continue.png");
 
-    GLuint Play_press = LoadTexture("../../../src/button_play_press.png"); 
-    GLuint Info_press = LoadTexture("../../../src/button_info_press.png"); 
-    GLuint Exit_press = LoadTexture("../../../src/button_exit_press.png"); 
-    GLuint Continue_press = LoadTexture("../../../src/button_continue_press.png");
+    GLuint Play_press = LoadTexture("../../../Assets/Imagenes/button_play_press.png"); 
+    GLuint Info_press = LoadTexture("../../../Assets/Imagenes/button_info_press.png"); 
+    GLuint Exit_press = LoadTexture("../../../Assets/Imagenes/button_exit_press.png"); 
+    GLuint Continue_press = LoadTexture("../../../Assets/Imagenes/button_continue_press.png");
 
     bool hover = false; //para mirar si esta presionado o no
 
@@ -340,10 +340,6 @@ int main(int argc, char** argv) {
 
             // Swap buffers
             glfwSwapBuffers(m_Window);
-        }
-
-        // Join the loading thread
-        loadingThread.join();
     }
 
     // Cleanup

@@ -134,11 +134,14 @@ void Camera::followPlayer()
 
 // Update front vector of the camera
 void Camera::update() {
-	glm::vec3 tmpFront;
-	tmpFront.x = cos(glm::radians(pitch)) * cos(glm::radians(yaw));
-	tmpFront.y = sin(glm::radians(pitch));
-	tmpFront.z = cos(glm::radians(pitch)) * sin(glm::radians(yaw));
-	front = glm::normalize(tmpFront);
-	right = glm::normalize(glm::cross(front, worldUp));
-	up = glm::normalize(glm::cross(right, front));
+	if (m_firstPerson)
+	{
+		glm::vec3 tmpFront;
+		tmpFront.x = cos(glm::radians(pitch)) * cos(glm::radians(yaw));
+		tmpFront.y = sin(glm::radians(pitch));
+		tmpFront.z = cos(glm::radians(pitch)) * sin(glm::radians(yaw));
+		front = glm::normalize(tmpFront);
+		right = glm::normalize(glm::cross(front, worldUp));
+		up = glm::normalize(glm::cross(right, front));
+	}
 }

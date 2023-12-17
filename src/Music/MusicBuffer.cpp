@@ -51,6 +51,46 @@ void MusicBuffer::Resume()
 	alSourcePlay(p_Source);
 }
 
+void MusicBuffer::Reset(const char* filename) {
+	// Detener la reproducción actual
+		Stop();
+
+	// Esperar hasta que la reproducción se detenga completamente
+		ALint state;
+		do {
+			alGetSourcei(p_Source, AL_SOURCE_STATE, &state);
+		} while (state == AL_PLAYING);
+
+		// Desvincular buffers
+		alSourcei(p_Source, AL_BUFFER, 0);
+
+	// Desvincular buffers
+	alSourcei(p_Source, AL_BUFFER, 0);
+
+	// Eliminar los buffers y el source existentes
+	alDeleteBuffers(NUM_BUFFERS, p_Buffers);
+	alDeleteSources(1, &p_Source);
+
+	// Crear nuevos buffers y source
+	alGenSources(1, &p_Source);
+	alGenBuffers(NUM_BUFFERS, p_Buffers);
+
+
+	// Restablecer variables y cargar la nueva música
+	std::size_t frame_size;
+	std::cout << "Ruta del archivo: " << filename << std::endl;
+	p_SndFile = sf_open(filename, SFM_READ, &p_Sfinfo);
+	if (!p_SndFile) {
+		throw std::runtime_error("Could not open provided music file -- check path");
+	}
+
+	// Resto del código para determinar el formato y cargar la música
+
+	frame_size = ((size_t)BUFFER_SAMPLES * (size_t)p_Sfinfo.channels) * sizeof(short);
+	p_Membuf = static_cast<short*>(malloc(frame_size));
+}
+
+
 void MusicBuffer::UpdateBufferStream()
 {
 	ALint processed, state;
@@ -175,3 +215,4 @@ MusicBuffer::~MusicBuffer()
 	alDeleteBuffers(NUM_BUFFERS, p_Buffers);
 
 }
+

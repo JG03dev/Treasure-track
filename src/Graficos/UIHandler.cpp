@@ -12,16 +12,26 @@ UIHandler::UIHandler(GLFWwindow* window) : window(window), m_progText(0), m_rota
     io.Fonts->AddFontFromFileTTF("../../../src/Graficos/NFS.ttf", 15.0f);  // Cambia el nombre del archivo y el tamano segun tus necesidades
     m_HUDFont = io.Fonts->Fonts[0];
 
+    // Load Button textures
+    img_gameStarts = LoadTexture("../../../Assets/Imagenes/button_play.png");
+    img_help = LoadTexture("../../../Assets/Imagenes/Controls-SinFondo.png");
+    img_exit = LoadTexture("../../../Assets/Imagenes/button_exit.png");
+    img_CoinMode = LoadTexture("../../../Assets/Imagenes/Coin-Collection-Challenge-SinFondo.png");
+    img_FreeMode = LoadTexture("../../../Assets/Imagenes/MODO-LIBRE-SinFondo.png");
+    img_Day = LoadTexture("../../../Assets/Imagenes/Dia-SinFondo.png");
+	img_Afternoon = LoadTexture("../../../Assets/Imagenes/Tarde-SinFondo.png");
+    img_Night = LoadTexture("../../../Assets/Imagenes/Noche-SinFondo.png");
 
-    // Load textures
-    img_gameStarts = LoadTexture("../../../Assets/Imagenes/s2.jpg");
-    img_help = LoadTexture("../../../Assets/Imagenes/s2.jpg");
-    img_exit = LoadTexture("../../../Assets/Imagenes/s2.jpg");
-    img_MMBackground = LoadTexture("../../../Assets/Imagenes/s2.jpg");
+    // Load Background textures
+    img_MMBackground = LoadTexture("../../../Assets/Imagenes/fondo.png");
     img_LSBackground = LoadTexture("../../../Assets/Imagenes/LoadingScreenFoto.png");
-    // Cargar texturas
+
+    // Load Other textures
     img_Speedometer = LoadTexture("../../../Assets/Imagenes/speedometer.png");
     img_SpeedPointer = LoadTexture("../../../Assets/Imagenes/pointer.png");
+    img_Title = LoadTexture("../../../Assets/Imagenes/title6.png");
+    img_Controls = LoadTexture("../../../Assets/Imagenes/Controles.png");
+    
 }
 
 UIHandler::~UIHandler() {
@@ -45,18 +55,27 @@ UIEvents UIHandler::DrawAndPollEvents(int flags, float data, float carSpeed, flo
     //This means result 
     UIEvents result = None;
     
-    if (flags & Main_Menu) {
+    if (flags & DMainMenu) {
         DrawMainMenu(result);
     }
-    if (flags & Pause_Menu) {
+    if (flags & DPauseMenu) {
 		DrawPauseMenu(result);
     }
-    if (flags & HUD) {
+    if (flags & DHUD) {
         //      timer,              carSpeed,           rotationAngle,          coinsCollected,     totalCoins
         DrawHUD(data, carSpeed, rotAngle, actCoin, totalCoin);
     }
-    if (flags & Load_Screen) {
+    if (flags & DLoadScreen) {
         DrawLoadScreen(result, data);
+    }
+    if (flags & DMenuModeSelection) {
+        DrawModeMenu(result);
+    }
+    if (flags & DMenuTimeSelection) {
+        DrawTimeMenu(result);
+    }
+    if (flags & DEndScreen) {
+        DrawEndScreen(result, data);
     }
 
     ImGui::Render();
@@ -110,6 +129,8 @@ void UIHandler::DrawMainMenu(UIEvents& e)
     ImGui::SetNextWindowSizeConstraints(windowSize, windowSize);
     // Calculate the center position for the buttons
     ImVec2 centerPos = ImVec2((windowSize.x - 200) * 0.5f, (windowSize.y - 150) * 0.5f);
+	ImGui::SetCursorPos(ImVec2(centerPos.x - 250, centerPos.y - 250));
+	ImGui::Image((void*)(intptr_t)img_Title, ImVec2(877 * 0.8f, 197 * 0.8f));
 
     // Start button
     ImGui::SetCursorPos(centerPos);
@@ -132,8 +153,105 @@ void UIHandler::DrawMainMenu(UIEvents& e)
     ImGui::End();
 }
 
+void UIHandler::DrawModeMenu(UIEvents& e) {
+    // Set the background image
+    ImVec2 windowSize(display_w, display_h);
+    ImGui::SetNextWindowSize(windowSize);
+    ImGui::SetNextWindowPos(ImVec2(0, 0));
+    ImGui::Begin("Background", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
+    ImGui::Image((void*)(intptr_t)img_MMBackground, windowSize);
+    ImGui::End();
+
+    // Set up the main menu
+    ImGui::SetNextWindowSize(windowSize);
+    ImGui::SetNextWindowPos(ImVec2(0, 0));
+    ImGui::Begin("Mode Menu", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoBackground);
+
+    ImGui::SetNextWindowSizeConstraints(windowSize, windowSize);
+    // Calculate the center position for the buttons
+    ImVec2 centerPos = ImVec2((windowSize.x - 200) * 0.5f, (windowSize.y - 150) * 0.5f);
+    
+    // Coin Mode Button
+    ImGui::SetCursorPos(ImVec2(centerPos.x - 400, centerPos.y));
+    if (ImGui::ImageButton((void*)(intptr_t)img_CoinMode, ImVec2(200, 200))) {
+        e = CoinMode;
+    }
+
+    // Free Mode Button
+    ImGui::SetCursorPos(ImVec2(centerPos.x + 400, centerPos.y));  // Adjust the vertical distance
+    if (ImGui::ImageButton((void*)(intptr_t)img_FreeMode, ImVec2(200, 200))) {
+        e = FreeMode;
+    }
+
+    ImGui::End();
+}
+
+void UIHandler::DrawTimeMenu(UIEvents& e) {
+	// Set the background image
+	ImVec2 windowSize(display_w, display_h);
+	ImGui::SetNextWindowSize(windowSize);
+	ImGui::SetNextWindowPos(ImVec2(0, 0));
+	ImGui::Begin("Background", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
+	ImGui::Image((void*)(intptr_t)img_MMBackground, windowSize);
+	ImGui::End();
+
+	// Set up the main menu
+	ImGui::SetNextWindowSize(windowSize);
+	ImGui::SetNextWindowPos(ImVec2(0, 0));
+	ImGui::Begin("Time Menu", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoBackground);
+
+	ImGui::SetNextWindowSizeConstraints(windowSize, windowSize);
+	// Calculate the center position for the buttons
+	ImVec2 centerPos = ImVec2((windowSize.x - 200) * 0.5f, (windowSize.y - 150) * 0.5f);
+
+	// Day Time Button
+	ImGui::SetCursorPos(ImVec2(centerPos.x - 600, centerPos.y));
+	if (ImGui::ImageButton((void*)(intptr_t)img_Day, ImVec2(200, 200))) {
+		e = Day;
+	}
+
+	// Afternoon Time Button
+	ImGui::SetCursorPos(centerPos);  // Adjust the vertical distance
+	if (ImGui::ImageButton((void*)(intptr_t)img_Afternoon, ImVec2(200, 200))) {
+		e = Afternoon;
+	}
+
+	// Night Time Button
+	ImGui::SetCursorPos(ImVec2(centerPos.x + 600, centerPos.y));  // Adjust the vertical distance
+	if (ImGui::ImageButton((void*)(intptr_t)img_Night, ImVec2(200, 200))) {
+		e = Night;
+	}
+
+	ImGui::End();
+}
+
+void UIHandler::DrawEndScreen(UIEvents& e, float data) {
+	// Set the background image
+	ImVec2 windowSize(display_w, display_h);
+
+	// Set up the main menu
+	ImGui::SetNextWindowSize(windowSize);
+	ImGui::SetNextWindowPos(ImVec2(0, 0));
+	ImGui::Begin("End Screen", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoBackground);
+
+	ImGui::SetNextWindowSizeConstraints(windowSize, windowSize);
+	// Calculate the center position for the buttons
+	ImVec2 centerPos = ImVec2((windowSize.x - 200) * 0.5f, (windowSize.y - 150) * 0.5f);
+
+	
+    if (data == 0) {
+        ImGui::Image((void*)(intptr_t)img_Title, centerPos);
+    }
+    else {
+		ImGui::Image((void*)(intptr_t)img_Title, centerPos);
+    }
+
+	ImGui::End();
+}
+
 void UIHandler::DrawPauseMenu(UIEvents& e)
 {
+
 }
 
 void UIHandler::ImRotateStart()

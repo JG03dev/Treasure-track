@@ -17,7 +17,7 @@
 
 class MySoundEffects {
 public:
-    MySoundEffects() : wasWPressed(false), once(true), myMusic("../../../music/coconut.wav") {
+    MySoundEffects() : wasWPressed(false), once(true), myMusic("../../../music/music1.wav") {
         sound1 = SE_LOAD("../../../music/sounds/arranque.wav");
         sound2 = SE_LOAD("../../../music/sounds/acelerar2.wav");
         sound3 = SE_LOAD("../../../music/sounds/frenar.wav");
@@ -26,6 +26,11 @@ public:
         sound6 = SE_LOAD("../../../music/sounds/nitro.wav");
         sound7 = SE_LOAD("../../../music/sounds/pre-aceleracion.wav");
         sound8 = SE_LOAD("../../../music/sounds/MairoCoinSound.wav");
+        sound9 = SE_LOAD("../../../music/sounds/choque.wav");
+        myMusic.Play();
+        num = 1;
+        musicaTotal = 4;
+        shiftPressedPreviousFrame = false;
     }
 
     void PlayCoinSound() {
@@ -35,11 +40,27 @@ public:
         effectsPlayer5.Play(sound8);
     }
 
+    void Choque() {
+        if (effectsPlayer5.isPlaying())
+            effectsPlayer5.Stop();
+
+        effectsPlayer5.Play(sound9);
+    }
+
     void PlaySound(float deltaTime) {
         static float healcooldown = 3;
         healcooldown += deltaTime;
         static float failcooldown = .8f;
         failcooldown += deltaTime;
+
+        bool shiftPressed = (GetKeyState(VK_SHIFT) & 0x8000) != 0;
+        if (!shiftPressedPreviousFrame && shiftPressed) {
+            effectsPlayer4.Stop();
+            effectsPlayer4.Play(sound6);
+            healcooldown = 0;
+            failcooldown = 0;
+        }
+        shiftPressedPreviousFrame = shiftPressed;
 
         if (GetKeyState('W') & 0x8000)
         {
@@ -80,35 +101,60 @@ public:
             effectsPlayer1.Play(sound5);
             wasWPressed = false;
         }
-
-        if (GetKeyState(VK_SPACE) & 0x8000)
-        {
-            effectsPlayer4.Stop();
-            effectsPlayer4.Play(sound6);
-            healcooldown = 0;
-            failcooldown = 0;
-        }
     }
 
-    void PlayMusic(float deltaTime) {
+    void PlayMusic(float deltaTime) 
+    {
         myMusic.UpdateBufferStream();
+        
+        static float cooldown = 0.0f;
+        const float cooldownTime = 1.0f;
+        cooldown -= deltaTime;
 
-        static float musiccontrolcooldown = 1;
-        musiccontrolcooldown += deltaTime;
-        if (musiccontrolcooldown > 0 && GetKeyState('Q') & 0x8000)
+        if (GetKeyState('Q') & 0x8000 && cooldown <= 0.0f) 
         {
-            if (myMusic.isPlaying())
+            num = num + 1;
+            if (num == musicaTotal) { num = -1; }
+            if (num != -1) 
             {
-                myMusic.Pause();
-            }
-            else
-            {
+                std::string rutaMusica = "../../../music/music" + std::to_string(num) + ".wav";
+                myMusic.Reset(rutaMusica.c_str());
                 myMusic.Play();
             }
-            _sleep(100);
-            musiccontrolcooldown = 0;
+            else 
+            {
+                if (myMusic.isPlaying()) 
+                {
+                    myMusic.Pause();
+                }
+            }
+            cooldown = cooldownTime;
         }
+
+        if (GetKeyState('E') & 0x8000 && cooldown <= 0.0f) 
+        {
+            num = (num - 1);
+            if (num == -1){ num = musicaTotal; }
+            if (num != musicaTotal) 
+            {
+                std::string rutaMusica = "../../../music/music" + std::to_string(num) + ".wav";
+                myMusic.Reset(rutaMusica.c_str());
+                myMusic.Play();
+            }
+            else 
+            {
+                if (myMusic.isPlaying()) 
+                {
+                    myMusic.Pause();
+                }
+            }
+            cooldown = cooldownTime;
+        }
+        cooldown -= deltaTime;
+        cooldown = std::max(cooldown, 0.0f);
     }
+
+
 
 private:
     SoundEffectsPlayer effectsPlayer1;
@@ -117,9 +163,13 @@ private:
     SoundEffectsPlayer effectsPlayer4;
     SoundEffectsPlayer effectsPlayer5;
 
-    uint32_t sound1, sound2, sound3, sound4, sound5, sound6, sound7, sound8;
+    uint32_t sound1, sound2, sound3, sound4, sound5, sound6, sound7, sound8, sound9;
 
     bool wasWPressed;
     bool once;
     MusicBuffer myMusic;
+    int num;
+    int musicaTotal;
+    bool shiftPressedPreviousFrame;
+    
 };
