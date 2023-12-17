@@ -16,10 +16,11 @@ enum UIFlags {
 	DLostMenu = 1 << 5,
 	DMenuModeSelection = 1 << 6,
     DMenuTimeSelection = 1 << 7,
-    DEndScreen = 1 << 8
+    DEndScreen = 1 << 8,
+    DCoinHUD = 1 << 9,
 };
 
-//Only ONE event will be handled per frame
+//Only ONE event will be handled per framexº
 enum UIEvents {
     None,
     Start_Game,
@@ -30,6 +31,7 @@ enum UIEvents {
     Night,
     Help,
     Resume,
+    Return,
     Exit
 };
 
@@ -45,6 +47,16 @@ public:
     UIEvents UIHandler::DrawAndPollEvents(int flags, float data = 0.0f, float carSpeed = 0.0f, float rotAngle = 0.0f, int actCoin = 0, int totalCoin = 0);
 
     void cycleLoadingTexts() { m_progText = m_progText + 1 < LOADING_STAGES ? m_progText + 1 : 0; }
+
+	void StartContext() { 
+        ImGui_ImplOpenGL3_Shutdown();
+        ImGui_ImplGlfw_Shutdown();
+        ImGui::DestroyContext();
+
+        ImGui::CreateContext();     
+		ImGui_ImplGlfw_InitForOpenGL(window, true);
+		ImGui_ImplOpenGL3_Init("#version 330");        
+	}
 
 private:
     //Window
@@ -96,7 +108,8 @@ private:
     void DrawModeMenu(UIEvents& e);
     void DrawTimeMenu(UIEvents& e);
     void DrawPauseMenu(UIEvents& e);
-    void DrawHUD(float timer, float carSpeed, float rotationAngle, int coinsCollected, int totalCoins);
+    void DrawHUD(float carSpeed, float rotationAngle);
+    void DrawCoinHUD(float timer, int coinsCollected, int totalCoins);
     void DrawLoadScreen(UIEvents& e, float progress);
 	void DrawEndScreen(UIEvents& e, float data);
 };

@@ -38,7 +38,17 @@ UIHandler::~UIHandler() {
     glDeleteTextures(1, &img_gameStarts);
     glDeleteTextures(1, &img_help);
     glDeleteTextures(1, &img_exit);
-    glDeleteTextures(1, &img_MMBackground);
+    glDeleteTextures(1, &img_CoinMode);
+	glDeleteTextures(1, &img_FreeMode);
+	glDeleteTextures(1, &img_Day);
+	glDeleteTextures(1, &img_Afternoon);
+	glDeleteTextures(1, &img_Night);
+	glDeleteTextures(1, &img_MMBackground);
+	glDeleteTextures(1, &img_LSBackground);
+	glDeleteTextures(1, &img_Speedometer);
+	glDeleteTextures(1, &img_SpeedPointer);
+	glDeleteTextures(1, &img_Title);
+	glDeleteTextures(1, &img_Controls);
 
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
@@ -61,9 +71,13 @@ UIEvents UIHandler::DrawAndPollEvents(int flags, float data, float carSpeed, flo
     if (flags & DPauseMenu) {
 		DrawPauseMenu(result);
     }
+    if (flags & DCoinHUD) {
+        //      timer, coinsCollected, totalCoins
+        DrawCoinHUD(data, actCoin, totalCoin);
+    }
     if (flags & DHUD) {
-        //      timer,              carSpeed,           rotationAngle,          coinsCollected,     totalCoins
-        DrawHUD(data, carSpeed, rotAngle, actCoin, totalCoin);
+        //      carSpeed, rotationAngle,
+        DrawHUD(carSpeed, rotAngle);
     }
     if (flags & DLoadScreen) {
         DrawLoadScreen(result, data);
@@ -113,7 +127,14 @@ GLuint UIHandler::LoadTexture(const char* path)
 
 void UIHandler::DrawMainMenu(UIEvents& e)
 {
+	// Cambia el color del botón a transparente
+	ImVec4 transparentColor = ImVec4(0.0f, 0.0f, 0.0f, 0.0f);
+	ImGui::GetStyle().Colors[ImGuiCol_Button] = transparentColor;
+	ImGui::GetStyle().Colors[ImGuiCol_ButtonHovered] = transparentColor;
+	ImGui::GetStyle().Colors[ImGuiCol_ButtonActive] = transparentColor;
+
     // Set the background image
+
     ImVec2 windowSize(display_w, display_h);
     ImGui::SetNextWindowSize(windowSize);
     ImGui::SetNextWindowPos(ImVec2(0, 0));
@@ -134,6 +155,7 @@ void UIHandler::DrawMainMenu(UIEvents& e)
 
     // Start button
     ImGui::SetCursorPos(centerPos);
+	
     if (ImGui::ImageButton((void*)(intptr_t)img_gameStarts, ImVec2(200, 50))) {
         e = Start_Game;
     }
@@ -154,6 +176,12 @@ void UIHandler::DrawMainMenu(UIEvents& e)
 }
 
 void UIHandler::DrawModeMenu(UIEvents& e) {
+	// Cambia el color del botón a transparente
+	ImVec4 transparentColor = ImVec4(0.0f, 0.0f, 0.0f, 0.0f);
+	ImGui::GetStyle().Colors[ImGuiCol_Button] = transparentColor;
+	ImGui::GetStyle().Colors[ImGuiCol_ButtonHovered] = transparentColor;
+	ImGui::GetStyle().Colors[ImGuiCol_ButtonActive] = transparentColor;
+
     // Set the background image
     ImVec2 windowSize(display_w, display_h);
     ImGui::SetNextWindowSize(windowSize);
@@ -187,6 +215,12 @@ void UIHandler::DrawModeMenu(UIEvents& e) {
 }
 
 void UIHandler::DrawTimeMenu(UIEvents& e) {
+	// Cambia el color del botón a transparente
+	ImVec4 transparentColor = ImVec4(0.0f, 0.0f, 0.0f, 0.0f);
+	ImGui::GetStyle().Colors[ImGuiCol_Button] = transparentColor;
+	ImGui::GetStyle().Colors[ImGuiCol_ButtonHovered] = transparentColor;
+	ImGui::GetStyle().Colors[ImGuiCol_ButtonActive] = transparentColor;
+
 	// Set the background image
 	ImVec2 windowSize(display_w, display_h);
 	ImGui::SetNextWindowSize(windowSize);
@@ -226,6 +260,12 @@ void UIHandler::DrawTimeMenu(UIEvents& e) {
 }
 
 void UIHandler::DrawEndScreen(UIEvents& e, float data) {
+	// Cambia el color del botón a transparente
+	ImVec4 transparentColor = ImVec4(0.0f, 0.0f, 0.0f, 0.0f);
+	ImGui::GetStyle().Colors[ImGuiCol_Button] = transparentColor;
+	ImGui::GetStyle().Colors[ImGuiCol_ButtonHovered] = transparentColor;
+	ImGui::GetStyle().Colors[ImGuiCol_ButtonActive] = transparentColor;
+
 	// Set the background image
 	ImVec2 windowSize(display_w, display_h);
 
@@ -251,6 +291,47 @@ void UIHandler::DrawEndScreen(UIEvents& e, float data) {
 
 void UIHandler::DrawPauseMenu(UIEvents& e)
 {
+	// Cambia el color del botón a transparente
+	ImVec4 transparentColor = ImVec4(0.0f, 0.0f, 0.0f, 0.0f);
+	ImGui::GetStyle().Colors[ImGuiCol_Button] = transparentColor;
+	ImGui::GetStyle().Colors[ImGuiCol_ButtonHovered] = transparentColor;
+	ImGui::GetStyle().Colors[ImGuiCol_ButtonActive] = transparentColor;
+
+    // Set the background image
+	ImVec2 windowSize(display_w, display_h);
+
+	// Set up the main menu
+	ImGui::SetNextWindowSize(windowSize);
+	ImGui::SetNextWindowPos(ImVec2(0, 0));
+	ImGui::Begin("Pause Menu", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoBackground);
+
+	ImGui::SetNextWindowSizeConstraints(windowSize, windowSize);
+	// Calculate the center position for the buttons
+	ImVec2 centerPos = ImVec2((windowSize.x - 200) * 0.5f, (windowSize.y - 150) * 0.5f);
+
+	// Resume Button
+	ImGui::SetCursorPos(centerPos);
+	if (ImGui::ImageButton((void*)(intptr_t)img_gameStarts, ImVec2(200, 50))) {
+		e = Resume;
+	}
+
+	// Controls Image
+	ImGui::SetCursorPos(ImVec2(centerPos.x + 400, centerPos.y + 100));  // Adjust the vertical distance
+    ImGui::Image((void*)(intptr_t)img_Controls, ImVec2(200, 200));
+
+	// Return Button
+	ImGui::SetCursorPos(ImVec2(centerPos.x, centerPos.y + 100));  // Adjust the vertical distance
+	if (ImGui::ImageButton((void*)(intptr_t)img_exit, ImVec2(200, 50))) {
+		e = Return;
+	}
+
+	// Exit Button
+	ImGui::SetCursorPos(ImVec2(centerPos.x, centerPos.y + 200));  // Adjust the vertical distance
+	if (ImGui::ImageButton((void*)(intptr_t)img_exit, ImVec2(200, 50))) {
+		e = Exit;
+	}
+
+	ImGui::End();
 
 }
 
@@ -306,7 +387,7 @@ void UIHandler::ImRotateEnd_MinMax(float rad, int v)
 }
 
 
-void UIHandler::DrawHUD(float timer, float carSpeed, float rotationAngle, int coinsCollected, int totalCoins)
+void UIHandler::DrawHUD(float carSpeed, float rotationAngle)
 {
     ImGui::PushFont(m_HUDFont);
 
@@ -317,21 +398,6 @@ void UIHandler::DrawHUD(float timer, float carSpeed, float rotationAngle, int co
 
     //Quitar el fondo transparente
     ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
-
-    ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_Always);
-    ImGui::SetNextWindowSize(ImVec2(250, 50), ImGuiCond_Always);
-    ImGui::Begin("Temporizador", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoCollapse);
-    ImGui::SetWindowFontScale(2.0f);
-    if (timer > 25.0f)
-    {
-        ImGui::TextColored(ImVec4(1.0f, 1.0f, 1.0f, 1.0f), "Tiempo: %.2f", timer);
-    }
-    else
-    {
-        ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "Tiempo: %.2f", timer);
-    }
-   
-    ImGui::End();
 
     ImGui::SetNextWindowPos(ImVec2(900, 400), ImGuiCond_Always);
     ImGui::SetNextWindowSize(ImVec2(450, 500), ImGuiCond_Always);
@@ -360,18 +426,49 @@ void UIHandler::DrawHUD(float timer, float carSpeed, float rotationAngle, int co
 
     ImGui::End();
 
-    // Actualizar el contador de monedas en la interfaz
-    ImGui::SetNextWindowPos(ImVec2(10, 50), ImGuiCond_Always);
-    ImGui::SetNextWindowSize(ImVec2(250, 50), ImGuiCond_Always);
-
-    ImGui::Begin("Contador de Monedas", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoCollapse);
-    ImGui::SetWindowFontScale(2.0f);
-    ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "Monedas: %d / %d", coinsCollected, totalCoins + coinsCollected);
-    ImGui::End();
-
     ImGui::PopStyleVar(3);
     ImGui::PopStyleColor();
     ImGui::PopFont();
+}
+
+void UIHandler::DrawCoinHUD(float timer, int coinsCollected, int totalCoins) {
+	ImGui::PushFont(m_HUDFont);
+
+	//Desactivar las decoraciones de la ventana
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
+
+	//Quitar el fondo transparente
+	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
+
+	ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_Always);
+	ImGui::SetNextWindowSize(ImVec2(250, 50), ImGuiCond_Always);
+	ImGui::Begin("Temporizador", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoCollapse);
+	ImGui::SetWindowFontScale(2.0f);
+	if (timer > 25.0f)
+	{
+		ImGui::TextColored(ImVec4(1.0f, 1.0f, 1.0f, 1.0f), "Tiempo: %.2f", timer);
+	}
+	else
+	{
+		ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "Tiempo: %.2f", timer);
+	}
+
+	ImGui::End();
+
+	// Actualizar el contador de monedas en la interfaz
+	ImGui::SetNextWindowPos(ImVec2(10, 50), ImGuiCond_Always);
+	ImGui::SetNextWindowSize(ImVec2(250, 50), ImGuiCond_Always);
+
+	ImGui::Begin("Contador de Monedas", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoCollapse);
+	ImGui::SetWindowFontScale(2.0f);
+	ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "Monedas: %d / %d", coinsCollected, totalCoins + coinsCollected);
+	ImGui::End();
+
+	ImGui::PopStyleVar(3);
+	ImGui::PopStyleColor();
+	ImGui::PopFont();
 }
 
 void UIHandler::DrawLoadScreen(UIEvents& e, float progress) {
@@ -402,8 +499,3 @@ void UIHandler::DrawLoadScreen(UIEvents& e, float progress) {
 
     ImGui::End();
 }
-
-
-
-
-

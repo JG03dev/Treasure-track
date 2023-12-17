@@ -64,16 +64,16 @@ public:
 	const char* name = "Nombre juego";
 
 	// Constructors
-
 	Game() :m_Window(NULL), m_renderer(NULL), m_Camera(NULL),
 		m_dynamicsWorld(NULL), m_Player(NULL), m_sinTime(0), m_coinsCollected(0),
 		m_currentState(GameState::MainMenu), m_deltaTime(0.0f), m_lastFrame(0.0f),
-		m_sound(NULL), m_progressBar(0.01f), m_timer(100.0f), m_initSky(0), m_coinMode(true){
+		m_sound(NULL), m_progressBar(0.01f), m_timer(200.0f), m_initSky(0), m_coinMode(true){
 		m_Camera = new Camera(glm::vec3(0.0f, 0.0f, 3.0f));
 		InitializeWindow();
 	};
 	// Destructor
 	~Game();
+	void DeleteCurrentGame();
 
 	// Game States
 	void HandleMainMenu();
@@ -168,7 +168,5 @@ private:
 
 	void Actualizar(float deltaTime);
 	void Render();
-
-	void LoadScreen();
 };
 

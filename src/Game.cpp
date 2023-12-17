@@ -5,13 +5,21 @@
 Game::~Game()
 {
     if (m_ui != NULL) delete m_ui;
-    if (m_renderer != NULL) delete m_renderer;
-    if (m_Player != NULL) delete m_Player;
     if (m_Camera != NULL) delete m_Camera;
-    if (m_dynamicsWorld != NULL) delete m_dynamicsWorld;
-    for (int i = 0; i < m_Objects.size(); i++)
-        if (m_Objects[i] != NULL) delete m_Objects[i];
-    if (m_sound != NULL) delete m_sound;
+    if (m_dynamicsWorld != NULL) { delete m_dynamicsWorld; m_dynamicsWorld = nullptr; }
+    DeleteCurrentGame();
+}
+
+void Game::DeleteCurrentGame()
+{
+    if (m_renderer != NULL) { delete m_renderer; m_renderer = nullptr; }
+    if (m_Player != NULL) { delete m_Player; m_Player = nullptr; }
+    for (int i = 0; i < m_Objects.size(); i++) {
+        if (m_Objects[i] != NULL) delete m_Objects[i]; m_Objects[i] = nullptr;
+    }
+    if (m_sound != NULL) {
+        delete m_sound; m_renderer = nullptr;
+    }
 }
 
 #pragma region HANDLERS
@@ -76,14 +84,22 @@ void Game::HandleLoading()
     if (m_progressBar >= 1.0f) {
         InitializeInput();
         m_currentState = InGame;
+        m_lastFrame = static_cast<float>(glfwGetTime());
     }
 }
 
 void Game::HandlePause()
 {
-	switch (m_ui->DrawAndPollEvents(DPauseMenu)) {
-	case Resume:
-		m_currentState = InGame;
+    switch (m_ui->DrawAndPollEvents(DPauseMenu)) {
+    case Resume:
+        m_currentState = InGame;
+        break;
+    case Return:
+        m_currentState = MainMenu;
+        break;
+    case Exit:
+        glfwSetWindowShouldClose(m_Window, true);
+        break;
 	}
 }
 
@@ -260,7 +276,7 @@ void Game::InitializeGraphics()
     }
     // Inicializar camara
     //m_Camera = new Camera(glm::vec3(0.0f, 0.0f, 3.0f));
-    m_Camera->setTarget(m_Player);
+    m_Camera->setTarget(m_Player); 
 }
 
 void Game::InitializeSound()
@@ -322,62 +338,6 @@ void Game::img_loader() {
     glfwSetWindowIcon(m_Window, 1, images);
 }
 
-GLuint LoadTexture(const char* filepath)
-{
-    int width, height, nrChannels;
-    unsigned char* data = stbi_load(filepath, &width, &height, &nrChannels, 0);
-    if (data)
-    {
-        GLuint textureID;
-        glGenTextures(1, &textureID);
-        glBindTexture(GL_TEXTURE_2D, textureID);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-        glGenerateMipmap(GL_TEXTURE_2D);
-        stbi_image_free(data);
-        return textureID;
-    }
-    else
-    {
-        std::cout << "Failed to load texture" << std::endl;
-        return 0;
-    }
-}
-
-
-GLuint LoadTexture2(const char* path) {
-    GLuint textureID;
-    int width, height, channels;
-
-    // Cargar la textura con SOIL2
-    unsigned char* image = SOIL_load_image(path, &width, &height, &channels, SOIL_LOAD_RGBA);
-
-    if (!image) {
-        std::cerr << "Error cargando la textura desde " << path << std::endl;
-        return 0;
-    }
-
-    // Generar un ID de textura
-    glGenTextures(1, &textureID);
-    glBindTexture(GL_TEXTURE_2D, textureID);
-
-    // Configurar la textura
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
-    glGenerateMipmap(GL_TEXTURE_2D);
-
-    // Liberar memoria de la imagen cargada
-    SOIL_free_image_data(image);
-
-    // Configurar parámetros de textura (puedes ajustarlos según tus necesidades)
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-    return textureID;
-}
-
-
-
 void Game::Run()
 {
     m_sound->PlayMusic(m_deltaTime);
@@ -402,7 +362,9 @@ void Game::Run()
     float carSpeedRad = carSpeed * (M_PI / 180.0f);
     float rotationAngle = carSpeedRad * 1.8f;
 
-    m_ui->DrawAndPollEvents(DHUD, m_timer, carSpeed, rotationAngle, m_coinsCollected, m_Coins.size());
+    UIFlags f = m_coinMode ? static_cast<UIFlags>(DHUD | DCoinHUD) : DHUD;
+
+    m_ui->DrawAndPollEvents(f, m_timer, carSpeed, rotationAngle, m_coinsCollected, m_Coins.size());
     
 }
 
@@ -422,7 +384,8 @@ void Game::KeyCallback(GLFWwindow* window, int key, int scancode, int action, in
 	    else {
 		    glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 		    m_currentState = Paused;
-
+            delete m_ui;
+            m_ui = new UIHandler(m_Window);
 		    // Round up camera front to avoid pause view glitches
 		    m_Camera->front = glm::vec3(float(int(m_Camera->front.x)), float(int(m_Camera->front.y)), float(int(m_Camera->front.z)));
 	    }
@@ -545,9 +508,6 @@ void Game::Render()
     glm::mat4 projection = glm::perspective(glm::radians(m_Camera->FOV), (float)m_SCR_WIDTH / (float)m_SCR_HEIGHT, c_near, c_far);
 
     m_renderer->RenderEverything(*m_Camera, projection);
-}
-
-void Game::LoadScreen() {
 }
 
 // Function to perform jump and spin animation
