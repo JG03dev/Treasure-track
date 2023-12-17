@@ -45,17 +45,17 @@ UIEvents UIHandler::DrawAndPollEvents(int flags, float data, float carSpeed, flo
     //This means result 
     UIEvents result = None;
     
-    if (flags & Main_Menu) {
+    if (flags & DMainMenu) {
         DrawMainMenu(result);
     }
-    if (flags & Pause_Menu) {
+    if (flags & DPauseMenu) {
 		DrawPauseMenu(result);
     }
-    if (flags & HUD) {
+    if (flags & DHUD) {
         //      timer,              carSpeed,           rotationAngle,          coinsCollected,     totalCoins
         DrawHUD(data, carSpeed, rotAngle, actCoin, totalCoin);
     }
-    if (flags & Load_Screen) {
+    if (flags & DLoadScreen) {
         DrawLoadScreen(result, data);
     }
 
@@ -130,10 +130,6 @@ void UIHandler::DrawMainMenu(UIEvents& e)
     }
 
     ImGui::End();
-}
-
-void UIHandler::DrawPauseMenu(UIEvents& e)
-{
 }
 
 void UIHandler::ImRotateStart()
@@ -281,6 +277,46 @@ void UIHandler::DrawLoadScreen(UIEvents& e, float progress) {
     ImGui::PopStyleColor();
 
     ImGui::ProgressBar(progress, ImVec2(-1, 0));
+
+    ImGui::End();
+}
+
+void UIHandler::DrawPauseMenu(UIEvents& e)
+{
+    // Set the background image
+    ImVec2 windowSize(display_w, display_h);
+    // Set up the main menu
+    ImGui::SetNextWindowSize(windowSize);
+    ImGui::SetNextWindowPos(ImVec2(0, 0));
+    ImGui::Begin("Pause", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoBackground);
+
+    ImGui::SetNextWindowSizeConstraints(windowSize, windowSize);
+    // Calculate the center position for the buttons
+    ImVec2 centerPos = ImVec2((windowSize.x - 200) * 0.5f, (windowSize.y - 150) * 0.5f);
+
+    // Resume
+    ImGui::SetCursorPos(centerPos);
+    if (ImGui::ImageButton((void*)(intptr_t)img_gameStarts, ImVec2(200, 50))) {
+        e = Resume;
+    }
+
+    // Restart
+    ImGui::SetCursorPos(centerPos);
+    if (ImGui::ImageButton((void*)(intptr_t)img_gameStarts, ImVec2(200, 50))) {
+        e = Restart;
+    }
+
+    // Back to main menu
+    ImGui::SetCursorPos(ImVec2(centerPos.x, centerPos.y + 100));  // Adjust the vertical distance
+    if (ImGui::ImageButton((void*)(intptr_t)img_help, ImVec2(200, 50))) {
+        e = Return;
+    }
+
+    // Exit Game
+    ImGui::SetCursorPos(ImVec2(centerPos.x, centerPos.y + 200));  // Adjust the vertical distance
+    if (ImGui::ImageButton((void*)(intptr_t)img_exit, ImVec2(200, 50))) {
+        e = Exit;
+    }
 
     ImGui::End();
 }

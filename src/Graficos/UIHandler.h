@@ -8,10 +8,13 @@
 
 // There can be multiple events drawn (ej. Pause and HUD)
 enum UIFlags {
-    Main_Menu = 1 << 0,
-    Pause_Menu = 1 << 1,
-    HUD = 1 << 2,
-    Load_Screen = 1 << 3,
+    DMainMenu = 1 << 0,
+    DPauseMenu = 1 << 1,
+    DHUD = 1 << 2,
+    DLoadScreen = 1 << 3,
+    DWonMenu = 1 << 4,
+    DLostMenu = 1 << 5,
+    DMapSelection = 1 << 6
 };
 
 //Only ONE event will be handled per frame
@@ -20,6 +23,8 @@ enum UIEvents {
     Start_Game,
     Help,
     Resume,
+    Restart,
+    Return,
     Exit
 };
 

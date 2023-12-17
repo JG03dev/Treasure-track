@@ -16,13 +16,13 @@ Game::~Game()
 }
 void Game::HandleMainMenu()
 {
-    UIEvents e = m_ui->DrawAndPollEvents(Main_Menu);
+    UIEvents e = m_ui->DrawAndPollEvents(DMainMenu);
 
     switch (e)
     {
-    case Start_Game:
+    case Start_Game: //TODO: change this to map selection
         glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-        m_currentState = Loading;
+        m_currentState = GameState::Loading;
         break;
     case Help: //Or settings
         // Call help or setting function
@@ -69,15 +69,37 @@ void Game::HandleLoading()
     }
 
     // Update progress bar with easing
-    m_ui->DrawAndPollEvents(Load_Screen, m_progressBar);
+    m_ui->DrawAndPollEvents(DLoadScreen, m_progressBar);
 
     // Once progress bar is finished start the game
     if(m_progressBar >= 1.0f)
         m_currentState = InGame;
 }
 
+void Game::HandlePause()
+{
+        switch (m_ui->DrawAndPollEvents(DPauseMenu)) {
+    case Resume:
+        m_currentState = InGame;
+    }
+}
+
+void Game::HandleSelectionMap()
+{
+}
+
 void Game::HandleGameOver()
 {
+    UIFlags flag = DHUD; // HUD will still be drown
+    if (m_coinsCollected < m_Coins.size()) // Game lost
+    {
+        // TODO: Make OR operator for UIFlags
+        flag = DLostMenu;
+    }
+    else
+        flag = DWonMenu;
+
+    m_ui->DrawAndPollEvents(flag, m_timer, 0.0f, 0.0f, m_coinsCollected, m_Coins.size());
 }
 
 int Game::Start()
@@ -89,6 +111,11 @@ int Game::Start()
     while (!glfwWindowShouldClose(m_Window))
     {
         glfwPollEvents();
+        // per-frame time logic
+        // --------------------
+        float currentFrame = static_cast<float>(glfwGetTime());
+        m_deltaTime = currentFrame - m_lastFrame;
+        m_lastFrame = currentFrame;
 
         switch (m_currentState) {
         case GameState::MainMenu:
@@ -99,6 +126,12 @@ int Game::Start()
             break;
         case GameState::InGame:
             Run();
+            break;
+        case GameState::Paused:
+            HandlePause();
+            break;
+        case GameState::MapSelection:
+            HandleSelectionMap();
             break;
         case GameState::GameOver:
             HandleGameOver();
@@ -115,7 +148,7 @@ int Game::Start()
 
 void Game::UpdateProgressBar()
 {// TODO: try different easing functions
-    m_progressBar += 1.0f / 25000.0f;
+    m_progressBar += 1.0f / 2500.0f;
 }
 
 void Game::InitializePhysics()
@@ -282,15 +315,10 @@ GLuint LoadTexture2(const char* path) {
 }
 
 
-
 void Game::Run()
 {
 
-        // per-frame time logic
-        // --------------------
-        float currentFrame = static_cast<float>(glfwGetTime());
-        m_deltaTime = currentFrame - m_lastFrame;
-        m_lastFrame = currentFrame;
+
 
         m_sound->PlayMusic(m_deltaTime);
         m_sound->PlaySound(m_deltaTime);
@@ -313,7 +341,7 @@ void Game::Run()
         float carSpeedRad = carSpeed * (M_PI / 180.0f);
         float rotationAngle = carSpeedRad * 1.8f;
 
-        m_ui->DrawAndPollEvents(HUD, m_timer, carSpeed, rotationAngle, m_coinsCollected, m_Coins.size());
+        m_ui->DrawAndPollEvents(DHUD, m_timer, carSpeed, rotationAngle, m_coinsCollected, m_Coins.size());
     
 }
 
@@ -323,7 +351,19 @@ void Game::ProcessInput(GLFWwindow* window, int key, int action)
 {
     
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, true);
+    {
+        if (m_currentState == MainMenu)
+            glfwSetWindowShouldClose(window, true);
+        else if (m_currentState == MapSelection)
+            m_currentState = GameState::MainMenu;
+        else if (m_currentState == Loading) {} // Do nothing when its loading
+        else {
+            glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+            m_currentState = Paused;
+            // Round up camera front to avoid pause view glitches
+            m_Camera->front = glm::vec3(float(int(m_Camera->front.x)), float(int(m_Camera->front.y)), float(int(m_Camera->front.z)));
+        }
+    }
     if (glfwGetKey(window, GLFW_KEY_TAB) == GLFW_PRESS)
     {
         m_renderer->cycleDirLight();
@@ -414,9 +454,6 @@ void Game::Render()
     glm::mat4 projection = glm::perspective(glm::radians(m_Camera->FOV), (float)m_SCR_WIDTH / (float)m_SCR_HEIGHT, c_near, c_far);
 
     m_renderer->RenderEverything(*m_Camera, projection);
-}
-
-void Game::LoadScreen() {
 }
 
 // Function to perform jump and spin animation

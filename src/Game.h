@@ -50,6 +50,8 @@ enum GameState {
 	MainMenu,
 	Loading,
 	InGame,
+	Paused,
+	MapSelection,
 	GameOver
 };
 
@@ -75,6 +77,9 @@ public:
 	// Game States
 	void HandleMainMenu();
 	void HandleLoading();
+	//Run
+	void HandlePause();
+	void HandleSelectionMap();
 	void HandleGameOver();
 
 	// Public Methods
@@ -153,7 +158,5 @@ private:
 
 	void Actualizar(float deltaTime);
 	void Render();
-
-	void LoadScreen();
 };
 
