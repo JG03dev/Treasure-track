@@ -31,47 +31,7 @@
 
 // --OTHER INCLUDES--
 
-Game* g = nullptr;
-
 #pragma region CAMCONTROL
-
-Camera* camera; //Camera global (TEMPORAL) necessario para obtener la camera de game para las funciones de glfw
-int gWindowWidth, gWindowHeight;
-
-
-//-----------------------------------------------------------------------------
-// Is called whenever mouse movement is detected via GLFW
-//-----------------------------------------------------------------------------
-void mouseCallback(GLFWwindow* window, double xpos, double ypos) {
-
-    static bool  firstMouse = true;
-    static float lastX = gWindowWidth / 2;
-    static float lastY = gWindowHeight / 2;
-
-    if (firstMouse) {
-        lastX = xpos;
-        lastY = ypos;
-        firstMouse = false;
-    }
-
-    float xoffset = xpos - lastX;
-    float yoffset = lastY - ypos; // reversed since y-coord range from buttom to top
-    lastX = xpos;
-    lastY = ypos;
-
-    camera->processMouse(xoffset, yoffset);
-}
-
-//-----------------------------------------------------------------------------
-// Is called whenever scroller is detected via GLFW
-//-----------------------------------------------------------------------------
-void scrollCallback(GLFWwindow* window, double xoffset, double yoffset) {
-    camera->processScroll(yoffset);
-}
-
-void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
-    g->ProcessInput(window, key, action);
-}
 
 //-----------------------------------------------------------------------------
 // Is called when the window is resized
@@ -98,14 +58,11 @@ int main(int argc, char **argv) {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    g = new Game();
-    camera = g->GetCamera();
+    
+    Game game;
 
     // Set the required callback functions
-    glfwSetKeyCallback(g->GetWindow(), keyCallback);
-    glfwSetCursorPosCallback(g->GetWindow(), mouseCallback);
-    glfwSetScrollCallback(g->GetWindow(), scrollCallback);
-    glfwSetFramebufferSizeCallback(g->GetWindow(), glfw_onFramebufferSize);
+    glfwSetFramebufferSizeCallback(game.GetWindow(), glfw_onFramebufferSize);
     SoundDevice::Init();
 
     // Hide the cursor and capture it
@@ -123,11 +80,10 @@ int main(int argc, char **argv) {
     // Depth test
     glEnable(GL_DEPTH_TEST);
 
-    if (g->Start() != 0)
+    if (game.Start() != 0)
         std::cout << "Game crashed" << std::endl;
 
     SoundDevice::Release();
-    delete g;
 
     return 0;
 }

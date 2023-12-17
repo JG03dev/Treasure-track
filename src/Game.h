@@ -83,12 +83,15 @@ public:
 	GLFWwindow* GetWindow() { return m_Window; }
 	Camera* GetCamera() { return m_Camera; }
 
-	void ProcessInput(GLFWwindow* window, int key, int action);
+	void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
+	void MouseCallback(GLFWwindow* window, double xpos, double ypos);
+	void ScrollCallback(GLFWwindow* window, double xoffset, double yoffset);
 	void img_loader();
 
 private:
 	/// Private Attributes
 	GameState m_currentState;
+
 	// Window
 	GLFWwindow* m_Window;
 	const unsigned int m_SCR_WIDTH = 1280;
@@ -144,7 +147,9 @@ private:
 	void InitializePhysics();
 	void InitializeGraphics();
 	void InitializeSound();
+	void InitializeInput();
 	int InitializeWindow();
+
 
 	/// Functionality
 	void Run();

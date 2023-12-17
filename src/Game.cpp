@@ -72,8 +72,10 @@ void Game::HandleLoading()
     m_ui->DrawAndPollEvents(Load_Screen, m_progressBar);
 
     // Once progress bar is finished start the game
-    if(m_progressBar >= 1.0f)
+    if (m_progressBar >= 1.0f) {
+        InitializeInput();
         m_currentState = InGame;
+    }
 }
 
 void Game::HandleGameOver()
@@ -115,7 +117,7 @@ int Game::Start()
 
 void Game::UpdateProgressBar()
 {// TODO: try different easing functions
-    m_progressBar += 1.0f / 25000.0f;
+    m_progressBar += 1.0f / 250.0f;
 }
 
 void Game::InitializePhysics()
@@ -190,6 +192,25 @@ void Game::InitializeGraphics()
 void Game::InitializeSound()
 {
     m_sound = new MySoundEffects();
+}
+
+void Game::InitializeInput() {
+    glfwSetWindowUserPointer(GetWindow(), this);
+
+    glfwSetKeyCallback(GetWindow(), [](GLFWwindow* window, int key, int scancode, int action, int mods)
+        {
+            static_cast<Game*>(glfwGetWindowUserPointer(window))->KeyCallback(window, key, scancode, action, mods);
+        });
+
+    glfwSetCursorPosCallback(GetWindow(), [](GLFWwindow* window, double xpos, double ypos)
+        {
+            static_cast<Game*>(glfwGetWindowUserPointer(window))->MouseCallback(window, xpos, ypos);
+        });
+
+    glfwSetScrollCallback(GetWindow(), [](GLFWwindow* window, double xoffset, double yoffset)
+        {
+            static_cast<Game*>(glfwGetWindowUserPointer(window))->ScrollCallback(window, xoffset, yoffset);
+        });
 }
 
 int Game::InitializeWindow()
@@ -319,7 +340,7 @@ void Game::Run()
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 // ---------------------------------------------------------------------------------------------------------
-void Game::ProcessInput(GLFWwindow* window, int key, int action)
+void Game::KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
     
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
@@ -347,6 +368,30 @@ void Game::ProcessInput(GLFWwindow* window, int key, int action)
         m_Player->setLights(nullptr, nullptr);
 
     m_Player->InputMethod(key, action);
+}
+
+void Game::MouseCallback(GLFWwindow* window, double xpos, double ypos) {
+
+    static bool  firstMouse = true;
+    static float lastX = m_SCR_WIDTH / 2;
+    static float lastY = m_SCR_HEIGHT / 2;
+
+    if (firstMouse) {
+        lastX = xpos;
+        lastY = ypos;
+        firstMouse = false;
+    }
+
+    float xoffset = xpos - lastX;
+    float yoffset = lastY - ypos; // reversed since y-coord range from buttom to top
+    lastX = xpos;
+    lastY = ypos;
+
+    m_Camera->processMouse(xoffset, yoffset);
+}
+
+void Game::ScrollCallback(GLFWwindow* window, double xoffset, double yoffset) {
+    m_Camera->processScroll(yoffset);
 }
 
 void Game::Actualizar(float deltaTime)
