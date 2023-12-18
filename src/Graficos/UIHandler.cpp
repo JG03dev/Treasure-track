@@ -9,7 +9,7 @@ UIHandler::UIHandler(GLFWwindow* window) : window(window), m_progText(0), m_rota
 
     //HABRIA QUE PONERLO EN UNA FUNCION A PARTE...
     io = ImGui::GetIO();
-    io.Fonts->AddFontFromFileTTF("../../../src/Graficos/NFS.ttf", 15.0f);  // Cambia el nombre del archivo y el tamano segun tus necesidades
+    io.Fonts->AddFontFromFileTTF("../../../Assets/NFS.ttf", 15.0f);  // Cambia el nombre del archivo y el tamano segun tus necesidades
     m_HUDFont = io.Fonts->Fonts[0];
 
     // Load Button textures
