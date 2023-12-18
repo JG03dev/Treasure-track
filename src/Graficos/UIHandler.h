@@ -73,6 +73,7 @@ private:
     GLuint img_Day;
     GLuint img_Afternoon;
     GLuint img_Night;
+    GLuint img_MainMenu;
     GLuint img_Close;
     GLuint img_Victory;
     GLuint img_Defeat;

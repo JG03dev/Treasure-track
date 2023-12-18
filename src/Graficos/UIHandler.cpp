@@ -21,6 +21,7 @@ UIHandler::UIHandler(GLFWwindow* window) : window(window), m_progText(0), m_rota
     img_Day = LoadTexture("../../../Assets/Imagenes/Dia-SinFondo.png");
 	img_Afternoon = LoadTexture("../../../Assets/Imagenes/Tarde-SinFondo.png");
     img_Night = LoadTexture("../../../Assets/Imagenes/Noche-SinFondo.png");
+    img_MainMenu = LoadTexture("../../../Assets/Imagenes/button_main_menu.png");
     img_Close = LoadTexture("../../../Assets/Imagenes/CerrarIcono.png");
     img_Victory = LoadTexture("../../../Assets/Imagenes/VICTORIA.png");
     img_Defeat = LoadTexture("../../../Assets/Imagenes/DERROTA.png");
@@ -41,6 +42,7 @@ UIHandler::~UIHandler() {
     glDeleteTextures(1, &img_gameStarts);
     glDeleteTextures(1, &img_help);
     glDeleteTextures(1, &img_exit);
+    glDeleteTextures(1, &img_MainMenu);
     glDeleteTextures(1, &img_CoinMode);
 	glDeleteTextures(1, &img_FreeMode);
 	glDeleteTextures(1, &img_Day);
@@ -365,7 +367,7 @@ void UIHandler::DrawPauseMenu(UIEvents& e)
 
 	// Return Button
 	ImGui::SetCursorPos(ImVec2(centerPos.x, centerPos.y + 100));  // Adjust the vertical distance
-	if (ImGui::ImageButton((void*)(intptr_t)img_Afternoon, ImVec2(200, 50))) {
+	if (ImGui::ImageButton((void*)(intptr_t)img_MainMenu, ImVec2(200, 50))) {
 		e = Return;
 	}
 
