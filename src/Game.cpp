@@ -419,6 +419,8 @@ void Game::Run()
 
     UIFlags f = m_coinMode ? static_cast<UIFlags>(DHUD | DCoinHUD) : DHUD;
 
+    if (m_showEsc) f = static_cast<UIFlags>(f | DESC);
+
     m_ui->DrawAndPollEvents(f, m_timer, carSpeed, rotationAngle, m_coinsCollected, m_totalCoins);
     
     if (m_coinMode && (m_timer <= 0 || m_coinsCollected == m_totalCoins)) {
@@ -458,6 +460,7 @@ void Game::KeyCallback(GLFWwindow* window, int key, int scancode, int action, in
         break;
     case InGame:
         if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
+            m_showEsc = false;
             glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
             m_currentState = GameState::Paused;
             delete m_ui;

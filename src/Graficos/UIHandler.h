@@ -18,6 +18,7 @@ enum UIFlags {
     DMenuTimeSelection = 1 << 7,
     DEndScreen = 1 << 8,
     DCoinHUD = 1 << 9,
+    DESC = 1 << 10
 };
 
 //Only ONE event will be handled per framexº
@@ -119,5 +120,5 @@ private:
     void DrawCoinHUD(float timer, int coinsCollected, int totalCoins);
     void DrawLoadScreen(UIEvents& e, float progress);
 	void DrawEndScreen(UIEvents& e, int coinsCollected, int totalCoins);
-    void DrawControlsImage(UIEvents& e);
+    void DrawEsc();
 };

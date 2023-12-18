@@ -94,6 +94,9 @@ UIEvents UIHandler::DrawAndPollEvents(int flags, float data, float carSpeed, flo
     if (flags & DEndScreen) {
         DrawEndScreen(result, actCoin, totalCoin);
     }
+    if (flags & DESC) {
+        DrawEsc();
+    }
 
     ImGui::Render();
     glViewport(0, 0, display_w, display_h);
@@ -306,6 +309,32 @@ void UIHandler::DrawEndScreen(UIEvents& e, int coinsCollected, int totalCoins) {
     }
 
 	ImGui::End();
+}
+
+void UIHandler::DrawEsc()
+{
+    ImGui::PushFont(m_HUDFont);
+    
+    //Desactivar las decoraciones de la ventana
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
+
+    //Quitar el fondo transparente
+    ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
+
+    ImGui::SetNextWindowPos(ImVec2(10, 100), ImGuiCond_Always);
+    ImGui::SetNextWindowSize(ImVec2(800, 100), ImGuiCond_Always);
+    ImGui::Begin("EscText", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoCollapse);
+    ImGui::SetWindowFontScale(2.0f);
+
+    ImGui::TextColored(ImVec4(1.0f, 1.0f, 1.0f, 1.0f), "Apreta ESC pels controls");
+
+    ImGui::End();
+    ImGui::PopStyleVar(3);
+    ImGui::PopStyleColor();
+    ImGui::PopFont();
+
 }
 
 void UIHandler::DrawPauseMenu(UIEvents& e)

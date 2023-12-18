@@ -39,7 +39,7 @@ void glfw_onFramebufferSize(GLFWwindow* window, int width, int height)
     glViewport(0, 0, width, height);
 }
 #pragma endregion
-
+#pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
 int main(int argc, char **argv) {
     std::cout << argv[0] << std::endl;
     int state = 0;
