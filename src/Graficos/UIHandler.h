@@ -5,6 +5,7 @@
 #include <thread>
 #include <mutex>
 #include <condition_variable>
+#include <vector>
 
 // There can be multiple events drawn (ej. Pause and HUD)
 enum UIFlags {
@@ -80,7 +81,16 @@ private:
 
     // Backgrounds
     GLuint img_MMBackground;
-    GLuint img_LSBackground;
+    GLuint img_LSBackground_1;
+    GLuint img_LSBackground_2;
+    GLuint img_LSBackground_3;
+    GLuint img_LSBackground_4;
+    GLuint img_LSBackground_5;
+    GLuint img_LSBackground_6;
+    GLuint img_LSBackground_7;
+    GLuint img_LSBackground_8;
+
+    int backgroundCounter = 1;
 
     // Others
     GLuint img_Speedometer;

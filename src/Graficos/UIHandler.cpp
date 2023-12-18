@@ -14,21 +14,30 @@ UIHandler::UIHandler(GLFWwindow* window) : window(window), m_progText(0), m_rota
 
     // Load Button textures
     img_gameStarts = LoadTexture("../../../Assets/Imagenes/button_play.png");
-    img_help = LoadTexture("../../../Assets/Imagenes/Controls-SinFondo.png");
+    img_help = LoadTexture("../../../Assets/Imagenes/button_controls.png");
     img_exit = LoadTexture("../../../Assets/Imagenes/button_exit.png");
-    img_CoinMode = LoadTexture("../../../Assets/Imagenes/Coin-Collection-Challenge-SinFondo.png");
-    img_FreeMode = LoadTexture("../../../Assets/Imagenes/MODO-LIBRE-SinFondo.png");
-    img_Day = LoadTexture("../../../Assets/Imagenes/Dia-SinFondo.png");
-	img_Afternoon = LoadTexture("../../../Assets/Imagenes/Tarde-SinFondo.png");
-    img_Night = LoadTexture("../../../Assets/Imagenes/Noche-SinFondo.png");
-    img_MainMenu = LoadTexture("../../../Assets/Imagenes/button_main_menu.png");
+
+    img_CoinMode = LoadTexture("../../../Assets/Imagenes/modo_monedas.png");
+    img_FreeMode = LoadTexture("../../../Assets/Imagenes/modo_libre.png");
+    img_Day = LoadTexture("../../../Assets/Imagenes/dia.png");
+	img_Afternoon = LoadTexture("../../../Assets/Imagenes/tarde.png");
+    img_Night = LoadTexture("../../../Assets/Imagenes/noche.png");
+    img_MainMenu = LoadTexture("../../../Assets/Imagenes/button_main-menu.png");
     img_Close = LoadTexture("../../../Assets/Imagenes/CerrarIcono.png");
     img_Victory = LoadTexture("../../../Assets/Imagenes/VICTORIA.png");
     img_Defeat = LoadTexture("../../../Assets/Imagenes/DERROTA.png");
 
     // Load Background textures
-    img_MMBackground = LoadTexture("../../../Assets/Imagenes/fondo.png");
-    img_LSBackground = LoadTexture("../../../Assets/Imagenes/LoadingScreenFoto.png");
+    img_MMBackground = LoadTexture("../../../Assets/Imagenes/fondo2.png");
+    //img_LSBackground = LoadTexture("../../../Assets/Imagenes/LoadingScreenFoto.png");
+    img_LSBackground_1 = LoadTexture("../../../Assets/Imagenes/carga1.jpg");
+    img_LSBackground_2 = LoadTexture("../../../Assets/Imagenes/carga2.jpg");
+    img_LSBackground_3 = LoadTexture("../../../Assets/Imagenes/carga3.jpg");
+    img_LSBackground_4 = LoadTexture("../../../Assets/Imagenes/carga4.jpg");
+    img_LSBackground_5 = LoadTexture("../../../Assets/Imagenes/carga5.jpg");
+    img_LSBackground_6 = LoadTexture("../../../Assets/Imagenes/carga6.jpg");
+    img_LSBackground_7 = LoadTexture("../../../Assets/Imagenes/carga7.jpg");
+    img_LSBackground_8 = LoadTexture("../../../Assets/Imagenes/carga8.jpg");
 
     // Load Other textures
     img_Speedometer = LoadTexture("../../../Assets/Imagenes/speedometer.png");
@@ -49,7 +58,14 @@ UIHandler::~UIHandler() {
 	glDeleteTextures(1, &img_Afternoon);
 	glDeleteTextures(1, &img_Night);
 	glDeleteTextures(1, &img_MMBackground);
-	glDeleteTextures(1, &img_LSBackground);
+	glDeleteTextures(1, &img_LSBackground_1);
+    glDeleteTextures(1, &img_LSBackground_2);
+    glDeleteTextures(1, &img_LSBackground_3);
+    glDeleteTextures(1, &img_LSBackground_4);
+    glDeleteTextures(1, &img_LSBackground_5);
+    glDeleteTextures(1, &img_LSBackground_6);
+    glDeleteTextures(1, &img_LSBackground_7);
+    glDeleteTextures(1, &img_LSBackground_8);
 	glDeleteTextures(1, &img_Speedometer);
 	glDeleteTextures(1, &img_SpeedPointer);
 	glDeleteTextures(1, &img_Title);
@@ -158,25 +174,25 @@ void UIHandler::DrawMainMenu(UIEvents& e)
     ImGui::SetNextWindowSizeConstraints(windowSize, windowSize);
     // Calculate the center position for the buttons
     ImVec2 centerPos = ImVec2((windowSize.x - 200) * 0.5f, (windowSize.y - 150) * 0.5f);
-	ImGui::SetCursorPos(ImVec2(centerPos.x - 250, centerPos.y - 250));
+	ImGui::SetCursorPos(ImVec2(centerPos.x - 250, centerPos.y - 180));
 	ImGui::Image((void*)(intptr_t)img_Title, ImVec2(877 * 0.8f, 197 * 0.8f));
 
     if (!showHelp) {
         // Start button
-        ImGui::SetCursorPos(centerPos);
+        ImGui::SetCursorPos(ImVec2(centerPos.x - 120, centerPos.y + 10));
 
         if (ImGui::ImageButton((void*)(intptr_t)img_gameStarts, ImVec2(200, 50))) {
             e = Start_Game;
         }
 
         // Help button
-        ImGui::SetCursorPos(ImVec2(centerPos.x, centerPos.y + 100));  // Adjust the vertical distance
+        ImGui::SetCursorPos(ImVec2(centerPos.x + 120, centerPos.y + 10));  // Adjust the vertical distance
         if (ImGui::ImageButton((void*)(intptr_t)img_help, ImVec2(200, 50))) {
             showHelp = !showHelp;
         }
 
         // Exit button
-        ImGui::SetCursorPos(ImVec2(centerPos.x, centerPos.y + 200));  // Adjust the vertical distance
+        ImGui::SetCursorPos(ImVec2(centerPos.x, centerPos.y + 80));  // Adjust the vertical distance
         if (ImGui::ImageButton((void*)(intptr_t)img_exit, ImVec2(200, 50))) {
             e = Exit;
         }
@@ -217,16 +233,20 @@ void UIHandler::DrawModeMenu(UIEvents& e) {
     ImGui::SetNextWindowSizeConstraints(windowSize, windowSize);
     // Calculate the center position for the buttons
     ImVec2 centerPos = ImVec2((windowSize.x - (446 * 2 / 1.5)) / 3, (windowSize.y - 537 / 1.5) * 0.5f);
+
+    ImGui::SetCursorPos(ImVec2(centerPos.x + 300, centerPos.y - 50));
+    ImGui::SetWindowFontScale(2.0f);
+    ImGui::TextColored(ImVec4(1.0f, 1.0f, 1.0f, 1.0f), "Select a mode");
     
     // Coin Mode Button
     ImGui::SetCursorPos(centerPos);
-    if (ImGui::ImageButton((void*)(intptr_t)img_CoinMode, ImVec2(446 / 1.5, 537 / 1.5))) {
+    if (ImGui::ImageButton((void*)(intptr_t)img_CoinMode, ImVec2(360 * 0.8, 360 * 0.8))) {
         e = CoinMode;
     }
 
     // Free Mode Button
     ImGui::SetCursorPos(ImVec2(centerPos.x * 2 + (446 / 1.5), centerPos.y));  // Adjust the vertical distance
-    if (ImGui::ImageButton((void*)(intptr_t)img_FreeMode, ImVec2(446 / 1.5, 537 / 1.5))) {
+    if (ImGui::ImageButton((void*)(intptr_t)img_FreeMode, ImVec2(360 * 0.8, 360 * 0.8))) {
         e = FreeMode;
     }
 
@@ -257,21 +277,25 @@ void UIHandler::DrawTimeMenu(UIEvents& e) {
 	// Calculate the center position for the buttons
 	ImVec2 centerPos = ImVec2((windowSize.x - (446*3/1.5))/4, (windowSize.y - 537/1.5) * 0.5f);
 
+    ImGui::SetCursorPos(ImVec2(centerPos.x + 385, centerPos.y - 50));
+    ImGui::SetWindowFontScale(2.0f);
+    ImGui::TextColored(ImVec4(1.0f, 1.0f, 1.0f, 1.0f), "Select a time mode");
+
 	// Day Time Button
 	ImGui::SetCursorPos(centerPos);
-	if (ImGui::ImageButton((void*)(intptr_t)img_Day, ImVec2(446 / 1.5, 537 / 1.5))) {
+	if (ImGui::ImageButton((void*)(intptr_t)img_Day, ImVec2(360 * 0.8, 360 * 0.8))) {
 		e = Day;
 	}
 
 	// Afternoon Time Button
 	ImGui::SetCursorPos(ImVec2(centerPos.x*2 + (446 / 1.5), centerPos.y));  // Adjust the vertical distance
-	if (ImGui::ImageButton((void*)(intptr_t)img_Afternoon, ImVec2(446 / 1.5, 537 / 1.5))) {
+	if (ImGui::ImageButton((void*)(intptr_t)img_Afternoon, ImVec2(360 * 0.8, 360 * 0.8))) {
 		e = Afternoon;
 	}
 
 	// Night Time Button
 	ImGui::SetCursorPos(ImVec2(centerPos.x*3 + (446 / 1.5) * 2, centerPos.y));  // Adjust the vertical distance
-	if (ImGui::ImageButton((void*)(intptr_t)img_Night, ImVec2(446 / 1.5, 537 / 1.5))) {
+	if (ImGui::ImageButton((void*)(intptr_t)img_Night, ImVec2(360 * 0.8, 360 * 0.8))) {
 		e = Night;
 	}
 
@@ -330,7 +354,7 @@ void UIHandler::DrawEsc()
     ImGui::Begin("EscText", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoCollapse);
     ImGui::SetWindowFontScale(2.0f);
 
-    ImGui::TextColored(ImVec4(1.0f, 1.0f, 1.0f, 1.0f), "Apreta ESC pels controls");
+    ImGui::TextColored(ImVec4(1.0f, 1.0f, 1.0f, 1.0f), "Press ESC to see Controls");
 
     ImGui::End();
     ImGui::PopStyleVar(3);
@@ -360,26 +384,26 @@ void UIHandler::DrawPauseMenu(UIEvents& e)
 	ImVec2 centerPos = ImVec2((windowSize.x - 200) * 0.5f, (windowSize.y - 150) * 0.5f);
 
 	// Resume Button
-	ImGui::SetCursorPos(centerPos);
+	ImGui::SetCursorPos(ImVec2(centerPos.x - 150, centerPos.y - 120));
 	if (ImGui::ImageButton((void*)(intptr_t)img_gameStarts, ImVec2(200, 50))) {
 		e = Resume;
 	}	
 
 	// Return Button
-	ImGui::SetCursorPos(ImVec2(centerPos.x, centerPos.y + 100));  // Adjust the vertical distance
+	ImGui::SetCursorPos(ImVec2(centerPos.x + 150, centerPos.y - 120));  // Adjust the vertical distance
 	if (ImGui::ImageButton((void*)(intptr_t)img_MainMenu, ImVec2(200, 50))) {
 		e = Return;
 	}
 
 	// Exit Button
-	ImGui::SetCursorPos(ImVec2(centerPos.x, centerPos.y + 200));  // Adjust the vertical distance
+	ImGui::SetCursorPos(ImVec2(centerPos.x, centerPos.y + 270));  // Adjust the vertical distance
 	if (ImGui::ImageButton((void*)(intptr_t)img_exit, ImVec2(200, 50))) {
 		e = Exit;
 	}
 
     // Controls Image
-    ImGui::SetCursorPos(ImVec2(775, 250));  // Adjust the vertical distance
-    ImGui::Image((void*)(intptr_t)img_Controls, ImVec2(1920/4, 1080/4));
+    ImGui::SetCursorPos(ImVec2(centerPos.x - 185, centerPos.y - 60));  // Adjust the vertical distance
+    ImGui::Image((void*)(intptr_t)img_Controls, ImVec2(1920 * 0.3, 1080 * 0.3));
 
 	ImGui::End();
 }
@@ -497,11 +521,11 @@ void UIHandler::DrawCoinHUD(float timer, int coinsCollected, int totalCoins) {
 	ImGui::SetWindowFontScale(2.0f);
 	if (timer > 25.0f)
 	{
-		ImGui::TextColored(ImVec4(1.0f, 1.0f, 1.0f, 1.0f), "Tiempo: %.2f", timer);
+		ImGui::TextColored(ImVec4(1.0f, 1.0f, 1.0f, 1.0f), "Time: %.2f", timer);
 	}
 	else
 	{
-		ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "Tiempo: %.2f", timer);
+		ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "Time: %.2f", timer);
 	}
 
 	ImGui::End();
@@ -512,7 +536,7 @@ void UIHandler::DrawCoinHUD(float timer, int coinsCollected, int totalCoins) {
 
 	ImGui::Begin("Contador de Monedas", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoCollapse);
 	ImGui::SetWindowFontScale(2.0f);
-	ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "Monedas: %d / %d", coinsCollected, totalCoins);
+	ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "Coins: %d / %d", coinsCollected, totalCoins);
 	ImGui::End();
 
 	ImGui::PopStyleVar(3);
@@ -526,7 +550,48 @@ void UIHandler::DrawLoadScreen(UIEvents& e, float progress) {
     ImGui::SetNextWindowSize(windowSize);
     ImGui::SetNextWindowPos(ImVec2(0, 0));
     ImGui::Begin("Background", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
-    ImGui::Image((void*)(intptr_t)img_LSBackground, windowSize);
+    
+    switch (backgroundCounter)
+    {
+    case 1: ImGui::Image((void*)(intptr_t)img_LSBackground_1, windowSize);
+        backgroundCounter++;
+        break;
+
+    case 2: ImGui::Image((void*)(intptr_t)img_LSBackground_2, windowSize);
+        backgroundCounter++;
+        break;
+
+    case 3: ImGui::Image((void*)(intptr_t)img_LSBackground_3, windowSize);
+        backgroundCounter++;
+        break;
+
+    case 4: ImGui::Image((void*)(intptr_t)img_LSBackground_4, windowSize);
+        backgroundCounter++;
+        break;
+
+    case 5: ImGui::Image((void*)(intptr_t)img_LSBackground_5, windowSize);
+        backgroundCounter++;
+        break;
+
+    case 6: ImGui::Image((void*)(intptr_t)img_LSBackground_6, windowSize);
+        backgroundCounter++;
+        break;
+
+    case 7: ImGui::Image((void*)(intptr_t)img_LSBackground_7, windowSize);
+        backgroundCounter++;
+        break;
+
+    case 8: ImGui::Image((void*)(intptr_t)img_LSBackground_8, windowSize);
+        backgroundCounter++;
+        break;
+
+    case 9: backgroundCounter = 1;
+        break;
+
+    default:
+        break;
+    }
+
     ImGui::End();
 
     // Set up the loading bar
