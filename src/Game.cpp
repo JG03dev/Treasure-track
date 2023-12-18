@@ -126,7 +126,6 @@ void Game::HandleLoading()
 
     // Once progress bar is finished start the game
     if (m_progressBar >= 1.0f) {
-        InitializeInput();
         m_currentState = InGame;
         m_lastFrame = static_cast<float>(glfwGetTime());
         m_progressBar = 0.0f;
@@ -211,6 +210,7 @@ void Game::HandleGameOver()
 
 int Game::Start()
 {
+    InitializeInput();
     m_ui = new UIHandler(m_Window);
     img_loader();
 
@@ -433,47 +433,60 @@ void Game::Run()
 // ---------------------------------------------------------------------------------------------------------
 void Game::KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-    
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        if (m_currentState == MainMenu)
+    switch (m_currentState)
+    {
+    case MainMenu:
+        if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
             glfwSetWindowShouldClose(window, true);
-        else if (m_currentState == ModeSelector)
+        }
+        break;
+    case ModeSelector:
+        if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
             m_currentState = GameState::MainMenu;
-        else if (m_currentState == TimeSelector)
+        }
+        break;
+    case TimeSelector:
+        if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
             m_currentState = GameState::ModeSelector;
-	    else if (m_currentState == Loading) {} // Do nothing when its loading
-	    else {
-		    glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-		    m_currentState = Paused;
+        }
+        break;
+    case Paused:
+        if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
+            m_currentState = GameState::InGame;
+        }
+        break;
+    case InGame:
+        if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
+            glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+            m_currentState = GameState::Paused;
             delete m_ui;
             m_ui = new UIHandler(m_Window);
-		    // Round up camera front to avoid pause view glitches
-		    m_Camera->front = glm::vec3(float(int(m_Camera->front.x)), float(int(m_Camera->front.y)), float(int(m_Camera->front.z)));
-	    }
+            // Round up camera front to avoid pause view glitches
+            m_Camera->front = glm::vec3(float(int(m_Camera->front.x)), float(int(m_Camera->front.y)), float(int(m_Camera->front.z)));
+        }
 
-    if (glfwGetKey(window, GLFW_KEY_TAB) == GLFW_PRESS)
-    {
-        m_renderer->cycleDirLight();
-        m_renderer->cycleSky();
-    }
-    if (GLFW_KEY_C == key && action == GLFW_PRESS)
-    {
-        m_Camera->changeCamera();
-    }
+        if (GLFW_KEY_C == key && action == GLFW_PRESS)
+        {
+            m_Camera->changeCamera();
+        }
 
-    // Luces
-    if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS)
-    {
-        // Cambiar el estado de las luces
-        m_renderer->getSpotLight(0)->Toggle();
-        m_renderer->getSpotLight(1)->Toggle();
-    }
-    if (m_renderer->getNSpotLights() >= 2 && m_renderer->getSpotLight(0)->isActive() && m_renderer->getSpotLight(1)->isActive()) //TODO: study a way to avoid magic numbers
-        m_Player->setLights(m_renderer->getSpotLight(0), m_renderer->getSpotLight(1));
-    else
-        m_Player->setLights(nullptr, nullptr);
+        // Luces
+        if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS)
+        {
+            // Cambiar el estado de las luces
+            m_renderer->getSpotLight(0)->Toggle();
+            m_renderer->getSpotLight(1)->Toggle();
+        }
+        if (m_renderer->getNSpotLights() >= 2 && m_renderer->getSpotLight(0)->isActive() && m_renderer->getSpotLight(1)->isActive()) //TODO: study a way to avoid magic numbers
+            m_Player->setLights(m_renderer->getSpotLight(0), m_renderer->getSpotLight(1));
+        else
+            m_Player->setLights(nullptr, nullptr);
 
-    m_Player->InputMethod(key, action);
+        m_Player->InputMethod(key, action);
+        break;
+    default:
+        break;
+    }
 }
 
 void Game::MouseCallback(GLFWwindow* window, double xpos, double ypos) {
