@@ -1,19 +1,6 @@
 #include "Object.h"
 
 // Constructors
-// TODO: I would delete this constructor since it would lead to memory leaks
-Object::Object(std::string const& modelPath, std::string const& modelName, btDiscreteDynamicsWorld* dynamicsWorld, GLfloat sIntensity, GLfloat shine) {
-	model = new Model(sIntensity, shine);
-	model->LoadModel(modelPath, modelName);
-
-	Model hitbox;
-	hitbox.LoadModel(std::string("../../../Assets/") + modelName + std::string("/") + modelName + std::string("Hitbox.obj"), modelName + std::string("Hitbox"));
-	this->CreateRigidBody(hitbox);
-
-
-	dynamicsWorld->addRigidBody(this->rb);
-}
-
 Object::Object(Model* m, btDiscreteDynamicsWorld* dynamicsWorld, glm::mat4 initOpenGLMatrix)
 {
 	model = m; // Model points to the same model shared
@@ -28,11 +15,27 @@ Object::Object(Model* m, btDiscreteDynamicsWorld* dynamicsWorld, glm::mat4 initO
 	dynamicsWorld->addRigidBody(this->rb);
 }
 
-// Public Methods
+// Destructors
 
-void Object::Draw(Shader& shader) {
-	//model->Draw(shader);
+void Object::DestroyObject(btDiscreteDynamicsWorld* dynamicsWorld) {
+	if (rb && rb->getMotionState()) {
+		while (rb->getNumConstraintRefs()) {
+			btTypedConstraint* constraint = rb->getConstraintRef(0);
+			dynamicsWorld->removeConstraint(constraint);
+			delete constraint;
+		}
+		delete rb->getMotionState();
+		dynamicsWorld->removeRigidBody(rb);
+	}
+
+	for (int i = 0; i < m_CollisionShapes.size(); i++) {
+		btCollisionShape* shape = m_CollisionShapes[i];
+		delete shape;
+	}
+	m_CollisionShapes.clear();
 }
+
+// Public Methods
 
 void Object::setOpenGLMatrixToPhysics(const glm::mat4 openGLMatrix)
 {
@@ -66,6 +69,7 @@ void Object::setOpenGLMatrixToPhysics(const glm::mat4 openGLMatrix)
 
 void Object::CreateRigidBody(Model& hitbox) {
 	btCompoundShape* objectShape = new btCompoundShape();
+	m_CollisionShapes.push_back(objectShape);
 
 	for (int i = 0, numMeshes = hitbox.meshList.size(); i < numMeshes; i++) {
 		btConvexHullShape convexShape;
@@ -86,7 +90,9 @@ void Object::CreateRigidBody(Model& hitbox) {
         convexShape.getAabb(t, min, max);
 		btVector3 halfExtents = (max - min) / 2;
 
-		btBoxShape* box = new btBoxShape(halfExtents);
+		btCollisionShape* box = new btBoxShape(halfExtents);
+		m_CollisionShapes.push_back(box);
+
 		box->setMargin(0.01f);
 		btTransform objectTransform;
 		objectTransform.setIdentity();

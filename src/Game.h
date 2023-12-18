@@ -60,18 +60,18 @@ class Game
 {
 public:
 	// Public Attributes
-
-	const char* name = "Nombre juego";
+	const char* name = "Nombre juego"; // Should we keep this? It does nothing
 
 	// Constructors
 	Game() :m_Window(NULL), m_renderer(NULL), m_Camera(NULL),
 		m_dynamicsWorld(NULL), m_Player(NULL), m_sinTime(0), m_coinsCollected(0),
 		m_currentState(GameState::MainMenu), m_deltaTime(0.0f), m_lastFrame(0.0f),
-		m_sound(NULL), m_progressBar(0.01f), m_timer(200.0f), m_initSky(0), m_coinMode(true){
+		m_sound(NULL), m_progressBar(0.01f), m_timer(200.0f), m_initSky(0), m_coinMode(true), m_totalCoins(0) {
 		m_Camera = new Camera(glm::vec3(0.0f, 0.0f, 3.0f));
 		InitializeWindow();
 	};
-	// Destructor
+
+	// Destructors
 	~Game();
 	void DeleteCurrentGame();
 
@@ -111,9 +111,15 @@ private:
 
 	// Graphics
 	Renderer* m_renderer;
+	float m_sinTime;
+	const float jumpHeight = 0.12f;
+	const float jumpDuration = 2.0f;
+	const float spinSpeed = 2.0f;
 
 	// UI
 	UIHandler* m_ui;
+	float m_PreviousSpeed;
+	float m_progressBar;
 
 	// Physics logic
 	float m_deltaTime;
@@ -124,31 +130,26 @@ private:
 	Player* m_Player;
 	std::vector<Object*> m_Objects;
 	std::vector<Coin*> m_Coins;
-	
 
 	// Sound
 	MySoundEffects* m_sound;
-	float v_ant;
-	//// Private Methods
 
-
-	/// Animations
-	void performJumpAndSpin(std::string id, float time1, float time2);
-	//Time
-	float m_sinTime;
-	// Constants for animation parameters
-	const float jumpHeight = 0.12f;
-	const float jumpDuration = 2.0f;
-
-	const float spinSpeed = 2.0f;
-
-	/// Loading
-	float m_progressBar;
-	void UpdateProgressBar(); 
-	// Contador Monedas
-	int m_coinsCollected;
-
+	// Game Logic
 	float m_timer;
+	int m_coinsCollected;
+	int m_totalCoins;
+
+	// Initialization Parameters
+	bool m_coinMode;
+	int m_initSky;
+
+	//// Private Methods
+	// Animations
+	void performJumpAndSpin(std::string id, float time1, float time2);
+
+	// Loading
+	
+	void UpdateProgressBar();
 
 	// Initializers
 	void InitializePhysics();
@@ -156,10 +157,6 @@ private:
 	void InitializeSound();
 	void InitializeInput();
 	int InitializeWindow();
-
-	// Parameters for initialization
-	int m_initSky;
-	bool m_coinMode;
 
 	/// Functionality
 	void Run();

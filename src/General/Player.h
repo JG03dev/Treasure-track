@@ -25,17 +25,15 @@ public:
 	glm::vec3 lastForward;
 
 	// Constructor
-	Player(std::string const& modelPath, std::string const& modelName, btDiscreteDynamicsWorld* dynamicsWorld, GLfloat sIntensity, GLfloat shine, bool addHitbox = false);
 	Player(Model* m, btDiscreteDynamicsWorld* dynamicsWorld);
 
 	// Destructor
-	~Player();
+	void DestroyObject(btDiscreteDynamicsWorld* dynamicsWorld);
+	~Player() {}
 
 	// Public Methods
 	void updatePlayerData();
-	void Draw(Shader& shader);
 	void InputMethod(int key, int keyPressed);
-	void AddWheelModel(std::string const& modelPath, std::string const& modelName, GLfloat sIntensity, GLfloat shine);
 
 	//Vehicle getters
 	glm::mat3x3 getCarBasis();
@@ -50,6 +48,7 @@ private:
 	// Private Attributes
 	SpotLight* delaIzquierda, * delaDerecha; //Luces delanteras
 	int m_num_keys;
+
 	struct VehicleParams {
 		// Construction Params
 		btScalar m_mass = 1200;
@@ -73,6 +72,10 @@ private:
 		btScalar m_maxSuspensionForce = 6000;//6000.;
 		//btScalar m_rollInfluence = 1;
 	} wheelParams;
+
+	// Memory Management
+	btAlignedObjectArray<btCollisionShape*> m_CollisionShapes;
+	btVehicleRaycaster* m_VehicleRayCaster;
 
 	// Private Methods
 

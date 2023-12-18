@@ -12,32 +12,23 @@ public:
 	std::string m_id;
 	
     // Constructors
-	Coin(Model* m, btDiscreteDynamicsWorld* dynamicsWorld, glm::mat4 initOpenGLMatrix, std::string const& id) : m_id(id)
-	{
-		model = m; // Model points to the same model shared
+	Coin(Model* m, btDiscreteDynamicsWorld* dynamicsWorld, glm::mat4 initOpenGLMatrix, std::string const& id);
 
-		Model hitbox;
-		hitbox.LoadModel(std::string("../../../Assets/") + m->GetName() + std::string("/") + m->GetName() + std::string("Hitbox.obj"), m->GetName() + std::string("Hitbox"));
-		this->CreateGhostObject(hitbox);
+	// Destructors
+	void DestroyObject(btDiscreteDynamicsWorld* dynamicsWorld);
+	~Coin() {}
 
-		setOpenGLMatrixToPhysics(initOpenGLMatrix);
+	//Getters
 
-		dynamicsWorld->addCollisionObject(this->ghostObject);
-		dynamicsWorld->getBroadphase()->getOverlappingPairCache()->setInternalGhostPairCallback(new btGhostPairCallback());
-	}
-
-    
-    ~Coin() {
-        delete ghostObject;
-    }
-
-    btPairCachingGhostObject* getGhostObject() {
-        return ghostObject;
-    }
+    btPairCachingGhostObject* getGhostObject() { return ghostObject; }
 
 private:
 	
+	// Private Attributes
+	// Memory Management
+	btAlignedObjectArray<btCollisionShape*> m_CollisionShapes;
 	btPairCachingGhostObject* ghostObject;
+	btGhostPairCallback* m_GhostPairCallback;
 
     void CreateGhostObject(Model& hitbox);
     void setOpenGLMatrixToPhysics(const glm::mat4 openGLMatrix);

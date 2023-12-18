@@ -82,6 +82,7 @@ private:
     GLuint img_SpeedPointer;
     GLuint img_Title;
     GLuint img_Controls;
+    GLuint img_SaulGoodman;
 
     ImFont* m_HUDFont;
     ImGuiIO io;
@@ -111,5 +112,5 @@ private:
     void DrawHUD(float carSpeed, float rotationAngle);
     void DrawCoinHUD(float timer, int coinsCollected, int totalCoins);
     void DrawLoadScreen(UIEvents& e, float progress);
-	void DrawEndScreen(UIEvents& e, float data);
+	void DrawEndScreen(UIEvents& e, int coinsCollected, int totalCoins);
 };

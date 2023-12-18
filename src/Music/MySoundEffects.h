@@ -29,7 +29,7 @@ public:
         sound9 = SE_LOAD("../../../music/sounds/choque.wav");
         myMusic.Play();
         num = 1;
-        musicaTotal = 4;
+        musicaTotal = 4 + 1; // Number of songs + empty song
         shiftPressedPreviousFrame = false;
     }
 
@@ -113,9 +113,9 @@ public:
 
         if (GetKeyState('Q') & 0x8000 && cooldown <= 0.0f) 
         {
-            num = num + 1;
-            if (num == musicaTotal) { num = -1; }
-            if (num != -1) 
+            num = (num + 1) % (musicaTotal);
+
+            if (num < musicaTotal - 1) 
             {
                 std::string rutaMusica = "../../../music/music" + std::to_string(num) + ".wav";
                 myMusic.Reset(rutaMusica.c_str());
@@ -133,9 +133,10 @@ public:
 
         if (GetKeyState('E') & 0x8000 && cooldown <= 0.0f) 
         {
-            num = (num - 1);
-            if (num == -1){ num = musicaTotal; }
-            if (num != musicaTotal) 
+            num = num - 1;
+            num = ((num % musicaTotal) + musicaTotal) % musicaTotal;
+
+            if (num < musicaTotal - 1)
             {
                 std::string rutaMusica = "../../../music/music" + std::to_string(num) + ".wav";
                 myMusic.Reset(rutaMusica.c_str());

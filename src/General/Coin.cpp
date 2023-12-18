@@ -1,5 +1,47 @@
 #include "Coin.h"
 
+// Constructors
+Coin::Coin(Model* m, btDiscreteDynamicsWorld* dynamicsWorld, glm::mat4 initOpenGLMatrix, std::string const& id) : m_id(id)
+{
+	model = m; // Model points to the same model shared
+
+	Model hitbox;
+	hitbox.LoadModel(std::string("../../../Assets/") + m->GetName() + std::string("/") + m->GetName() + std::string("Hitbox.obj"), m->GetName() + std::string("Hitbox"));
+	this->CreateGhostObject(hitbox);
+
+	setOpenGLMatrixToPhysics(initOpenGLMatrix);
+
+	dynamicsWorld->addCollisionObject(this->ghostObject);
+	m_GhostPairCallback = new btGhostPairCallback();
+	dynamicsWorld->getBroadphase()->getOverlappingPairCache()->setInternalGhostPairCallback(m_GhostPairCallback);
+}
+
+// Destructors
+void Coin::DestroyObject(btDiscreteDynamicsWorld* dynamicsWorld) {
+	btRigidBody* rb = btRigidBody::upcast(ghostObject);
+	if (rb && rb->getMotionState())
+	{
+		while (rb->getNumConstraintRefs())
+		{
+			btTypedConstraint* constraint = rb->getConstraintRef(0);
+			dynamicsWorld->removeConstraint(constraint);
+			delete constraint;
+		}
+		delete rb->getMotionState();
+		dynamicsWorld->removeRigidBody(rb);
+	}
+	else
+	{
+		dynamicsWorld->removeCollisionObject(ghostObject);
+	}
+	delete ghostObject;
+
+	for (int i = 0; i < m_CollisionShapes.size(); i++) {
+		btCollisionShape* shape = m_CollisionShapes[i];
+		delete shape;
+	}
+	m_CollisionShapes.clear();
+}
 
 void Coin::CreateGhostObject(Model& hitbox)
 {
@@ -22,6 +64,7 @@ void Coin::CreateGhostObject(Model& hitbox)
 	btVector3 halfExtents = (max - min) / 2;
 
 	btBoxShape* box = new btBoxShape(halfExtents);
+	m_CollisionShapes.push_back(box);
 	box->setMargin(0.01f);
 
 	this->ghostObject = new btPairCachingGhostObject();

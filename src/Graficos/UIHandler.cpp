@@ -31,7 +31,7 @@ UIHandler::UIHandler(GLFWwindow* window) : window(window), m_progText(0), m_rota
     img_SpeedPointer = LoadTexture("../../../Assets/Imagenes/pointer.png");
     img_Title = LoadTexture("../../../Assets/Imagenes/title6.png");
     img_Controls = LoadTexture("../../../Assets/Imagenes/Controles.png");
-    
+    img_SaulGoodman = LoadTexture("../../../Assets/Imagenes/s2.jpg");
 }
 
 UIHandler::~UIHandler() {
@@ -89,7 +89,7 @@ UIEvents UIHandler::DrawAndPollEvents(int flags, float data, float carSpeed, flo
         DrawTimeMenu(result);
     }
     if (flags & DEndScreen) {
-        DrawEndScreen(result, data);
+        DrawEndScreen(result, actCoin, totalCoin);
     }
 
     ImGui::Render();
@@ -259,7 +259,7 @@ void UIHandler::DrawTimeMenu(UIEvents& e) {
 	ImGui::End();
 }
 
-void UIHandler::DrawEndScreen(UIEvents& e, float data) {
+void UIHandler::DrawEndScreen(UIEvents& e, int coinsCollected, int totalCoins) {
 	// Cambia el color del botón a transparente
 	ImVec4 transparentColor = ImVec4(0.0f, 0.0f, 0.0f, 0.0f);
 	ImGui::GetStyle().Colors[ImGuiCol_Button] = transparentColor;
@@ -278,12 +278,16 @@ void UIHandler::DrawEndScreen(UIEvents& e, float data) {
 	// Calculate the center position for the buttons
 	ImVec2 centerPos = ImVec2((windowSize.x - 200) * 0.5f, (windowSize.y - 150) * 0.5f);
 
-	
-    if (data == 0) {
-        ImGui::Image((void*)(intptr_t)img_Title, centerPos);
+    ImGui::SetCursorPos(centerPos);
+    if (coinsCollected == totalCoins) {
+        if (ImGui::ImageButton((void*)(intptr_t)img_Title, ImVec2(400, 200))) {
+            e = Return;
+        }
     }
     else {
-		ImGui::Image((void*)(intptr_t)img_Title, centerPos);
+        if (ImGui::ImageButton((void*)(intptr_t)img_SaulGoodman, ImVec2(400, 200))) {
+            e = Return;
+        }
     }
 
 	ImGui::End();
@@ -412,7 +416,7 @@ void UIHandler::DrawHUD(float carSpeed, float rotationAngle)
     ImGui::Begin("pointer", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoCollapse);
     // Mostrar la imagen del indicador
     ImVec2 pointerSize(300.0f, 300.0f); // Ajusta seg?n sea necesario
-    // Dibuja la imagen sin rotaci?n
+    // Dibuja la imagen sin rotacion
     ImRotateStart();
     ImGui::Image((void*)(intptr_t)img_SpeedPointer, pointerSize);
     
@@ -462,7 +466,7 @@ void UIHandler::DrawCoinHUD(float timer, int coinsCollected, int totalCoins) {
 
 	ImGui::Begin("Contador de Monedas", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoCollapse);
 	ImGui::SetWindowFontScale(2.0f);
-	ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "Monedas: %d / %d", coinsCollected, totalCoins + coinsCollected);
+	ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "Monedas: %d / %d", coinsCollected, totalCoins);
 	ImGui::End();
 
 	ImGui::PopStyleVar(3);

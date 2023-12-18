@@ -21,16 +21,22 @@ public:
 	btRigidBody* rb;
 
 	// Constructor
-	Object(std::string const& modelPath, std::string const& modelName, btDiscreteDynamicsWorld* dynamicsWorld, GLfloat sIntensity, GLfloat shine);
 	Object(Model* m, btDiscreteDynamicsWorld* dynamicsWorld, glm::mat4 initOpenGLMatrix);
 
+	// Destructor (First call DestroyObject, then delete object)
+	void DestroyObject(btDiscreteDynamicsWorld* dynamicsWorld);
+	~Object() {} // Destructor managed
 
 	// Public Methods
-	void Draw(Shader& shader);
-
 	void setOpenGLMatrixToPhysics(const glm::mat4 openGLMatrix);
 private:
 
+	// Private Attributes
+	// Memory Management
+	btAlignedObjectArray<btCollisionShape*> m_CollisionShapes;
+
 	// Private Methods
 	void CreateRigidBody(Model& hitbox);
+
+	
 };

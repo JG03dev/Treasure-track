@@ -1,26 +1,70 @@
 #include "Game.h"
 #include <SOIL2/SOIL2.h>
 
+#pragma region DESTRUCTORS
 
 Game::~Game()
 {
+    DeleteCurrentGame();
     if (m_ui != NULL) delete m_ui;
     if (m_Camera != NULL) delete m_Camera;
-    if (m_dynamicsWorld != NULL) { delete m_dynamicsWorld; m_dynamicsWorld = nullptr; }
-    DeleteCurrentGame();
 }
 
 void Game::DeleteCurrentGame()
 {
-    if (m_renderer != NULL) { delete m_renderer; m_renderer = nullptr; }
-    if (m_Player != NULL) { delete m_Player; m_Player = nullptr; }
+    if (m_renderer != NULL) { 
+        delete m_renderer; 
+        m_renderer = nullptr; }
+    if (m_Player != NULL) { m_Player->DestroyObject(m_dynamicsWorld); delete m_Player; m_Player = nullptr; }
     for (int i = 0; i < m_Objects.size(); i++) {
-        if (m_Objects[i] != NULL) delete m_Objects[i]; m_Objects[i] = nullptr;
+        if (m_Objects[i] != NULL) { m_Objects[i]->DestroyObject(m_dynamicsWorld); delete m_Objects[i]; m_Objects[i] = nullptr; }
     }
+    m_Objects.clear();
+
+    for (int i = 0; i < m_Coins.size(); i++) {
+        if (m_Coins[i] != NULL) { m_Coins[i]->DestroyObject(m_dynamicsWorld); delete m_Coins[i]; m_Coins[i] = nullptr; }
+    }
+    m_Coins.clear();
+
+    if (m_dynamicsWorld != NULL) {
+        for (int i = m_dynamicsWorld->getNumCollisionObjects() - 1; i >= 0; i--)
+        {
+            btCollisionObject* obj = m_dynamicsWorld->getCollisionObjectArray()[i];
+            btRigidBody* body = btRigidBody::upcast(obj);
+            if (body && body->getMotionState())
+            {
+                while (body->getNumConstraintRefs())
+                {
+                    btTypedConstraint* constraint = body->getConstraintRef(0);
+                    m_dynamicsWorld->removeConstraint(constraint);
+                    delete constraint;
+                }
+                delete body->getMotionState();
+                m_dynamicsWorld->removeRigidBody(body);
+            }
+            else
+            {
+                m_dynamicsWorld->removeCollisionObject(obj);
+            }
+            delete obj;
+        }
+        btConstraintSolver* constraintSolver = m_dynamicsWorld->getConstraintSolver();
+        btBroadphaseInterface* broadphaseInterface = m_dynamicsWorld->getBroadphase();
+        btDispatcher* collisionDispatcher = this->m_dynamicsWorld->getDispatcher();
+
+        delete m_dynamicsWorld; m_dynamicsWorld = nullptr;
+        delete constraintSolver;
+        delete broadphaseInterface;
+        delete collisionDispatcher;
+    }
+
     if (m_sound != NULL) {
-        delete m_sound; m_renderer = nullptr;
+        delete m_sound; m_sound = nullptr;
     }
+    m_PreviousSpeed = 0; // This is to avoid the crashing sound when restarting the game
 }
+
+#pragma endregion
 
 #pragma region HANDLERS
 
@@ -85,6 +129,9 @@ void Game::HandleLoading()
         InitializeInput();
         m_currentState = InGame;
         m_lastFrame = static_cast<float>(glfwGetTime());
+        m_progressBar = 0.0f;
+        m_timer = 200.0f;
+        m_coinsCollected = 0;
     }
 }
 
@@ -93,9 +140,12 @@ void Game::HandlePause()
     switch (m_ui->DrawAndPollEvents(DPauseMenu)) {
     case Resume:
         m_currentState = InGame;
+        glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        InitializeInput();  // Pause menu somehow disables input or something like that, so I initialize it again. It works
         break;
     case Return:
         m_currentState = MainMenu;
+        DeleteCurrentGame();
         break;
     case Exit:
         glfwSetWindowShouldClose(m_Window, true);
@@ -147,54 +197,62 @@ void Game::HandleTimeSelection()
 
 void Game::HandleGameOver()
 {
-    
+    switch (m_ui->DrawAndPollEvents(DEndScreen, 0, 0, 0, m_coinsCollected,m_totalCoins)) {
+    case Return:
+        m_currentState = MainMenu;
+        DeleteCurrentGame();
+        break;
+    }
 }
 
 #pragma endregion
 
+#pragma region MAIN-LOOP
+
 int Game::Start()
 {
-	m_ui = new UIHandler(m_Window);
-	img_loader();
+    m_ui = new UIHandler(m_Window);
+    img_loader();
 
-	// Main menu loop
-	while (!glfwWindowShouldClose(m_Window))
-	{
-		glfwPollEvents();
-		// per-frame time logic
-		// --------------------
-		float currentFrame = static_cast<float>(glfwGetTime());
-		m_deltaTime = currentFrame - m_lastFrame;
-		m_lastFrame = currentFrame;
+    // Main menu loop
+    while (!glfwWindowShouldClose(m_Window))
+    {
+        glfwPollEvents();
+        // per-frame time logic
+        // --------------------
+        float currentFrame = static_cast<float>(glfwGetTime());
+        m_deltaTime = currentFrame - m_lastFrame;
+        m_lastFrame = currentFrame;
 
-		switch (m_currentState) {
-		case GameState::MainMenu:
-			HandleMainMenu();
-			break;
-		case GameState::Loading:
-			HandleLoading();
-			break;
-		case GameState::InGame:
-			Run();
-			break;
-		case GameState::Paused:
-			HandlePause();
-			break;
+        switch (m_currentState) {
+        case GameState::MainMenu:
+            HandleMainMenu();
+            break;
+        case GameState::Loading:
+            HandleLoading();
+            break;
+        case GameState::InGame:
+            Run();
+            break;
+        case GameState::Paused:
+            HandlePause();
+            break;
         case GameState::ModeSelector:
             HandleModeSelector();
             break;
-		case GameState::TimeSelector:
-			HandleTimeSelection();
-			break;
-		case GameState::GameOver:
-			HandleGameOver();
-			break;
-		}
-		glfwSwapBuffers(m_Window);
-	}
-	return 0;
+        case GameState::TimeSelector:
+            HandleTimeSelection();
+            break;
+        case GameState::GameOver:
+            HandleGameOver();
+            break;
+        }
+        glfwSwapBuffers(m_Window);
+    }
+    return 0;
 }
 
+#pragma endregion
 
 #pragma region PRIVATE_METHODS_INITIALIZERS
 
@@ -247,9 +305,6 @@ void Game::InitializeGraphics()
             // This could be at the constructor
             m_Player->vehicle->getChassisWorldTransform().getOpenGLMatrix(glm::value_ptr(model));
             m_renderer->setModelMatrix(Obj.first, model);
-            /*
-            if (m_renderer->getNSpotLights() >= 2) //TODO: study a way to avoid magic numbers
-                m_Player->setLights(m_renderer->getSpotLight(0), m_renderer->getSpotLight(1));*/
         }
         else if (Obj.first.substr(0, 4) == "Coin") { // CREAR OBJETO MONEDA
             if(m_coinMode)
@@ -275,8 +330,8 @@ void Game::InitializeGraphics()
         //Handle error when no player is parsed
     }
     // Inicializar camara
-    //m_Camera = new Camera(glm::vec3(0.0f, 0.0f, 3.0f));
     m_Camera->setTarget(m_Player); 
+    m_totalCoins = m_Coins.size();
 }
 
 void Game::InitializeSound()
@@ -345,7 +400,7 @@ void Game::Run()
 
     //Actualizar Informacion (Mover coordenadas)
     Actualizar(m_deltaTime);
-    v_ant = m_Player->vehicle->getCurrentSpeedKmHour();
+    m_PreviousSpeed = m_Player->vehicle->getCurrentSpeedKmHour();
 
     //Renderizar
     Render();
@@ -364,8 +419,14 @@ void Game::Run()
 
     UIFlags f = m_coinMode ? static_cast<UIFlags>(DHUD | DCoinHUD) : DHUD;
 
-    m_ui->DrawAndPollEvents(f, m_timer, carSpeed, rotationAngle, m_coinsCollected, m_Coins.size());
+    m_ui->DrawAndPollEvents(f, m_timer, carSpeed, rotationAngle, m_coinsCollected, m_totalCoins);
     
+    if (m_coinMode && (m_timer <= 0 || m_coinsCollected == m_totalCoins)) {
+        m_currentState = GameOver;
+        glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+        delete m_ui;
+        m_ui = new UIHandler(m_Window);
+    }
 }
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
@@ -389,6 +450,7 @@ void Game::KeyCallback(GLFWwindow* window, int key, int scancode, int action, in
 		    // Round up camera front to avoid pause view glitches
 		    m_Camera->front = glm::vec3(float(int(m_Camera->front.x)), float(int(m_Camera->front.y)), float(int(m_Camera->front.z)));
 	    }
+
     if (glfwGetKey(window, GLFW_KEY_TAB) == GLFW_PRESS)
     {
         m_renderer->cycleDirLight();
@@ -444,7 +506,7 @@ void Game::Actualizar(float deltaTime)
     m_dynamicsWorld->stepSimulation(deltaTime, 2);
 
     //Sonido choque
-    if (m_Player->vehicle->getCurrentSpeedKmHour() < (v_ant - 10)) {
+    if (m_Player->vehicle->getCurrentSpeedKmHour() < (m_PreviousSpeed - 10)) {
         m_sound->Choque();
     }
 

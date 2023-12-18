@@ -12,7 +12,29 @@ Player::Player(Model* m, btDiscreteDynamicsWorld* dynamicsWorld) : modelWheel(NU
 }
 
 // Destructor
-Player::~Player() {
+void Player::DestroyObject(btDiscreteDynamicsWorld* dynamicsWorld) {
+	btRigidBody* rb = vehicle->getRigidBody();
+
+	if (rb && rb->getMotionState()) {
+		while (rb->getNumConstraintRefs()) {
+			btTypedConstraint* constraint = rb->getConstraintRef(0);
+			dynamicsWorld->removeConstraint(constraint);
+			delete constraint;
+		}
+		delete rb->getMotionState();
+		dynamicsWorld->removeRigidBody(rb);
+	}
+
+	for (int i = 0; i < m_CollisionShapes.size(); i++) {
+		btCollisionShape* shape = m_CollisionShapes[i];
+		delete shape;
+	}
+	m_CollisionShapes.clear();
+
+	dynamicsWorld->removeVehicle(vehicle);
+
+	delete vehicle;
+	delete m_VehicleRayCaster;
 }
 
 // Public Methods
@@ -38,10 +60,6 @@ void Player::updatePlayerData() //TODO: find more uses to this function
 		// Update light parameters
 		delaDerecha->SetFlash(positionRight, direction);
 	}
-}
-
-void Player::Draw(Shader& shader) {
-	//model->Draw(shader);
 }
 
 void Player::InputMethod(int key, int keyPressed) {
@@ -149,11 +167,6 @@ void Player::InputMethod(int key, int keyPressed) {
 	}
 }
 
-void Player::AddWheelModel(std::string const& modelPath, std::string const& modelName, GLfloat sIntensity, GLfloat shine) {
-	modelWheel = new Model(sIntensity, shine);
-	modelWheel->LoadModel(modelPath, modelName);
-}
-
 glm::mat3x3 Player::getCarBasis()
 {
 	btTransform carTransform = vehicle->getChassisWorldTransform();
@@ -185,6 +198,7 @@ btQuaternion Player::getCarRotation() {
 void Player::CreateVehicle(btDiscreteDynamicsWorld* dynamicsWorld, Model& hitbox) {
 	// --------- Mesh Load to Get the chassis half extents for the box shape
 	btCompoundShape* temp = new btCompoundShape();
+	m_CollisionShapes.push_back(temp);
 
 	btTransform chassisTransform;
 	chassisTransform.setIdentity();
@@ -209,6 +223,8 @@ void Player::CreateVehicle(btDiscreteDynamicsWorld* dynamicsWorld, Model& hitbox
 	// --------- Chassis RigidBody
 
 	btCollisionShape* chassisShape = new btBoxShape(halfExtents);
+	m_CollisionShapes.push_back(chassisShape);
+
 	temp->addChildShape(chassisTransform, chassisShape);
 
 	btScalar mass(this->vehicleParams.m_mass);
@@ -227,7 +243,7 @@ void Player::CreateVehicle(btDiscreteDynamicsWorld* dynamicsWorld, Model& hitbox
 
 	// --------- Raycast Vehicle
 
-	btVehicleRaycaster* vehicleRayCaster = new btDefaultVehicleRaycaster(dynamicsWorld);
+	m_VehicleRayCaster = new btDefaultVehicleRaycaster(dynamicsWorld);
 
 	btRaycastVehicle::btVehicleTuning tuning;
 	tuning.m_suspensionStiffness = wheelParams.m_suspensionStiffness;
@@ -238,7 +254,7 @@ void Player::CreateVehicle(btDiscreteDynamicsWorld* dynamicsWorld, Model& hitbox
 	tuning.m_maxSuspensionForce = wheelParams.m_maxSuspensionForce;
 
 	//Creates a new instance of the raycast vehicle
-	this->vehicle = new btRaycastVehicle(tuning, chassisRigidBody, vehicleRayCaster);
+	this->vehicle = new btRaycastVehicle(tuning, chassisRigidBody, m_VehicleRayCaster);
 
 	this->vehicle->setCoordinateSystem(2, 1, 0); // To adjust the coordinate system to the OpenGL coordinate system
 
