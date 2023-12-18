@@ -73,6 +73,8 @@ private:
     GLuint img_Afternoon;
     GLuint img_Night;
     GLuint img_Close;
+    GLuint img_Victory;
+    GLuint img_Defeat;
 
     // Backgrounds
     GLuint img_MMBackground;

@@ -453,6 +453,7 @@ void Game::KeyCallback(GLFWwindow* window, int key, int scancode, int action, in
     case Paused:
         if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
             m_currentState = GameState::InGame;
+            glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
         }
         break;
     case InGame:

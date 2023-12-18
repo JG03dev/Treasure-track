@@ -22,6 +22,8 @@ UIHandler::UIHandler(GLFWwindow* window) : window(window), m_progText(0), m_rota
 	img_Afternoon = LoadTexture("../../../Assets/Imagenes/Tarde-SinFondo.png");
     img_Night = LoadTexture("../../../Assets/Imagenes/Noche-SinFondo.png");
     img_Close = LoadTexture("../../../Assets/Imagenes/CerrarIcono.png");
+    img_Victory = LoadTexture("../../../Assets/Imagenes/VICTORIA.png");
+    img_Defeat = LoadTexture("../../../Assets/Imagenes/DERROTA.png");
 
     // Load Background textures
     img_MMBackground = LoadTexture("../../../Assets/Imagenes/fondo.png");
@@ -292,12 +294,12 @@ void UIHandler::DrawEndScreen(UIEvents& e, int coinsCollected, int totalCoins) {
 
     ImGui::SetCursorPos(centerPos);
     if (coinsCollected == totalCoins) {
-        if (ImGui::ImageButton((void*)(intptr_t)img_Title, ImVec2(400, 200))) {
+        if (ImGui::ImageButton((void*)(intptr_t)img_Victory, ImVec2(400, 200))) {
             e = Return;
         }
     }
     else {
-        if (ImGui::ImageButton((void*)(intptr_t)img_SaulGoodman, ImVec2(400, 200))) {
+        if (ImGui::ImageButton((void*)(intptr_t)img_Defeat, ImVec2(400, 200))) {
             e = Return;
         }
     }
@@ -344,8 +346,8 @@ void UIHandler::DrawPauseMenu(UIEvents& e)
 	}
 
     // Controls Image
-    ImGui::SetCursorPos(ImVec2(centerPos.x + 400, centerPos.y + 100));  // Adjust the vertical distance
-    ImGui::Image((void*)(intptr_t)img_Controls, ImVec2(200, 200));
+    ImGui::SetCursorPos(ImVec2(775, 250));  // Adjust the vertical distance
+    ImGui::Image((void*)(intptr_t)img_Controls, ImVec2(1920/4, 1080/4));
 
 	ImGui::End();
 }
