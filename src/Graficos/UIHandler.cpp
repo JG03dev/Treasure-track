@@ -1,6 +1,6 @@
 #include "UIHandler.h"
 
-UIHandler::UIHandler(GLFWwindow* window) : window(window), m_progText(0), m_rotation_start_index(0) {
+UIHandler::UIHandler(GLFWwindow* window) : window(window), m_progText(0), m_rotation_start_index(0), showHelp(false) {
     ImGui::CreateContext();
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init("#version 330");
@@ -21,6 +21,7 @@ UIHandler::UIHandler(GLFWwindow* window) : window(window), m_progText(0), m_rota
     img_Day = LoadTexture("../../../Assets/Imagenes/Dia-SinFondo.png");
 	img_Afternoon = LoadTexture("../../../Assets/Imagenes/Tarde-SinFondo.png");
     img_Night = LoadTexture("../../../Assets/Imagenes/Noche-SinFondo.png");
+    img_Close = LoadTexture("../../../Assets/Imagenes/CerrarIcono.png");
 
     // Load Background textures
     img_MMBackground = LoadTexture("../../../Assets/Imagenes/fondo.png");
@@ -153,23 +154,34 @@ void UIHandler::DrawMainMenu(UIEvents& e)
 	ImGui::SetCursorPos(ImVec2(centerPos.x - 250, centerPos.y - 250));
 	ImGui::Image((void*)(intptr_t)img_Title, ImVec2(877 * 0.8f, 197 * 0.8f));
 
-    // Start button
-    ImGui::SetCursorPos(centerPos);
-	
-    if (ImGui::ImageButton((void*)(intptr_t)img_gameStarts, ImVec2(200, 50))) {
-        e = Start_Game;
-    }
+    if (!showHelp) {
+        // Start button
+        ImGui::SetCursorPos(centerPos);
 
-    // Help button
-    ImGui::SetCursorPos(ImVec2(centerPos.x, centerPos.y + 100));  // Adjust the vertical distance
-    if (ImGui::ImageButton((void*)(intptr_t)img_help, ImVec2(200, 50))) {
-        e = Help;
-    }
+        if (ImGui::ImageButton((void*)(intptr_t)img_gameStarts, ImVec2(200, 50))) {
+            e = Start_Game;
+        }
 
-    // Exit button
-    ImGui::SetCursorPos(ImVec2(centerPos.x, centerPos.y + 200));  // Adjust the vertical distance
-    if (ImGui::ImageButton((void*)(intptr_t)img_exit, ImVec2(200, 50))) {
-        e = Exit;
+        // Help button
+        ImGui::SetCursorPos(ImVec2(centerPos.x, centerPos.y + 100));  // Adjust the vertical distance
+        if (ImGui::ImageButton((void*)(intptr_t)img_help, ImVec2(200, 50))) {
+            showHelp = !showHelp;
+        }
+
+        // Exit button
+        ImGui::SetCursorPos(ImVec2(centerPos.x, centerPos.y + 200));  // Adjust the vertical distance
+        if (ImGui::ImageButton((void*)(intptr_t)img_exit, ImVec2(200, 50))) {
+            e = Exit;
+        }
+    }
+    else {
+        ImGui::SetCursorPos(ImVec2(160, 90));
+        ImGui::Image((void*)(intptr_t)img_Controls, ImVec2(1920/2, 1080/2));
+
+        ImGui::SetCursorPos(ImVec2(1052, 88));
+        if (ImGui::ImageButton((void*)(intptr_t)img_Close, ImVec2(512/8, 512/8))) {
+            showHelp = !showHelp;
+        }
     }
 
     ImGui::End();

@@ -72,6 +72,7 @@ private:
     GLuint img_Day;
     GLuint img_Afternoon;
     GLuint img_Night;
+    GLuint img_Close;
 
     // Backgrounds
     GLuint img_MMBackground;
@@ -83,6 +84,9 @@ private:
     GLuint img_Title;
     GLuint img_Controls;
     GLuint img_SaulGoodman;
+
+    // I need this to show help
+    bool showHelp;
 
     ImFont* m_HUDFont;
     ImGuiIO io;
@@ -113,4 +117,5 @@ private:
     void DrawCoinHUD(float timer, int coinsCollected, int totalCoins);
     void DrawLoadScreen(UIEvents& e, float progress);
 	void DrawEndScreen(UIEvents& e, int coinsCollected, int totalCoins);
+    void DrawControlsImage(UIEvents& e);
 };
