@@ -485,6 +485,10 @@ void Game::KeyCallback(GLFWwindow* window, int key, int scancode, int action, in
 
         m_Player->InputMethod(key, action);
         break;
+    case GameOver:
+        if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
+            glfwSetWindowShouldClose(m_Window, true);
+        }
     default:
         break;
     }

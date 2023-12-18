@@ -291,15 +291,16 @@ void UIHandler::DrawEndScreen(UIEvents& e, int coinsCollected, int totalCoins) {
 	ImGui::SetNextWindowSizeConstraints(windowSize, windowSize);
 	// Calculate the center position for the buttons
 	ImVec2 centerPos = ImVec2((windowSize.x - 200) * 0.5f, (windowSize.y - 150) * 0.5f);
-
-    ImGui::SetCursorPos(centerPos);
+    
     if (coinsCollected == totalCoins) {
-        if (ImGui::ImageButton((void*)(intptr_t)img_Victory, ImVec2(400, 200))) {
+        ImGui::SetCursorPos(ImVec2(389, 290));
+        if (ImGui::ImageButton((void*)(intptr_t)img_Victory, ImVec2(501, 139))) {
             e = Return;
         }
     }
     else {
-        if (ImGui::ImageButton((void*)(intptr_t)img_Defeat, ImVec2(400, 200))) {
+        ImGui::SetCursorPos(ImVec2(396, 290));
+        if (ImGui::ImageButton((void*)(intptr_t)img_Defeat, ImVec2(488, 139))) {
             e = Return;
         }
     }
