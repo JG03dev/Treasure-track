@@ -29,6 +29,8 @@
 
 // --OTHER INCLUDES--
 
+
+
 #pragma region CAMCONTROL
 
 //-----------------------------------------------------------------------------
@@ -40,8 +42,7 @@ void glfw_onFramebufferSize(GLFWwindow* window, int width, int height)
 }
 #pragma endregion
 
-int main(int argc, char **argv) {
-    std::cout << argv[0] << std::endl;
+int main() {
     int state = 0;
 
     // Intialize GLFW 
@@ -86,3 +87,13 @@ int main(int argc, char **argv) {
     return 0;
 }
 
+#pragma region WindowsExecutable
+
+#include <windows.h>
+
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
+    main();
+    return 0;
+}
+
+#pragma endregion
