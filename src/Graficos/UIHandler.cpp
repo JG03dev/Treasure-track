@@ -211,17 +211,17 @@ void UIHandler::DrawModeMenu(UIEvents& e) {
 
     ImGui::SetNextWindowSizeConstraints(windowSize, windowSize);
     // Calculate the center position for the buttons
-    ImVec2 centerPos = ImVec2((windowSize.x - 200) * 0.5f, (windowSize.y - 150) * 0.5f);
+    ImVec2 centerPos = ImVec2((windowSize.x - (446 * 2 / 1.5)) / 3, (windowSize.y - 537 / 1.5) * 0.5f);
     
     // Coin Mode Button
-    ImGui::SetCursorPos(ImVec2(centerPos.x - 400, centerPos.y));
-    if (ImGui::ImageButton((void*)(intptr_t)img_CoinMode, ImVec2(200, 200))) {
+    ImGui::SetCursorPos(centerPos);
+    if (ImGui::ImageButton((void*)(intptr_t)img_CoinMode, ImVec2(446 / 1.5, 537 / 1.5))) {
         e = CoinMode;
     }
 
     // Free Mode Button
-    ImGui::SetCursorPos(ImVec2(centerPos.x + 400, centerPos.y));  // Adjust the vertical distance
-    if (ImGui::ImageButton((void*)(intptr_t)img_FreeMode, ImVec2(200, 200))) {
+    ImGui::SetCursorPos(ImVec2(centerPos.x * 2 + (446 / 1.5), centerPos.y));  // Adjust the vertical distance
+    if (ImGui::ImageButton((void*)(intptr_t)img_FreeMode, ImVec2(446 / 1.5, 537 / 1.5))) {
         e = FreeMode;
     }
 
@@ -250,23 +250,23 @@ void UIHandler::DrawTimeMenu(UIEvents& e) {
 
 	ImGui::SetNextWindowSizeConstraints(windowSize, windowSize);
 	// Calculate the center position for the buttons
-	ImVec2 centerPos = ImVec2((windowSize.x - 200) * 0.5f, (windowSize.y - 150) * 0.5f);
+	ImVec2 centerPos = ImVec2((windowSize.x - (446*3/1.5))/4, (windowSize.y - 537/1.5) * 0.5f);
 
 	// Day Time Button
-	ImGui::SetCursorPos(ImVec2(centerPos.x - 600, centerPos.y));
-	if (ImGui::ImageButton((void*)(intptr_t)img_Day, ImVec2(200, 200))) {
+	ImGui::SetCursorPos(centerPos);
+	if (ImGui::ImageButton((void*)(intptr_t)img_Day, ImVec2(446 / 1.5, 537 / 1.5))) {
 		e = Day;
 	}
 
 	// Afternoon Time Button
-	ImGui::SetCursorPos(centerPos);  // Adjust the vertical distance
-	if (ImGui::ImageButton((void*)(intptr_t)img_Afternoon, ImVec2(200, 200))) {
+	ImGui::SetCursorPos(ImVec2(centerPos.x*2 + (446 / 1.5), centerPos.y));  // Adjust the vertical distance
+	if (ImGui::ImageButton((void*)(intptr_t)img_Afternoon, ImVec2(446 / 1.5, 537 / 1.5))) {
 		e = Afternoon;
 	}
 
 	// Night Time Button
-	ImGui::SetCursorPos(ImVec2(centerPos.x + 600, centerPos.y));  // Adjust the vertical distance
-	if (ImGui::ImageButton((void*)(intptr_t)img_Night, ImVec2(200, 200))) {
+	ImGui::SetCursorPos(ImVec2(centerPos.x*3 + (446 / 1.5) * 2, centerPos.y));  // Adjust the vertical distance
+	if (ImGui::ImageButton((void*)(intptr_t)img_Night, ImVec2(446 / 1.5, 537 / 1.5))) {
 		e = Night;
 	}
 
