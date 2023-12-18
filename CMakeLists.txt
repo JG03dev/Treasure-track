@@ -1,15 +1,9 @@
 cmake_minimum_required(VERSION 3.26)
 project(VGI-ABP)
 
-
-# Set the C++ standard
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
 set(CMAKE_CXX_STANDARD 14)
 IF (WIN32)
-    # Add the vcpkg toolchain file
-    set(VCPKG_TARGET_TRIPLET "x64-windows")
+    # Add the path to the vcpkg toolchain file
     set(CMAKE_TOOLCHAIN_FILE "${CMAKE_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake")
 ENDIF()
 
@@ -24,7 +18,7 @@ find_package(soil2 CONFIG REQUIRED)
 find_package(assimp REQUIRED)
 find_package(imgui CONFIG REQUIRED)
 
-add_executable(GameExecutable WIN32
+add_executable(GameExecutable 
 # Ficheros principales
         src/main.cpp
         src/Game.cpp
@@ -111,13 +105,6 @@ add_executable(MenuDemoExecutable src/main-menu.cpp
         src/Music/MySoundEffects.h 
         src/Music/MySoundEffects.cpp 
         src/Music/MySoundEffects.cpp)
-
-# Set target properties
-set_target_properties(GameExecutable PROPERTIES
-    VERSION "1.0.0"  # Set your custom version
-    OUTPUT_NAME "CarRacer"  # Set your custom output name (without extension)
-
-)
 
 # target_link_libraries(VGI-ABP PRIVATE glfw "${ASSIMP_INCLUDE_DIRS}/assimp" "${BULLET_LIBRARIES}" GLEW::glew OpenAL::OpenAL)
 target_link_libraries(GameExecutable  PRIVATE OpenAL::OpenAL)
