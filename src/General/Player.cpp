@@ -95,8 +95,8 @@ void Player::InputMethod(int key, int keyPressed) {
 			this->vehicle->setBrake(600, 3);
 			break;
 		case GLFW_KEY_LEFT_SHIFT:
-			this->vehicle->applyEngineForce(this->vehicleParams.m_fEngineForce * 2, 2);
-			this->vehicle->applyEngineForce(this->vehicleParams.m_fEngineForce * 2, 3);
+			this->vehicle->applyEngineForce(this->vehicleParams.m_fEngineForce * 1.5, 2);
+			this->vehicle->applyEngineForce(this->vehicleParams.m_fEngineForce * 1.5, 3);
 			this->vehicle->setBrake(0, 2);
 			this->vehicle->setBrake(0, 3);
 			m_num_keys++;
