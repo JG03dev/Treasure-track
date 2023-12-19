@@ -362,7 +362,7 @@ int Game::InitializeWindow()
 {
     // glfw window creation
     // --------------------
-    m_Window = glfwCreateWindow(m_SCR_WIDTH, m_SCR_HEIGHT, "City Driver Simulator", NULL, NULL);
+    m_Window = glfwCreateWindow(m_SCR_WIDTH, m_SCR_HEIGHT, "Treasure Track", NULL, NULL);
     if (m_Window == NULL)
     {
         std::cout << "Failed to create GLFW window" << std::endl;
