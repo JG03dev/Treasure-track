@@ -106,6 +106,61 @@ add_executable(MenuDemoExecutable src/main-menu.cpp
         src/Music/MySoundEffects.cpp 
         src/Music/MySoundEffects.cpp)
 
+add_executable(TestExecutable 
+# Ficheros de test
+        Tests/main.cpp
+        Tests/TestCamera.hpp
+        Tests/TestLights.hpp
+        Tests/TestModel.hpp
+        Tests/TestRenderer.hpp
+        Tests/TestShadows.hpp
+        Tests/Utility.hpp
+
+# Ficheros de funcionalidades extra
+        src/Encabezados/stdafx.h
+        src/Encabezados/stb_image.h
+        src/Encabezados/json.hpp
+
+        src/General/Player.cpp
+        src/General/Player.h
+        
+# Fiechros de funcionalidades del juego
+        src/General/Camera.h
+        src/General/Camera.cpp
+
+# Parte Graficos
+        src/Graficos/Renderer.h 
+        src/Graficos/Renderer.cpp
+        src/Graficos/Shader.h
+        src/Graficos/Shader.cpp
+        src/Graficos/Skybox.h
+        src/Graficos/Skybox.cpp
+
+# Ficheros de Objecto
+        src/Graficos/Modelo/Model.h
+        src/Graficos/Modelo/Model.cpp
+        src/Graficos/Modelo/Mesh.h
+        src/Graficos/Modelo/Mesh.cpp
+        src/Graficos/Modelo/Material.h
+        src/Graficos/Modelo/Material.cpp
+        src/Graficos/Modelo/Texture.h
+        src/Graficos/Modelo/Texture.cpp 
+
+# Ficheros para la iluminacion
+        src/Graficos/Luces/DirectionalLight.cpp
+        src/Graficos/Luces/DirectionalLight.h
+        src/Graficos/Luces/Light.cpp
+        src/Graficos/Luces/Light.h
+        src/Graficos/Luces/PointLight.cpp
+        src/Graficos/Luces/PointLight.h
+        src/Graficos/Luces/SpotLight.cpp
+        src/Graficos/Luces/SpotLight.h
+
+        src/Graficos/Sombras/ShadowMap.h
+        src/Graficos/Sombras/ShadowMap.cpp
+        src/Graficos/Sombras/OmniShadowMap.h
+        src/Graficos/Sombras/OmniShadowMap.cpp)
+
 # target_link_libraries(VGI-ABP PRIVATE glfw "${ASSIMP_INCLUDE_DIRS}/assimp" "${BULLET_LIBRARIES}" GLEW::glew OpenAL::OpenAL)
 target_link_libraries(GameExecutable  PRIVATE OpenAL::OpenAL)
 target_link_libraries(GameExecutable  PRIVATE OpenGL::GL)
@@ -125,3 +180,12 @@ target_link_libraries(MenuDemoExecutable  PRIVATE SndFile::sndfile)
 target_link_libraries(MenuDemoExecutable  PRIVATE imgui::imgui) 
 target_link_libraries(MenuDemoExecutable  PRIVATE soil2)
 
+target_link_libraries(TestExecutable  PRIVATE OpenAL::OpenAL)
+target_link_libraries(TestExecutable  PRIVATE OpenGL::GL)
+target_link_libraries(TestExecutable  PRIVATE GLEW::GLEW)
+target_link_libraries(TestExecutable  PRIVATE glfw)
+target_link_libraries(TestExecutable  PRIVATE "${BULLET_LIBRARIES}")
+target_link_libraries(TestExecutable  PRIVATE SndFile::sndfile)
+target_link_libraries(TestExecutable  PRIVATE soil2)
+target_link_libraries(TestExecutable  PRIVATE ${ASSIMP_LIBRARIES})
+target_link_libraries(TestExecutable  PRIVATE imgui::imgui) 

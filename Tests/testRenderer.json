@@ -1,0 +1,226 @@
+{
+  "shaders": [],
+  "models": [
+    {
+      "id": "Coin",
+      "path": "../../../Assets/Moneda/Moneda.obj",
+      "name": "Moneda",
+      "intensity": 4.0,
+      "shine": 256,
+      "instances": [
+        {
+          "suffix": "2i5j",
+          "transform": { "translate": [ 16.0, -3.4, 0.0 ] }
+        },
+        {
+          "suffix": "3i5j",
+          "transform": { "translate": [ 56.0, -3.4, 0.0 ] }
+        },
+        {
+          "suffix": "4i5j_1",
+          "transform": { "translate": [ 106.0, -3.4, 0.0 ] }
+        },
+        {
+          "suffix": "4i5j_2",
+          "transform": { "translate": [ 114.0, -3.4, 8.0 ] }
+        },
+        {
+          "suffix": "4i6j_1",
+          "transform": { "translate": [ 114.0, -3.4, 54.0 ] }
+        },
+        {
+          "suffix": "4i6j_2",
+          "transform": { "translate": [ 106.0, -3.4, 62.0 ] }
+        },
+        {
+          "suffix": "3i6j",
+          "transform": { "translate": [ 56.0, -3.4, 62.0 ] }
+        },
+        {
+          "suffix": "2i6j_1",
+          "transform": { "translate": [ 8.0, -3.4, 62.0 ] }
+        },
+        {
+          "suffix": "2i6j_2",
+          "transform": { "translate": [ 0.0, -3.4, 70.0 ] }
+        },
+        {
+          "suffix": "2i7j",
+          "transform": { "translate": [ 0.0, -3.4, 91.0 ] }
+        },
+        {
+          "suffix": "2i8j_1",
+          "transform": { "translate": [ 0.0, -3.4, 106.0 ] }
+        },
+        {
+          "suffix": "2i8j_2",
+          "transform": { "translate": [ -8.0, -3.4, 114.0 ] }
+        },
+        {
+          "suffix": "1i8j",
+          "transform": { "translate": [ -56.0, -3.4, 114.0 ] }
+        },
+        {
+          "suffix": "0i8j_1",
+          "transform": { "translate": [ -106.0, -3.4, 114.0 ] }
+        },
+        {
+          "suffix": "0i8j_2",
+          "transform": { "translate": [ -114.0, -3.4, 106.0 ] }
+        },
+        {
+          "suffix": "0i7j",
+          "transform": { "translate": [ -114.0, -3.4, 91.0 ] }
+        },
+        {
+          "suffix": "0i6j_1",
+          "transform": { "translate": [ -114.0, -3.4, 70.0 ] }
+        },
+        {
+          "suffix": "0i6j_2",
+          "transform": { "translate": [ -106.0, -3.4, 62.0 ] }
+        },
+        {
+          "suffix": "1i6j_1",
+          "transform": { "translate": [ -64.0, -3.4, 62.0 ] }
+        },
+        {
+          "suffix": "1i6j_2",
+          "transform": { "translate": [ -56.0, -3.4, 54.0 ] }
+        },
+        {
+          "suffix": "1i5j",
+          "transform": { "translate": [ -56.0, -3.4, 0.0 ] }
+        },
+        {
+          "suffix": "1i4j_1",
+          "transform": { "translate": [ -56.0, -3.4, -32.0 ] }
+        },
+        {
+          "suffix": "1i4j_2",
+          "transform": { "translate": [ -64.0, -3.4, -40.0 ] }
+        },
+        {
+          "suffix": "0i4j_1",
+          "transform": { "translate": [ -106.0, -3.4, -40.0 ] }
+        },
+        {
+          "suffix": "0i4j_2",
+          "transform": { "translate": [ -114.0, -3.4, -48.0 ] }
+        },
+        {
+          "suffix": "0i3j",
+          "transform": { "translate": [ -114.0, -3.4, -68.0 ] }
+        },
+        {
+          "suffix": "0i2j",
+          "transform": { "translate": [ -114.0, -3.4, -98.0 ] }
+        },
+        {
+          "suffix": "0i1j",
+          "transform": { "translate": [ -114.0, -3.4, -160.0 ] }
+        },
+        {
+          "suffix": "0i0j_1",
+          "transform": { "translate": [ -114.0, -3.4, -186.0 ] }
+        },
+        {
+          "suffix": "0i0j_2",
+          "transform": { "translate": [ -106.0, -3.4, -194.0 ] }
+        },
+        {
+          "suffix": "1i0j_1",
+          "transform": { "translate": [ -64.0, -3.4, -194.0 ] }
+        },
+        {
+          "suffix": "1i0j_2",
+          "transform": { "translate": [ -56.0, -3.4, -186.0 ] }
+        },
+        {
+          "suffix": "1i1j_1",
+          "transform": { "translate": [ -56.0, -3.4, -168.0 ] }
+        },
+        {
+          "suffix": "1i1j_2",
+          "transform": { "translate": [ -48.0, -3.4, -160.0 ] }
+        },
+        {
+          "suffix": "2i1j",
+          "transform": { "translate": [ 16.0, -3.4, -160.0 ] }
+        },
+        {
+          "suffix": "3i1j_1",
+          "transform": { "translate": [ 48.0, -3.4, -160.0 ] }
+        },
+        {
+          "suffix": "3i1j_2",
+          "transform": { "translate": [ 56.0, -3.4, -152.0 ] }
+        },
+        {
+          "suffix": "3i2j_1",
+          "transform": { "translate": [ 56.0, -3.4, -106.0 ] }
+        },
+        {
+          "suffix": "3i2j_2",
+          "transform": { "translate": [ 48.0, -3.4, -98.0 ] }
+        },
+        {
+          "suffix": "2i2j_1",
+          "transform": { "translate": [ 8.0, -3.4, -98.0 ] }
+        },
+        {
+          "suffix": "2i2j_2",
+          "transform": { "translate": [ 0.0, -3.4, -90.0 ] }
+        },
+        {
+          "suffix": "2i3j",
+          "transform": { "translate": [ 0.0, -3.4, -68.0 ] }
+        },
+        {
+          "suffix": "2i4ja_m",
+          "transform": { "translate": [ 8.0, -3.0, -40.0 ] }
+        }
+      ]
+    }
+  ],
+  "lights": {
+    "directionalLights": [
+      {
+        "shadow": [ 2048, 2048 ],
+        "color": [ 1.0, 1.0, 1.0 ],
+        "intensity": 0.8,
+        "diffuse": 0.5,
+        "direction": [ -10.0, -12.0, 18.5 ]
+      }
+    ],
+    "pointLights": [
+      {
+        "shadow": [ 2048, 2048 ],
+        "near": 0.01,
+        "far": 100.0,
+        "color": [ 1.0, 1.0, 1.0 ],
+        "intensity": 0.8,
+        "diffuse": 0.5,
+        "position": [ 0.0, 0.0, 0.0 ],
+        "CLE": [ 0.3, 0.2, 0.1 ],
+        "initalState": true
+      }
+    ],
+    "spotLights": [
+      {
+        "shadow": [ 2048, 2048 ],
+        "near": 0.01,
+        "far": 100.0,
+        "color": [ 1.0, 1.0, 1.0 ],
+        "intensity": 0.8,
+        "diffuse": 0.5,
+        "position": [ 0.0, 0.0, 0.0 ],
+        "direction": [ -10.0, -12.0, 18.5 ],
+        "CLE": [ 1.0, 0.002, 0.001 ],
+        "edge": 20.0,
+        "initalState": true
+      }
+    ]
+  },
+  "skyboxes": []
+}
