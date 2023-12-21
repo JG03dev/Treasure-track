@@ -28,20 +28,20 @@ public:
 	int getNInstances() { return nInstances; }
 	std::string GetName() { return m_name; }
 	bool loaded() { return isLoaded; }
+	Material getMaterial() { return materialModel; }
 
 	~Model();
 
 	std::vector<Mesh*> meshList;
+	std::vector<Texture*> textureList;
+	std::vector<unsigned int> meshToTex;
 
 private:
 
 	void LoadNode(aiNode *node, const aiScene *scene);
 	void LoadMesh(aiMesh *mesh, const aiScene *scene);
-	void LoadMaterials(const aiScene *scene);
+	void LoadMaterials(const aiScene *scene);	
 
-	
-	std::vector<Texture*> textureList;
-	std::vector<unsigned int> meshToTex;
 	std::string m_name; // Used to refer to textures in case obj is in another folder
 	std::string modelPath;
 

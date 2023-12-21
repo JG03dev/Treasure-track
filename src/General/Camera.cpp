@@ -13,12 +13,12 @@ Camera::Camera( // Init with vector
 	float yaw,
 	float pitch) :
 	position(position), yaw(yaw), pitch(pitch) {
-	//this->position = position;
-	//this->yaw      = yaw;
-	//this->pitch    = pitch;
+	this->position = position;
+	this->yaw      = yaw;
+	this->pitch    = pitch;
 	worldUp = up;
 	front = glm::vec3(0.0f, 0.0f, -1.0f),
-		speed = SPEED;
+	speed = SPEED;
 	sensitivity = SENSITIVITY;
 	fov = FOV;
 	m_firstPerson = false;

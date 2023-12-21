@@ -71,6 +71,10 @@ public:
 	// Get view matrix based on Eular angles
 	glm::mat4 getViewMatrix();
 
+	glm::vec3 getCameraPos() { return position; }
+	float getPitch() { return pitch; }
+	float getYaw() { return yaw; }
+
 	// Process keyboard events
 	void processKeyboard(Camera_Movement_Type move_type, float deltaTime);
 
@@ -89,11 +93,12 @@ public:
 
 	void changeCamera();
 
+	// Update vectors of the camera
+	void update();
 private:
 	bool m_firstPerson;
 	bool m_isCameraMoving;
-	// Update vectors of the camera
-	void update();
+
 };
 
 #endif
