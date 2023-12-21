@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Car Racer"
-#define MyAppVersion "1.0.0"
+#define MyAppVersion "1.1.0"
 #define MyAppPublisher "VGI-ABP-Grup04"
 #define MyAppURL "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
 #define MyAppExeName "GameExecutable.exe"
@@ -30,7 +30,7 @@ LicenseFile=C:\Users\jangr\OneDrive\Documents\Github\VGI-ABP\LICENSE
 PrivilegesRequired=lowest
 OutputDir=C:\Users\jangr\OneDrive\Escriptori
 OutputBaseFilename=CarRacerInstaller
-SetupIconFile=C:\Users\jangr\OneDrive\Documents\Github\CarRacer-Releases\Release1_0\Icon.ico
+SetupIconFile=C:\Users\jangr\OneDrive\Documents\Github\CarRacer-Releases\Release1_1\Icon.ico
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
@@ -42,8 +42,8 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "C:\Users\jangr\OneDrive\Documents\Github\CarRacer-Releases\Test\Release1_0\out\build\x64-Release\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\jangr\OneDrive\Documents\Github\CarRacer-Releases\Release1_0\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "C:\Users\jangr\OneDrive\Documents\Github\CarRacer-Releases\Release1_1\out\build\x64-Release\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Users\jangr\OneDrive\Documents\Github\CarRacer-Releases\Release1_1\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Registry]

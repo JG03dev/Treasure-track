@@ -113,7 +113,6 @@ add_executable(TestExecutable
         Tests/TestLights.hpp
         Tests/TestModel.hpp
         Tests/TestRenderer.hpp
-        Tests/TestShadows.hpp
         Tests/Utility.hpp
 
 # Ficheros de funcionalidades extra
