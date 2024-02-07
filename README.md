@@ -1,4 +1,4 @@
-# VGI-ABP Project
+# TREASURE TRACK
 
 Aquest projecte es una demo molt senzilla d'ús de glew i glfw, també inclou llibreries que utilitzarem en el projecte com assimp o openal-soft
 
